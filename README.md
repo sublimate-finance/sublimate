@@ -7,7 +7,8 @@
 #### Development:
 
 ```bash
-npx pnpm add -g pnpm
+npm install -g pnpm
+pnpm add -g pnpm
 pnpm install
 ```
 
