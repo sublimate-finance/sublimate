@@ -1,5 +1,6 @@
 <!--- -------------------------------------------- -->
-# Jolly  Roger
+
+# Jolly Roger
 
 This is a template to build a decentralised applicaiton using ethereum, hardhat, svelte and thegraph
 
@@ -11,7 +12,8 @@ npx degit wighawag/jolly-roger <your-app-folder>
 
 Alternatively create a repo from this template [here](https://github.com/wighawag/jolly-roger/generate)
 
--------------------------
+---
+
 <br/>
 <br/>
 <!--- -------------------------------------------- -->
@@ -39,7 +41,6 @@ If you decide to use `yarn` you ll have to remove the script "preinstall" that b
 `docker` and `docker-compose` are used to setup the external services (an ethereum node, an ipfs node and a [subgraph](https://thegraph.com) node)
 
 If you prefer (or do not have access to docker/docker-compose) you can run them independently.
-
 
 ## intall dependencies :
 
@@ -113,11 +114,11 @@ pnpm production:web:build
 
 You need to gather the following environment variables :
 
-- `THEGRAPH_TOKEN=<graph token used to deploy the subgraph on thegraph.com>`
-- `INFURA_TOKEN=<infura token to talk to a network>`
-- `IPFS_DEPLOY_PINATA__API_KEY=<pinata api key>`
-- `IPFS_DEPLOY_PINATA__SECRET_API_KEY=<pinata secret key>`
-- `MNEMONIC=<mnemonic of the account that will deploy the contract>`
+-   `THEGRAPH_TOKEN=<graph token used to deploy the subgraph on thegraph.com>`
+-   `INFURA_TOKEN=<infura token to talk to a network>`
+-   `IPFS_DEPLOY_PINATA__API_KEY=<pinata api key>`
+-   `IPFS_DEPLOY_PINATA__SECRET_API_KEY=<pinata secret key>`
+-   `MNEMONIC=<mnemonic of the account that will deploy the contract>`
 
 Note that pinata is currently the default ipfs provider setup but ipfs-deploy, the tool used to deploy to ipfs support other providers, see : https://github.com/ipfs-shipyard/ipfs-deploy
 
@@ -127,9 +128,9 @@ You can remove the env if you want to use the same as the one in `.env`
 
 You'll also need to update the following for staging and production :
 
-- `SUBGRAPH_NAME=<thegraph account name>/<subgraph name>`
-- `VITE_CHAIN_ID=<id of the chain where contracts lives>`
-- `VITE_THE_GRAPH_HTTP=https://api.thegraph.com/subgraphs/name/<thegraph account name>/<subgraph name>`
+-   `SUBGRAPH_NAME=<thegraph account name>/<subgraph name>`
+-   `VITE_CHAIN_ID=<id of the chain where contracts lives>`
+-   `VITE_THE_GRAPH_HTTP=https://api.thegraph.com/subgraphs/name/<thegraph account name>/<subgraph name>`
 
 you then need to ensure you have a subgraph already created on thegraph.com with that name: https://thegraph.com/explorer/dashboard
 

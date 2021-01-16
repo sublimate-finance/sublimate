@@ -1,6 +1,6 @@
-import Router from './router.svelte';
-import CurrentPage from './currentpage.svelte';
+import Router from './router.svelte'
+import CurrentPage from './currentpage.svelte'
 
-export type ComponentModule = {default: unknown};
+export type ComponentModule = {default: unknown}
 
-export {Router, CurrentPage};
+export {Router, CurrentPage}
