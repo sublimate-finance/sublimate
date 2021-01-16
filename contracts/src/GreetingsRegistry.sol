@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.7.1;
+pragma solidity ^0.7.0;
 
 import "hardhat-deploy/solc_0.7/proxy/Proxied.sol";
 import "hardhat/console.sol";
@@ -32,7 +32,7 @@ contract GreetingsRegistry is Proxied {
     // -----------------------------------------
 
     function setMessage(string calldata message) external {
-        string memory actualMessage = string(abi.encodePacked("welcome...:", message));
+        string memory actualMessage = string(abi.encodePacked("hey...:", message));
         _messages[msg.sender] = actualMessage;
         emit MessageChanged(msg.sender, actualMessage);
     }
