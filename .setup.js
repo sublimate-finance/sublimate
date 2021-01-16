@@ -16,7 +16,7 @@ function writeIfNotExists(p, content) {
 }
 
 ;[
-	'jolly-roger.code-workspace',
+	'sublimate.code-workspace',
 	'.env',
 	'.env.production',
 	'.env.staging',

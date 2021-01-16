@@ -1,5 +1,5 @@
 specVersion: 0.0.2
-description: Jolly Roger
+description: Sublimate
 schema:
     file: ./schema.graphql
 dataSources:

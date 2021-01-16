@@ -1,7 +1,7 @@
 <script lang="ts">
   import Button from '../components/Button.svelte';
   import Feature from '../components/Feature.svelte';
-  const name = 'Jolly Roger';
+  const name = 'Sublimate';
 </script>
 
 <section class="py-8 px-4 text-center">
@@ -32,7 +32,7 @@
         <Button
           blank={true}
           class="big secondary"
-          href="https://github.com/wighawag/jolly-roger"
+          href="https://github.com/wighawag/sublimate"
           label="get it from github!">
           Github
         </Button>
@@ -41,7 +41,7 @@
   </div>
   <div class="py-4 dark:bg-black bg-white">
     <!-- <h2 class="text-3xl underline mb-4 text-gray-600 dark:text-gray-400">Create App</h2> -->
-    <code>npx degit wighawag/jolly-roger &lt;your-app-folder&gt;</code>
+    <code>npx degit wighawag/sublimate &lt;your-app-folder&gt;</code>
   </div>
   <div class="py-4 dark:bg-black bg-white">
     <h2 class="text-3xl underline mb-4 text-gray-600 dark:text-gray-400">

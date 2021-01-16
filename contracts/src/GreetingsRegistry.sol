@@ -32,7 +32,7 @@ contract GreetingsRegistry is Proxied {
     // -----------------------------------------
 
     function setMessage(string calldata message) external {
-        string memory actualMessage = string(abi.encodePacked("", message));
+        string memory actualMessage = string(abi.encodePacked("welcome...:", message));
         _messages[msg.sender] = actualMessage;
         emit MessageChanged(msg.sender, actualMessage);
     }

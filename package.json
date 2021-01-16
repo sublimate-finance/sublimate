@@ -1,7 +1,7 @@
 {
-	"name": "jolly-roger",
+	"name": "sublimate",
 	"version": "0.0.1",
-	"description": "Jolly Roger",
+	"description": "Sublimate",
 	"license": "UNLICENSED",
 	"private": true,
 	"devDependencies": {
@@ -36,8 +36,8 @@
 	},
 	"scripts": {
 		"preinstall": "npx only-allow pnpm",
-		"setup": "npx change-name jolly-roger && pnpm install",
-		"set-name": "npx change-name jolly-roger",
+		"setup": "npx change-name sublimate && pnpm install",
+		"set-name": "npx change-name sublimate",
 		"prepare": "node ./.setup.js",
 		"lint": "eslint \"**/*.{js,ts}\" && solhint contracts/src/**/*.sol",
 		"lint:fix": "eslint --fix \"**/*.{js,ts}\" && solhint --fix contracts/src/**/*.sol",
