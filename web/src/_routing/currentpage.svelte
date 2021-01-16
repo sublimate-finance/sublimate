@@ -1,10 +1,10 @@
 <script lang="ts">
-  import {getResponse} from '@curi/svelte';
-  const response = getResponse();
+	import {getResponse} from '@curi/svelte';
+	const response = getResponse();
 </script>
 
 {#if $response}
-  <svelte:component this={$response.body} />
+	<svelte:component this={$response.body} />
 {:else}
-  <slot />
+	<slot />
 {/if}

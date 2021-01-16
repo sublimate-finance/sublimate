@@ -1,9 +1,9 @@
 <script lang="ts">
-  import {setup} from '@curi/svelte';
+	import {setup} from '@curi/svelte';
 
-  export let router;
+	export let router;
 
-  setup(router);
+	setup(router);
 </script>
 
 <slot />
