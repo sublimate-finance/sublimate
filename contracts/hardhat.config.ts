@@ -1,32 +1,32 @@
 import 'dotenv/config'
-import {HardhatUserConfig} from 'hardhat/types'
+import { HardhatUserConfig } from 'hardhat/types'
 import 'hardhat-deploy'
 import 'hardhat-deploy-ethers'
 import 'hardhat-typechain'
-import {node_url, accounts} from './utils/network'
+import { node_url, accounts } from './utils/network'
 
 const config: HardhatUserConfig = {
 	solidity: {
-    compilers: [
-      {
-        version: '0.8.0',
-        settings: {
-          optimizer: {
-            enabled: true,
-            runs: 2000,
-          },
-        },
-      },
-      {
-        version: '0.7.1',
-        settings: {
-          optimizer: {
-            enabled: true,
-            runs: 2000,
-          },
-        },
-      }
-    ]
+		compilers: [
+			{
+				version: '0.8.0',
+				settings: {
+					optimizer: {
+						enabled: true,
+						runs: 2000,
+					},
+				},
+			},
+			{
+				version: '0.7.1',
+				settings: {
+					optimizer: {
+						enabled: true,
+						runs: 2000,
+					},
+				},
+			}
+		]
 	},
 	namedAccounts: {
 		deployer: 0,
