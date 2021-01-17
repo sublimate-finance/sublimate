@@ -19,41 +19,33 @@ pnpm install
 
 ### Starting development environment:
 
-Navigate to the project root directory.
+1. Open a new terminal from the root directory.
 
-1. Run Docker containers for The Graph, IPFS, Postgres, and Ganache:
+   Run Docker containers for The Graph, IPFS, Postgres, and Ganache:
    ```bash
-   docker-compose up -d
+   npm run externals:up
    ```
 
 2. Open a new terminal from the root directory.
 
-   Run (keep this terminal running):
+   Watch and auto-compile common TypeScript files:
    ```bash
-   pnpm common
+   npm run common:dev
    ```
 
 3. Open a new terminal from the root directory.
 
-   Compile common TypeScript utilities:
+   Watch and auto-deploy smart contracts with Hardhat:
    ```bash
-   pnpm common:build
+   npm run contracts
    ```
 
-   Run Hardhat locally (watches for changes):
+   Watch and auto-deploy subgraph on The Graph:
    ```bash
-   pnpm contracts
+   npm run subgraph
    ```
 
-   Run The Graph locally (watches for changes):
+   Watch and auto-compile front end:
    ```bash
-   cd subgraph
-   pnpm local:setup
-   pnpm local:redeploy
-   ```
-
-   Run local web server (watches for changes):
-   ```bash
-   cd ..
-   pnpm web
+   npm run web
    ```
