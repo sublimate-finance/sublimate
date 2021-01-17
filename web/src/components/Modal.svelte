@@ -34,8 +34,7 @@
 			index += tabbable.length + (evt.shiftKey ? -1 : 1);
 			index %= tabbable.length;
 
-			(tabbable[index] as HTMLElement).focus &&
-				(tabbable[index] as HTMLElement).focus();
+			(tabbable[index] as HTMLElement).focus?();
 			evt.preventDefault();
 		}
 	}
@@ -90,7 +89,9 @@
 					<p class="text-2xl font-bold">{title}</p>
 				{/if}
 				{#if closeButton}
-					<div on:click={close} class="modal-close cursor-pointer z-50">
+					<div
+						on:click={close}
+						class="modal-close cursor-pointer z-50">
 						<svg
 							class="fill-current text-black"
 							xmlns="http://www.w3.org/2000/svg"
