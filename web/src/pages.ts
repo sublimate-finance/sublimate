@@ -14,10 +14,10 @@ export default [
 		component: HomePage, // Home Page is bundled for faster user interaction
 	},
 	{
-		name: 'Demo',
-		path: 'demo',
+		name: 'Explore',
+		path: 'explore',
 		asyncComponent: (): Promise<ComponentModule> =>
-			import('./pages/demo.svelte'),
+			import('./pages/explore.svelte'),
 	},
 	{
 		name: 'NotFound',
