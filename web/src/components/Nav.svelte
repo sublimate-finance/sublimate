@@ -2,6 +2,7 @@
 	type LinkInfo = string | {name: string; title: string}
 	export let links: LinkInfo[]
 	import NavLink from './NavLink.svelte'
+	import WalletControls from './WalletControls.svelte'
 </script>
 
 <style>
@@ -24,4 +25,5 @@
 			{:else}{typeof link === 'string' ? link : link.title}{/if}
 		</NavLink>
 	{/each}
+	<WalletControls />
 </ul>
