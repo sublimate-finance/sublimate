@@ -48,6 +48,8 @@
 			}
 		}
 	}
+
+	import {scale} from 'svelte/transition'
 </script>
 
 <style>
@@ -61,7 +63,8 @@
 			href={url}
 			class="button {_class}"
 			{disabled}
-			on:click={handlePageLink}>
+			on:click={handlePageLink}
+			transition:scale>
 			<slot>Name</slot>
 		</a>
 	{:else}
@@ -72,24 +75,24 @@
 			class="button {_class}"
 			rel={blank === true ? 'noopener noreferrer' : ''}
 			target={blank === true ? '_blank' : ''}
-			{disabled}>
+			{disabled}
+			transition:scale>
 			<slot>Name</slot>
 		</a>
 	{/if}
 {:else if type}
-	<button aria-label={label} title={label} {type} {disabled}>
+	<button aria-label={label} title={label} {type} {disabled} transition:scale>
 		<slot>Name</slot>
 	</button>
 {:else}
 	<button
-		on:click={() => {
-			dispatch('click')
-		}}
+		on:click={() => dispatch('click')}
 		aria-label={label}
 		title={label}
 		type="button"
 		class={_class}
-		{disabled}>
+		{disabled}
+		transition:scale>
 		<slot>Name</slot>
 	</button>
 {/if}

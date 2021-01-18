@@ -1,54 +1,57 @@
 <script lang="ts">
-	import {createEventDispatcher, onDestroy} from 'svelte';
-	export let globalCloseButton: boolean = false;
-	export let closeButton: boolean = false;
-	export let title: string;
-	export let cancelable: boolean = true;
+	import {createEventDispatcher, onDestroy} from 'svelte'
+	export let globalCloseButton: boolean = false
+	export let closeButton: boolean = false
+	export let title: string
+	export let cancelable: boolean = true
 
-	const dispatch = createEventDispatcher();
-	const close = () => cancelable && dispatch('close');
+	const dispatch = createEventDispatcher()
+	const close = () => cancelable && dispatch('close')
 
-	let modal;
+	let modal
 
 	function handle_keydown(evt: KeyboardEvent | undefined) {
-		evt = evt || (window.event as KeyboardEvent);
-		var isEscape = false;
+		evt = evt || (window.event as KeyboardEvent)
+		var isEscape = false
 		if ('key' in evt) {
-			isEscape = evt.key === 'Escape' || evt.key === 'Esc';
+			isEscape = evt.key === 'Escape' || evt.key === 'Esc'
 		} else {
-			isEscape = (evt as KeyboardEvent).keyCode === 27;
+			isEscape = (evt as KeyboardEvent).keyCode === 27
 		}
 		if (isEscape) {
-			close();
-			return;
+			close()
+			return
 		}
 
 		if (evt.key === 'Tab') {
 			// trap focus
-			const nodes = modal.querySelectorAll('*');
-			const tabbable = Array.from(nodes).filter((n: any) => n.tabIndex >= 0);
+			const nodes = modal.querySelectorAll('*')
+			const tabbable = Array.from(nodes).filter(
+				(n: any) => n.tabIndex >= 0
+			)
 
-			let index = tabbable.indexOf(document.activeElement);
-			if (index === -1 && evt.shiftKey) index = 0;
+			let index = tabbable.indexOf(document.activeElement)
+			if (index === -1 && evt.shiftKey) index = 0
 
-			index += tabbable.length + (evt.shiftKey ? -1 : 1);
-			index %= tabbable.length;
+			index += tabbable.length + (evt.shiftKey ? -1 : 1)
+			index %= tabbable.length
 
-			(tabbable[index] as HTMLElement).focus?();
-			evt.preventDefault();
+			;(tabbable[index] as HTMLElement).focus &&
+				(tabbable[index] as HTMLElement).focus()
+			evt.preventDefault()
 		}
 	}
 
 	const previously_focused =
-		typeof document !== 'undefined' && document.activeElement;
+		typeof document !== 'undefined' && document.activeElement
 
 	if (previously_focused) {
 		onDestroy(() => {
-			const htmlElement = previously_focused as HTMLElement;
+			const htmlElement = previously_focused as HTMLElement
 			if (htmlElement.focus) {
-				htmlElement.focus();
+				htmlElement.focus()
 			}
-		});
+		})
 	}
 </script>
 

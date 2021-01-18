@@ -1,8 +1,9 @@
 <script lang="ts">
-	import Button from '../components/Button.svelte'
-	import WalletAccess from '../templates/WalletAccess.svelte'
+	import Button from './Button.svelte'
+	import WalletAccess from './WalletAccess.svelte'
 	import {wallet, builtin, chain, flow, transactions} from '../stores/wallet'
 	import type {Contract} from '@ethersproject/contracts'
+	import Address from './Address.svelte'
 
 	let contractInterfaces:
 		| {
@@ -58,49 +59,53 @@
 
 <WalletAccess>
 	<div>
-		<!-- <Button
-			label="probe builtin wallet (like metamask)"
-			waitOnDisabled={$builtin.probing}
-			disabled={$builtin.state === 'Ready' || $builtin.probing}
-			on:click={() => builtin.probe()}>
-			probe Builtin
-		</Button> -->
-		<Button
-			label="connect via builtin wallet"
-			disabled={!$builtin.available || $wallet.connecting}
-			on:click={() => wallet.connect('builtin')}>
-			builtin
-		</Button>
-		<Button
-			label="connect via discord"
-			disabled={$wallet.connecting}
-			on:click={() => wallet.connect('torus-discord')}>
-			discord
-		</Button>
-		<Button
-			label="unlock wallet"
-			waitOnDisabled={$wallet.unlocking}
-			disabled={$wallet.state !== 'Locked' || $wallet.unlocking}
-			on:click={() => wallet.unlock()}>
-			unlock
-		</Button>
-		<Button
-			label="disconnect from wallet"
-			waitOnDisabled={$wallet.connecting}
-			disabled={$wallet.state !== 'Ready' || $wallet.connecting}
-			on:click={() => wallet.disconnect()}>
-			disconnect
-		</Button>
-	</div>
-
-	<div>
-		{#if $wallet.address}
-			<p>
-				<label for="wallet">Wallet</label>
-				<span id="wallet">{$wallet.address}</span>
-			</p>
+		{#if $wallet.state === 'Idle'}
+			<Button
+				label="Connect MetaMask Wallet"
+				disabled={!$builtin.available || $wallet.connecting}
+				on:click={() => wallet.connect('builtin')}>
+				Connect MetaMask Wallet
+			</Button>
+			<Button
+				label="Connect Torus Wallet"
+				disabled={$wallet.connecting}
+				on:click={() => wallet.connect('torus-google')}>
+				Connect Torus Wallet (Google)
+			</Button>
+			<Button
+				label="Connect Torus Wallet"
+				disabled={$wallet.connecting}
+				on:click={() => wallet.connect('torus-facebook')}>
+				Connect Torus Wallet (Facebook)
+			</Button>
+			<Button
+				label="Connect Torus Wallet"
+				disabled={$wallet.connecting}
+				on:click={() => wallet.connect('torus-discord')}>
+				Connect Torus Wallet (Discord)
+			</Button>
+		{/if}
+		{#if $wallet.state === 'Locked' && !$wallet.connecting}
+			<Button
+				label="Unlock Wallet"
+				waitOnDisabled={$wallet.unlocking}
+				on:click={() => wallet.unlock()}>
+				Unlock Wallet
+			</Button>
+		{/if}
+		{#if $wallet.state === 'Ready' && !$wallet.connecting}
+			<Button
+				label="Disconnect Wallet"
+				waitOnDisabled={$wallet.connecting}
+				on:click={() => wallet.disconnect()}>
+				Disconnect Wallet
+			</Button>
 		{/if}
 	</div>
+
+	{#if $wallet.address}
+		<Address address={$wallet.address} format="middle-truncated" />
+	{/if}
 	<div>
 		{#if $chain.contracts}
 			<h2>Contracts</h2>

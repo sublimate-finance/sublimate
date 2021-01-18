@@ -1,8 +1,8 @@
 <script lang="ts">
-	export let title: string = undefined;
-	import Button from '../components/Button.svelte';
-	import Toast from '../components/Toast.svelte';
-	import Modal from '../components/Modal.svelte';
+	export let title: string = undefined
+	import Button from '../components/Button.svelte'
+	import Toast from '../components/Toast.svelte'
+	import Modal from '../components/Modal.svelte'
 
 	import {
 		wallet,
@@ -11,7 +11,7 @@
 		transactions,
 		balance,
 		flow,
-	} from '../stores/wallet';
+	} from '../stores/wallet'
 
 	const chainNames = {
 		'1': 'mainnet',
@@ -21,24 +21,24 @@
 		'42': 'kovan',
 		'1337': 'localhost chain',
 		'31337': 'localhost chain',
-	};
-	const chainId = import.meta.env.VITE_CHAIN_ID;
+	}
+	const chainId = import.meta.env.VITE_CHAIN_ID
 	const chainName = (() => {
-		const name = chainNames[chainId];
+		const name = chainNames[chainId]
 		if (name) {
-			return name;
+			return name
 		}
-		return `chain with id ${chainId}`;
-	})();
+		return `chain with id ${chainId}`
+	})()
 
-	const base: string = window.basepath || '/';
+	const base: string = window.basepath || '/'
 
-	$: executionError = $flow.executionError as any;
+	$: executionError = $flow.executionError as any
 
-	let options: {img: string; id: string; name: string}[] = [];
+	let options: {img: string; id: string; name: string}[] = []
 	$: builtinNeedInstalation =
 		$wallet.options.filter((v) => v === 'builtin' && !$builtin.available)
-			.length > 0;
+			.length > 0
 	$: options = $wallet.options
 		.filter((v) => v !== 'builtin' || $builtin.available)
 		.map((v) => {
@@ -47,24 +47,24 @@
 					if (v === 'builtin') {
 						if ($builtin.state === 'Ready') {
 							if ($builtin.vendor === 'Metamask') {
-								return 'images/metamask.svg';
+								return 'images/metamask.svg'
 							} else if ($builtin.vendor === 'Opera') {
-								return 'images/opera.svg';
+								return 'images/opera.svg'
 							}
 						}
-						return 'images/web3-default.png';
+						return 'images/web3-default.png'
 					} else {
 						if (v.startsWith('torus-')) {
-							const verifier = v.slice(6);
-							return `images/torus/${verifier}.svg`;
+							const verifier = v.slice(6)
+							return `images/torus/${verifier}.svg`
 						}
-						return `images/${v}.svg`;
+						return `images/${v}.svg`
 					}
 				})(v),
 				id: v,
 				name: v,
-			};
-		});
+			}
+		})
 </script>
 
 <slot />
@@ -106,7 +106,7 @@
 								class="cursor-pointer p-0 mx-2 h-10 w-10 object-contain"
 								alt={`Download Metamask}`}
 								src={`${base}images/metamask.svg`} />
-							Download metamask
+							Download MetaMask
 						</Button>
 					</div>
 				{/if}
