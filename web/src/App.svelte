@@ -12,7 +12,7 @@
 	{pages}
 	globalQueryStrings={['subgraph', 'debug', 'log', 'trace', '_d_eruda']}>
 	<Notifications />
-	<Nav links={['Home', 'Explore']} />
+	<Nav links={['Home', 'Explore', '(Test)']} />
 	<CurrentPage>
 		<LoadingBar />
 		Loading...

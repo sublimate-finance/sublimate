@@ -14,6 +14,12 @@ export default [
 			import('./pages/explore.svelte'),
 	},
 	{
+		name: '(Test)',
+		path: 'test',
+		asyncComponent: (): Promise<ComponentModule> =>
+			import('./pages/test.svelte'),
+	},
+	{
 		name: 'NotFound',
 		path: '.*',
 		asyncComponent: (): Promise<ComponentModule> =>

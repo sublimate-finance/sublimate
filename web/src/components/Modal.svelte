@@ -54,36 +54,39 @@
 			}
 		})
 	}
+
+	import { fade, scale } from 'svelte/transition';
 </script>
 
 <style>
-  .modal {
-
-  }
+	.modal-container {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		position: fixed;
+		inset: 0;
+	}
+	.modal-overlay {
+		position: fixed;
+		inset: 0;
+		background-color: var(--accent-color);
+		opacity: 0.3;
+		z-index: -1;
+	}
+	.modal {
+		backdrop-filter: blur(--overlay-backdrop-filter);
+	}
 </style>
 
 <svelte:window on:keydown={onKeydown} />
 
-<div
-	class="modal z-50 opacity-80 fixed w-full h-full top-0 left-0 flex items-center justify-center">
-	<div
-		on:click={close}
-		class="z-50 modal-overlay absolute w-full h-full bg-gray-900 opacity-50" />
+<div class="modal-container" transition:fade={{duration: 300}}>
+	<div on:click={close} class="modal-overlay" />
 
-	<div
-		class="z-50 modal-container dark:bg-black dark:border-2 dark:border-gray-800 bg-white w-11/12 md:max-w-md mx-auto rounded
-		shadow-lg overflow-y-auto">
+	<div class="modal card" transition:scale={{duration: 300}}>
 		{#if globalCloseButton}
-			<div
-				on:click={close}
-				class="modal-close absolute top-0 right-0 cursor-pointer flex flex-col items-center mt-4 mr-4 text-white text-sm
-					z-50">
-				<svg
-					class="fill-current text-white"
-					xmlns="http://www.w3.org/2000/svg"
-					width="18"
-					height="18"
-					viewBox="0 0 18 18">
+			<div on:click={close} class="modal-close absolute top-0 right-0 cursor-pointer flex flex-col items-center mt-4 mr-4 text-white text-sm z-50">
+				<svg class="fill-current text-white" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
 					<path
 						d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z" />
 				</svg>
@@ -99,17 +102,9 @@
 					<h4>{title}</h4>
 				{/if}
 				{#if closeButton}
-					<div
-						on:click={close}
-						class="modal-close cursor-pointer z-50">
-						<svg
-							class="fill-current text-black"
-							xmlns="http://www.w3.org/2000/svg"
-							width="18"
-							height="18"
-							viewBox="0 0 18 18">
-							<path
-								d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z" />
+					<div on:click={close} class="modal-close cursor-pointer z-50">
+						<svg class="fill-current text-black" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
+							<path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z" />
 						</svg>
 					</div>
 				{/if}

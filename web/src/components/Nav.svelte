@@ -4,30 +4,48 @@
 	export let links: LinkInfo[]
 
 	import NavLink from './NavLink.svelte'
-	import WalletControls from './WalletControls.svelte'
+	import Wallet from './Wallet.svelte'
 </script>
 
 <style>
 	.nav {
-		--space-inner: 2rem;
 		display: flex;
 		align-items: stretch;
 		border-bottom: 1px solid;
+
+		padding: 0 var(--space-outer);
+
+		--space-inner: 2rem;
+	}
+	li {
+		display: flex;
+		align-items: center;
+		padding: calc(var(--space-inner) / 2);
+	}
+	li:first-child {
+		margin-right: auto;
+	}
+	li > :global(*) {
+		--space-inner: 1em;
 	}
 </style>
 
 <ul class="nav">
 	{#each links as link}
-		<NavLink name={typeof link === 'string' ? link : link.name}>
-			{#if link === 'Home'}
-				<div class="logo">
-					<img src="/images/logo.svg" alt="Sublimate" width="60" />
-					<h1>Sublimate</h1>
-				</div>
-			{:else}
-				{typeof link === 'string' ? link : link.title}
-			{/if}
-		</NavLink>
+		<li>
+			<NavLink name={typeof link === 'string' ? link : link.name}>
+				{#if link === 'Home'}
+					<div class="logo">
+						<img src="/images/logo.svg" alt="Sublimate" width="60" />
+						<h1>Sublimate</h1>
+					</div>
+				{:else}
+					{typeof link === 'string' ? link : link.title}
+				{/if}
+			</NavLink>
+		</li>
 	{/each}
-	<WalletControls />
+	<li>
+		<Wallet />
+	</li>
 </ul>

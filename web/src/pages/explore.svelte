@@ -19,7 +19,7 @@
 	console.log(
 		'CommonLib',
 		test('0x0000000000000000000000000000000000000001', 'hello')
-  );
+	);
 
 	import Blockie from '../components/Blockie.svelte';
 	import Button from '../components/Button.svelte';
