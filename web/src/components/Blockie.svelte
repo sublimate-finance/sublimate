@@ -5,7 +5,7 @@
 	export let _class = '';
 	export {_class as class};
 	export let address: string;
-	export let scale: number = 4;
+	export let scale: number = 3;
 
 	let lastOptions: {
 		address: string;
