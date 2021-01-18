@@ -14,4 +14,5 @@ module.exports = {
 			},
 		},
 	],
+	svelteSortOrder: 'options-scripts-styles-markup',
 }
