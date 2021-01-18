@@ -28,6 +28,10 @@
 	li > :global(*) {
 		--space-inner: 1em;
 	}
+
+	h1 {
+		visibility: hidden;
+	}
 </style>
 
 <ul class="nav">
@@ -35,8 +39,8 @@
 		<li>
 			<NavLink name={typeof link === 'string' ? link : link.name}>
 				{#if link === 'Home'}
-					<div class="logo">
-						<img src="/images/sublimate.svg" alt="Sublimate" width="60" />
+					<div class="logo stack">
+						<img src="/images/sublimate.svg" alt="Sublimate" width="160" />
 						<h1>Sublimate</h1>
 					</div>
 				{:else}

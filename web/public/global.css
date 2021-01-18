@@ -288,25 +288,6 @@ main {
 	align-items: center;
 }
 
-.logo {
-	display: flex;
-	align-items: center;
-	gap: var(--space-inner);
-	font-weight: 600;
-	text-transform: lowercase;
-	letter-spacing: 0.15ch;
-	line-height: 1;
-}
-/* .logo {
-	font-size: 1em;
-	font-weight: 600;
-	font-variant: all-small-caps;
-	letter-spacing: 0.15ch;
-	line-height: 0.9;
-	display: inline-block;
-	text-align: center;
-} */
-
 ::-webkit-scrollbar {
 	background: transparent;
 	width: 5px;
