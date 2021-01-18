@@ -36,7 +36,7 @@
 			<NavLink name={typeof link === 'string' ? link : link.name}>
 				{#if link === 'Home'}
 					<div class="logo">
-						<img src="/images/logo.svg" alt="Sublimate" width="60" />
+						<img src="/images/sublimate.svg" alt="Sublimate" width="60" />
 						<h1>Sublimate</h1>
 					</div>
 				{:else}
