@@ -16,16 +16,6 @@
 		$response && activeInteraction(route, $response, {params, partial})
 </script>
 
-<style>
-	li {
-		display: flex;
-		align-items: center;
-		padding: calc(var(--space-inner) / 2);
-	}
-</style>
-
-<li>
-	<Link class={active ? 'active' : ''} {name} {params}>
-		<slot />
-	</Link>
-</li>
+<Link class={active ? 'active' : ''} {name} {params}>
+	<slot />
+</Link>

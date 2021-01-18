@@ -53,62 +53,14 @@
 					}),
       }))
 
-  import Address from './Address.svelte'
-  import Blockie from './Blockie.svelte'
+	import Address from './Address.svelte'
+	import Blockie from './Blockie.svelte'
 	import Button from './Button.svelte'
+	import Modal from './Modal.svelte'
 	import WalletAccess from './WalletAccess.svelte'
 </script>
 
 <WalletAccess>
-	<div>
-		{#if $wallet.state === 'Idle'}
-			<Button
-				label="Connect MetaMask Wallet"
-				disabled={!$builtin.available || $wallet.connecting}
-				on:click={() => wallet.connect('builtin')}>
-				Connect MetaMask Wallet
-			</Button>
-			<Button
-				label="Connect Torus Wallet"
-				disabled={$wallet.connecting}
-				on:click={() => wallet.connect('torus-google')}>
-				Connect Torus Wallet (Google)
-			</Button>
-			<Button
-				label="Connect Torus Wallet"
-				disabled={$wallet.connecting}
-				on:click={() => wallet.connect('torus-facebook')}>
-				Connect Torus Wallet (Facebook)
-			</Button>
-			<Button
-				label="Connect Torus Wallet"
-				disabled={$wallet.connecting}
-				on:click={() => wallet.connect('torus-discord')}>
-				Connect Torus Wallet (Discord)
-			</Button>
-		{/if}
-		{#if $wallet.state === 'Locked' && !$wallet.connecting}
-			<Button
-				label="Unlock Wallet"
-				waitOnDisabled={$wallet.unlocking}
-				on:click={() => wallet.unlock()}>
-				Unlock Wallet
-			</Button>
-		{/if}
-		{#if $wallet.state === 'Ready' && !$wallet.connecting}
-			<Button
-				label="Disconnect Wallet"
-				waitOnDisabled={$wallet.connecting}
-				on:click={() => wallet.disconnect()}>
-				Disconnect Wallet
-			</Button>
-		{/if}
-	</div>
-
-	{#if $wallet.address}
-    <Blockie address={$wallet.address} />
-		<Address address={$wallet.address} format="middle-truncated" />
-	{/if}
 	<div>
 		{#if $chain.contracts}
 			<h2>Contracts</h2>
