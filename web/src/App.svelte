@@ -1,9 +1,10 @@
 <script lang="ts">
 	import {Router, CurrentPage} from './_routing'
 	import pages from './pages'
+
+	import LoadingBar from './components/LoadingBar.svelte'
 	import Nav from './components/Nav.svelte'
 	import Navigating from './_routing/curi/Navigating.svelte'
-	import Loading from './components/Loading.svelte'
 	import Notifications from './components/Notifications.svelte'
 </script>
 
@@ -13,8 +14,8 @@
 	<Notifications />
 	<Nav links={['Home', 'Explore']} />
 	<CurrentPage>
-		<Loading />
+		<LoadingBar />
 		Loading...
 	</CurrentPage>
-	<Navigating component={Loading} />
+	<Navigating component={LoadingBar} />
 </Router>

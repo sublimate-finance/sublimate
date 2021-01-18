@@ -17,7 +17,7 @@
 			background-color: #aaaaaa;
 		}
 		to {
-			background-color: #d61f69;
+			background-color: var(--primary-color);
 		}
 	}
 	.page-loading::before {

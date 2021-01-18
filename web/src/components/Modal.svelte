@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {createEventDispatcher, onDestroy} from 'svelte'
+
 	export let globalCloseButton: boolean = false
 	export let closeButton: boolean = false
 	export let title: string
@@ -10,9 +11,9 @@
 
 	let modal
 
-	function handle_keydown(evt: KeyboardEvent | undefined) {
+	function onKeydown(evt: KeyboardEvent | undefined) {
 		evt = evt || (window.event as KeyboardEvent)
-		var isEscape = false
+		let isEscape = false
 		if ('key' in evt) {
 			isEscape = evt.key === 'Escape' || evt.key === 'Esc'
 		} else {
@@ -55,7 +56,13 @@
 	}
 </script>
 
-<svelte:window on:keydown={handle_keydown} />
+<style>
+  .modal {
+
+  }
+</style>
+
+<svelte:window on:keydown={onKeydown} />
 
 <div
 	class="modal z-50 opacity-80 fixed w-full h-full top-0 left-0 flex items-center justify-center">
@@ -89,7 +96,7 @@
 			<div class="flex justify-between items-center pb-3">
 				<!--Title-->
 				{#if title}
-					<p class="text-2xl font-bold">{title}</p>
+					<h4>{title}</h4>
 				{/if}
 				{#if closeButton}
 					<div
