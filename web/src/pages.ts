@@ -17,6 +17,6 @@ export default [
 		name: 'NotFound',
 		path: '.*',
 		asyncComponent: (): Promise<ComponentModule> =>
-			import('./pages/notfound.svelte'),
+			import('./pages/404.svelte'),
 	},
 ]

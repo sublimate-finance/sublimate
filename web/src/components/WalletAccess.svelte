@@ -1,8 +1,5 @@
 <script lang="ts">
 	export let title: string = undefined
-	import Button from '../components/Button.svelte'
-	import Toast from '../components/Toast.svelte'
-	import Modal from '../components/Modal.svelte'
 
 	import {
 		wallet,
@@ -64,7 +61,11 @@
 				id: v,
 				name: v,
 			}
-		})
+    })
+
+	import Button from '../components/Button.svelte'
+	import Toast from '../components/Toast.svelte'
+	import Modal from '../components/Modal.svelte'
 </script>
 
 <slot />

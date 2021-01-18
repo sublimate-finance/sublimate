@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Button from '../components/Button.svelte'
-	import Feature from '../components/Feature.svelte'
 </script>
 
 <style>
@@ -16,6 +15,6 @@
 <section>
 	<h2>Make every second count.</h2>
 	<div>
-		<Button href="explore" label="">Get started</Button>
+		<Button href="explore">Get started</Button>
 	</div>
 </section>

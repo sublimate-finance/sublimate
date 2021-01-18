@@ -62,7 +62,7 @@
 			title={label}
 			href={url}
 			class="button {_class}"
-			{disabled}
+			disabled={disabled || undefined}
 			on:click={handlePageLink}
 			transition:scale>
 			<slot>Name</slot>
@@ -75,13 +75,13 @@
 			class="button {_class}"
 			rel={blank === true ? 'noopener noreferrer' : ''}
 			target={blank === true ? '_blank' : ''}
-			{disabled}
+			disabled={disabled || undefined}
 			transition:scale>
 			<slot>Name</slot>
 		</a>
 	{/if}
 {:else if type}
-	<button aria-label={label} title={label} {type} {disabled} transition:scale>
+	<button aria-label={label} title={label} {type} disabled={disabled || undefined} transition:scale>
 		<slot>Name</slot>
 	</button>
 {:else}
@@ -91,7 +91,7 @@
 		title={label}
 		type="button"
 		class={_class}
-		{disabled}
+		disabled={disabled || undefined}
 		transition:scale>
 		<slot>Name</slot>
 	</button>

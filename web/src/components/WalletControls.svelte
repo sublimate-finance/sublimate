@@ -1,9 +1,6 @@
 <script lang="ts">
-	import Button from './Button.svelte'
-	import WalletAccess from './WalletAccess.svelte'
 	import {wallet, builtin, chain, flow, transactions} from '../stores/wallet'
 	import type {Contract} from '@ethersproject/contracts'
-	import Address from './Address.svelte'
 
 	let contractInterfaces:
 		| {
@@ -54,7 +51,12 @@
 							},
 						}
 					}),
-			}))
+      }))
+
+  import Address from './Address.svelte'
+  import Blockie from './Blockie.svelte'
+	import Button from './Button.svelte'
+	import WalletAccess from './WalletAccess.svelte'
 </script>
 
 <WalletAccess>
@@ -104,6 +106,7 @@
 	</div>
 
 	{#if $wallet.address}
+    <Blockie address={$wallet.address} />
 		<Address address={$wallet.address} format="middle-truncated" />
 	{/if}
 	<div>
