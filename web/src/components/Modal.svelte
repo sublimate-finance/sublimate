@@ -65,16 +65,17 @@
 		align-items: center;
 		position: fixed;
 		inset: 0;
+		z-index: 1;
 	}
 	.modal-overlay {
 		position: fixed;
 		inset: 0;
 		background-color: var(--accent-color);
 		opacity: 0.3;
-		z-index: -1;
 	}
 	.modal {
 		backdrop-filter: blur(--overlay-backdrop-filter);
+		position: relative;
 	}
 </style>
 
