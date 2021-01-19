@@ -22,4 +22,29 @@ dataSources:
           eventHandlers:
               - event: MessageChanged(indexed address,string)
                 handler: handleMessageChanged
-          file: ./src/mapping.ts
+          file: ./mappings/greetings.ts
+    - kind: ethereum/contract
+      name: StreamableERC20
+      network: {{chainName}}
+      source:
+          address: '{{contracts.StreamableERC20.address}}'
+          abi: StreamableERC20Contract
+          startBlock: {{contracts.StreamableERC20.receipt.blockNumber}}
+      mapping:
+          kind: ethereum/events
+          apiVersion: 0.0.3
+          language: wasm/assemblyscript
+          entities:
+              - User
+              - Subscription
+          abis:
+              - name: StreamableERC20Contract
+                file: ./abis/StreamableERC20.json
+          eventHandlers:
+              - event: SubscriptionStarted(indexed address,indexed address,uint256,uint256)
+                handler: handleSubscriptionStarted
+              - event: SubscriptionStopped(indexed address,indexed address)
+                handler: handleSubscriptionStopped
+              - event: SubscriptionCanceled(indexed address,indexed address)
+                handler: handleSubscriptionCanceled
+          file: ./mappings/streamable-subscriptions.ts

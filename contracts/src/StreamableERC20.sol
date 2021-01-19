@@ -26,10 +26,10 @@ contract StreamableERC20 is IStreamableERC20, ERC20 {
 	}
 
 	struct Subscription {
+		SubscriptionStatus status;
 		uint256 rate; // tokens per block
 		uint256 maxAmount; // tokens
 		uint256 startBlock; // block number
-		SubscriptionStatus status;
 	}
 
 	// This model will allow only for one subscription to a Subscribee address at a given moment.
