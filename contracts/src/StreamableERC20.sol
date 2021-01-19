@@ -55,7 +55,7 @@ contract StreamableERC20 is ERC20 {
 
 		// Passing rate = 0, maxAmount = 0 cancels the subscription
 		if(_shouldCancelSubscription(rate, maxAmount)) {
-			return _handleSubscriptionCancellation(from, to);
+			return _cancelSubscription(from, to);
 		}
 
 		// If this subscription has never been created yet
@@ -93,7 +93,7 @@ contract StreamableERC20 is ERC20 {
 	 *
 	 * Emits a {SubscriptionCanceled} event.
 	 */
-	function _handleSubscriptionCancellation(address from, address to) internal returns (bool) {
+	function _cancelSubscription(address from, address to) internal returns (bool) {
 		assert(_subscriptions[from][to].status == SubscriptionStatus.ACTIVE);
 
 		_subscriptions[from][to].status = SubscriptionStatus.CANCELED;
