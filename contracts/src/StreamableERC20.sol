@@ -36,9 +36,7 @@ contract StreamableERC20 is IStreamableERC20, ERC20 {
 	mapping (address => mapping(address => Subscription)) private _subscriptions;
 
 
-	constructor (string memory name_, string memory symbol_) ERC20(name_, symbol_) {
-
-	}
+	constructor (string memory name_, string memory symbol_) ERC20(name_, symbol_) {}
 
 	/**
 	* @dev Returns the last updated balance of `account`
