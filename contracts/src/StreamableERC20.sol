@@ -63,8 +63,8 @@ contract StreamableERC20 is IStreamableERC20, ERC20 {
 	* Emits a {SubscriptionUpdated} event.
 	*/
 	function updateSubscription(address from, address to, uint256 rate, uint256 maxAmount) external override returns (bool) {
-		require(msg.sender == from);
-		require(balanceOf(from) >= maxAmount);
+		require(msg.sender == from, "StreamableERC20: Not the subscriber");
+		require(balanceOf(from) >= maxAmount, "StreamableERC20: Balance too low");
 
 		// Passing rate = 0, maxAmount = 0 cancels the subscription
 		if(_shouldCancelSubscription(rate, maxAmount)) {
@@ -106,7 +106,7 @@ contract StreamableERC20 is IStreamableERC20, ERC20 {
 	* Emits a {SubscriptionCanceled} event.
 	*/
 	function _cancelSubscription(address from, address to) internal returns (bool) {
-		require(_subscriptions[from][to].status == SubscriptionStatus.ACTIVE);
+		require(_subscriptions[from][to].status == SubscriptionStatus.ACTIVE, "StreamableERC20: Subscription not active");
 
 		_subscriptions[from][to].status = SubscriptionStatus.CANCELED;
 
