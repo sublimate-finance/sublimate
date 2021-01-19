@@ -2,11 +2,11 @@
 pragma solidity ^0.8.0;
 
 import "./ERC20/ERC20.sol";
+import "./IStreamableERC20.sol";
 
 // ERC20: balanceOf(), transfer()
 
-contract StreamableERC20 is ERC20 {
-
+contract StreamableERC20 is IStreamableERC20, ERC20 {
 	mapping (address => UserStatus) private _users;
 
 	struct UserStatus {
@@ -43,10 +43,17 @@ contract StreamableERC20 is ERC20 {
 	/**
 	* @dev Returns the last updated balance of `account`
 	*/
-	function lastUpdatedBalanceOf(address account) external view returns (uint256) {
+	function lastUpdatedBalanceOf(address account) external view override returns (uint256) {
 		UserStatus storage user_status = _users[account];
 		return balanceOf(account) + (user_status.incomingRate - user_status.outgoingRate) * (block.number - user_status.blockAtLastUpdate);
 	}
+
+    /**
+     * @dev Returns the rate and maxAmount of the current subscription from `from` to `to`.
+     */
+    function getSubscription(address from, address to) external view override returns (uint256, uint256) {
+        return (_subscriptions[from][to].rate, _subscriptions[from][to].maxAmount);
+    }
 
 	/**
 	* @dev Updates the subscription from `from` to `to`.
@@ -55,7 +62,7 @@ contract StreamableERC20 is ERC20 {
 	*
 	* Emits a {SubscriptionUpdated} event.
 	*/
-	function updateSubscription(address from, address to, uint256 rate, uint256 maxAmount) external returns (bool) {
+	function updateSubscription(address from, address to, uint256 rate, uint256 maxAmount) external override returns (bool) {
 		assert(balanceOf(from) >= maxAmount);
 
 		// Passing rate = 0, maxAmount = 0 cancels the subscription
