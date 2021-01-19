@@ -63,6 +63,7 @@ contract StreamableERC20 is IStreamableERC20, ERC20 {
 	* Emits a {SubscriptionUpdated} event.
 	*/
 	function updateSubscription(address from, address to, uint256 rate, uint256 maxAmount) external override returns (bool) {
+		require(msg.sender == from);
 		require(balanceOf(from) >= maxAmount);
 
 		// Passing rate = 0, maxAmount = 0 cancels the subscription
