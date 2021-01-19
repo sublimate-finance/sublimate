@@ -39,7 +39,7 @@ contract StreamableERC20 is ERC20 {
 	 * @dev Returns the last updated balance of `account`
 	 */
 	function lastUpdatedBalanceOf(address account) external view returns (uint256) {
-		UserStatus storage user_status = user_status[account];
+		UserStatus storage user_status = _users[account];
 		return balanceOf(account) + (user_status.incomingRate - user_status.outgoingRate) * (block.number - user_status.blockAtLastUpdate);
 	}
 
