@@ -73,7 +73,7 @@ contract StreamableERC20 is IStreamableERC20, ERC20 {
 		// If this subscription has never been created yet
 		if(_subscriptions[from][to].status == SubscriptionStatus.INACTIVE) {
 			// Create and store the subscription
-			Subscription storage sub = _subscriptions[from][to] = Subscription(rate, maxAmount, block.number, SubscriptionStatus.ACTIVE);
+			/*Subscription storage sub =*/ _subscriptions[from][to] = Subscription(rate, maxAmount, block.number, SubscriptionStatus.ACTIVE);
 
 			// Increase outgoingRate of "from"
 			UserStatus storage user_from_status = _users[from];
