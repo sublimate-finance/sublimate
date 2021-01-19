@@ -5,10 +5,9 @@ pragma solidity ^0.8.0;
 import "./ERC20/IERC20.sol";
 
 /**
- * @dev Interface of the StreamableERC20 
+ * @dev Interface of the StreamableERC20
  */
 interface IStreamableERC20 is IERC20 {
-    
 	/**
 	 * @dev Returns the last updated balance of `account`
 	 */
@@ -34,5 +33,4 @@ interface IStreamableERC20 is IERC20 {
 	 * Note that `rate` and `maxAmount` if the subscription is stopped.
 	 */
 	event SubscriptionUpdated(address indexed from, address indexed to, uint256 rate, uint256 maxAmount);
-
 }
