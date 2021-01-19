@@ -44,8 +44,8 @@ contract StreamableERC20 is IStreamableERC20, ERC20 {
 	* @dev Returns the last updated balance of `account`
 	*/
 	function lastUpdatedBalanceOf(address account) external view override returns (uint256) {
-		UserStatus storage user_status = _users[account];
-		return balanceOf(account) + (user_status.incomingRate - user_status.outgoingRate) * (block.number - user_status.blockAtLastUpdate);
+		UserStatus storage userStatus = _users[account];
+		return balanceOf(account) + (userStatus.incomingRate - userStatus.outgoingRate) * (block.number - userStatus.blockAtLastUpdate);
 	}
 
     /**
@@ -77,14 +77,14 @@ contract StreamableERC20 is IStreamableERC20, ERC20 {
 			/*Subscription storage sub =*/ _subscriptions[from][to] = Subscription(rate, maxAmount, block.number, SubscriptionStatus.ACTIVE);
 
 			// Increase outgoingRate of "from"
-			UserStatus storage user_from_status = _users[from];
-			user_from_status.outgoingRate += rate;
-			user_from_status.blockAtLastUpdate = block.number;
+			UserStatus storage userFromStatus = _users[from];
+			userFromStatus.outgoingRate += rate;
+			userFromStatus.blockAtLastUpdate = block.number;
 
 			// Increase incomingRate of "from"
-			UserStatus storage user_to_status = _users[to];
-			user_to_status.incomingRate += rate;
-			user_to_status.blockAtLastUpdate = block.number;
+			UserStatus storage userToStatus = _users[to];
+			userToStatus.incomingRate += rate;
+			userToStatus.blockAtLastUpdate = block.number;
 
 			emit SubscriptionStarted(from, to, rate, maxAmount);
 
