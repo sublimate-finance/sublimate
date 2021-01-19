@@ -39,8 +39,8 @@ contract StreamableERC20 is IStreamableERC20, ERC20 {
 	constructor (string memory name_, string memory symbol_) ERC20(name_, symbol_) {}
 
 	/**
-	* @dev Returns the last updated balance of `account`
-	*/
+	 * @dev Returns the last updated balance of `account`
+	 */
 	function lastUpdatedBalanceOf(address account) external view override returns (uint256) {
 		UserStatus storage userStatus = _users[account];
 		return balanceOf(account) + (userStatus.incomingRate - userStatus.outgoingRate) * (block.number - userStatus.blockAtLastUpdate);
@@ -54,12 +54,12 @@ contract StreamableERC20 is IStreamableERC20, ERC20 {
     }
 
 	/**
-	* @dev Updates the subscription from `from` to `to`.
-	*
-	* Returns a boolean value indicating whether the operation succeeded.
-	*
-	* Emits a {SubscriptionUpdated} event.
-	*/
+	 * @dev Updates the subscription from `from` to `to`.
+	 *
+	 * Returns a boolean value indicating whether the operation succeeded.
+	 *
+	 * Emits a {SubscriptionUpdated} event.
+	 */
 	function updateSubscription(address from, address to, uint256 rate, uint256 maxAmount) external override returns (bool) {
 		require(msg.sender == from, "StreamableERC20: Not the subscriber");
 		require(balanceOf(from) >= maxAmount, "StreamableERC20: Balance too low");
@@ -74,12 +74,12 @@ contract StreamableERC20 is IStreamableERC20, ERC20 {
 			// Create and store the subscription
 			/*Subscription storage sub =*/ _subscriptions[from][to] = Subscription(rate, maxAmount, block.number, SubscriptionStatus.ACTIVE);
 
-			// Increase outgoingRate of "from"
+			// Increase outgoingRate of `from`
 			UserStatus storage userFromStatus = _users[from];
 			userFromStatus.outgoingRate += rate;
 			userFromStatus.blockAtLastUpdate = block.number;
 
-			// Increase incomingRate of "from"
+			// Increase incomingRate of `to`
 			UserStatus storage userToStatus = _users[to];
 			userToStatus.incomingRate += rate;
 			userToStatus.blockAtLastUpdate = block.number;
@@ -97,12 +97,12 @@ contract StreamableERC20 is IStreamableERC20, ERC20 {
 	}
 
 	/**
-	* @dev Changes status of subscription from ACTIVE to CANCELED.
-	*
-	* Returns a boolean value indicating whether the operation succeeded.
-	*
-	* Emits a {SubscriptionCanceled} event.
-	*/
+	 * @dev Changes status of subscription from ACTIVE to CANCELED.
+	 *
+	 * Returns a boolean value indicating whether the operation succeeded.
+	 *
+	 * Emits a {SubscriptionCanceled} event.
+	 */
 	function _cancelSubscription(address from, address to) internal returns (bool) {
 		require(_subscriptions[from][to].status == SubscriptionStatus.ACTIVE, "StreamableERC20: Subscription not active");
 
