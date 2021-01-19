@@ -7,22 +7,22 @@ import "./ERC20/ERC20.sol";
 
 contract StreamableERC20 is ERC20 {
 
-    mapping (address => UserStatus) private _users;
+	mapping (address => UserStatus) private _users;
 
-    struct UserStatus {
-        uint256 incomingRate; // tokens per block
-        uint256 maxIncomingAmount; // tokens
-        uint256 outgoingRate; // tokens per block
-        uint256 maxOutgoingAmount; // tokens
-        uint256 blockAtLastUpdate; // block number
-    }
+	struct UserStatus {
+		uint256 incomingRate; // tokens per block
+		uint256 maxIncomingAmount; // tokens
+		uint256 outgoingRate; // tokens per block
+		uint256 maxOutgoingAmount; // tokens
+		uint256 blockAtLastUpdate; // block number
+	}
 
 	enum SubscriptionStatus {
 		INACTIVE, // Subscription not created yet - Used for checks if there is a subscription between subscriber and subscribee
 		ACTIVE, // Subscription is active
-        STOPPED, // Subscription is stopped - Run out of assets before it reached end date/max amount
-        CANCELED, // Subscription got canceled by the user
-        FINISHED // Subscription finished normally - this is relevant for the current limited model
+		STOPPED, // Subscription is stopped - Run out of assets before it reached end date/max amount
+		CANCELED, // Subscription got canceled by the user
+		FINISHED // Subscription finished normally - this is relevant for the current limited model
 	}
 
 	struct Subscription {
@@ -37,20 +37,20 @@ contract StreamableERC20 is ERC20 {
 
 
 	/**
-	 * @dev Returns the last updated balance of `account`
-	 */
+	* @dev Returns the last updated balance of `account`
+	*/
 	function lastUpdatedBalanceOf(address account) external view returns (uint256) {
 		UserStatus storage user_status = _users[account];
 		return balanceOf(account) + (user_status.incomingRate - user_status.outgoingRate) * (block.number - user_status.blockAtLastUpdate);
 	}
 
 	/**
-	 * @dev Updates the subscription from `from` to `to`.
-	 *
-	 * Returns a boolean value indicating whether the operation succeeded.
-	 *
-	 * Emits a {SubscriptionUpdated} event.
-	 */
+	* @dev Updates the subscription from `from` to `to`.
+	*
+	* Returns a boolean value indicating whether the operation succeeded.
+	*
+	* Emits a {SubscriptionUpdated} event.
+	*/
 	function updateSubscription(address from, address to, uint256 rate, uint256 maxAmount) external returns (bool) {
 		assert(balanceOf(from) >= maxAmount);
 
@@ -65,8 +65,8 @@ contract StreamableERC20 is ERC20 {
 			Subscription storage sub = _subscriptions[from][to] = Subscription(rate, maxAmount, block.number, SubscriptionStatus.ACTIVE);
 
 			// Increase outgoingRate of "from"
-	        UserStatus storage user_from_status = _users[from];
-	        user_from_status.outgoingRate += rate;
+			UserStatus storage user_from_status = _users[from];
+			user_from_status.outgoingRate += rate;
 			user_from_status.blockAtLastUpdate = block.number;
 
 			// Increase incomingRate of "from"
@@ -87,12 +87,12 @@ contract StreamableERC20 is ERC20 {
 	}
 
 	/**
-	 * @dev Changes status of subscription from ACTIVE to CANCELED.
-	 *
-	 * Returns a boolean value indicating whether the operation succeeded.
-	 *
-	 * Emits a {SubscriptionCanceled} event.
-	 */
+	* @dev Changes status of subscription from ACTIVE to CANCELED.
+	*
+	* Returns a boolean value indicating whether the operation succeeded.
+	*
+	* Emits a {SubscriptionCanceled} event.
+	*/
 	function _cancelSubscription(address from, address to) internal returns (bool) {
 		assert(_subscriptions[from][to].status == SubscriptionStatus.ACTIVE);
 
