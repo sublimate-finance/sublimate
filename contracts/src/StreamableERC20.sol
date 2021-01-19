@@ -86,7 +86,7 @@ contract StreamableERC20 is ERC20 {
 		return false;
 	}
 
-	function _shouldCancelSubscription(uint256 rate, uint256 maxAmount) internal returns (bool) {
+	function _shouldCancelSubscription(uint256 rate, uint256 maxAmount) internal pure returns (bool) {
 		return rate == 0 && maxAmount == 0;
 	}
 
