@@ -9,11 +9,11 @@ contract StreamableERC20 is ERC20 {
     mapping (address => UserStatus) private _users;
 
     struct UserStatus {
-        uint256 incomingRate;
-        uint256 maxIncomingAmount;
-        uint256 outgoingRate;
-        uint256 maxOutgoingAmount;
-        uint256 blockAtLastUpdate;
+        uint256 incomingRate; // tokens per block
+        uint256 maxIncomingAmount; // tokens
+        uint256 outgoingRate; // tokens per block
+        uint256 maxOutgoingAmount; // tokens
+        uint256 blockAtLastUpdate; // block number
     }
 
 	enum SubscriptionStatus {
@@ -25,9 +25,9 @@ contract StreamableERC20 is ERC20 {
 	}
 
 	struct Subscription {
-		uint256 rate;
-		uint256 maxAmount;
-		uint256 startBlock;
+		uint256 rate; // tokens per block
+		uint256 maxAmount; // tokens
+		uint256 startBlock; // block number
 		SubscriptionStatus status;
 	}
 
@@ -53,39 +53,53 @@ contract StreamableERC20 is ERC20 {
 	function updateSubscription(address from, address to, uint256 rate, uint256 maxAmount) external returns (bool) {
 		assert(balanceOf(from) >= maxAmount);
 
+		// Passing rate = 0, maxAmount = 0 cancels the subscription
 		if(_shouldCancelSubscription(rate, maxAmount)) {
 			return _handleSubscriptionCancellation(from, to);
 		}
 
+		// If this subscription has never been created yet
 		if(_subscriptions[from][to].status == SubscriptionStatus.INACTIVE) {
+			// Create the subscription
 			Subscription storage sub = Subscription(rate, maxAmount, block.number, SubscriptionStatus.ACTIVE);
 			_subscriptions[from][to] = sub;
 
+			// Increase outgoingRate of "from"
 	        UserStatus storage user_from_status = _users[from];
 	        user_from_status.outgoingRate += rate;
 			user_from_status.blockAtLastUpdate = block.number;
 
-
+			// Increase incomingRate of "from"
 			UserStatus storage user_to_status = _users[to];
 			user_to_status.incomingRate += rate;
 			user_to_status.blockAtLastUpdate = block.number;
 
 			emit SubscriptionStarted(from, to, rate, maxAmount);
+
 			return true;
 		}
 
 		return false;
-
 	}
 
 	function _shouldCancelSubscription(uint256 rate, uint256 maxAmount) internal returns (bool) {
 		return rate == 0 && maxAmount == 0;
 	}
 
+	/**
+	 * @dev Changes status of subscription from ACTIVE to CANCELED.
+	 *
+	 * Returns a boolean value indicating whether the operation succeeded.
+	 *
+	 * Emits a {SubscriptionCanceled} event.
+	 */
 	function _handleSubscriptionCancellation(address from, address to) internal returns (bool) {
 		assert(_subscriptions[from][to].status == SubscriptionStatus.ACTIVE);
+
 		_subscriptions[from][to].status = SubscriptionStatus.CANCELED;
+
 		emit SubscriptionCanceled(from, to);
+
 		return true;
 	}
 
@@ -93,5 +107,4 @@ contract StreamableERC20 is ERC20 {
 	event SubscriptionStarted(address indexed from, address indexed to, uint256 rate, uint256 maxAmount);
 	event SubscriptionStopped(address indexed from, address indexed to);
 	event SubscriptionCanceled(address indexed from, address indexed to);
-
 }
