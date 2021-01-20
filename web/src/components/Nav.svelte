@@ -11,16 +11,24 @@
 	.nav {
 		display: flex;
 		align-items: stretch;
-		border-bottom: 1px solid;
+		border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 
 		padding: 0 var(--space-outer);
+		height: 5rem;
 
-		--space-inner: 2rem;
+		position: sticky;
+		top: 0;
+
+		--space-inner: 3rem;
+
+		backdrop-filter: var(--overlay-backdrop-filter);
+		background-color: rgba(255, 255, 255, 0.2);
+		z-index: 1;
 	}
 	li {
 		display: flex;
 		align-items: center;
-		padding: calc(var(--space-inner) / 2);
+		padding: 0 calc(var(--space-inner) / 2);
 	}
 	li:first-child {
 		margin-right: auto;

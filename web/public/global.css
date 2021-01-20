@@ -78,6 +78,7 @@ a {
 		var(--text-decoration-color),
 		var(--text-decoration-opacity)
 	);
+	font-weight: bold;
 }
 a:hover {
 	--text-decoration-opacity: 0.5;
