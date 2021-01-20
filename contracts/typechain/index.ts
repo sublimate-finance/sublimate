@@ -4,7 +4,11 @@
 export type { ERC20 } from "./ERC20";
 export type { IERC20 } from "./IERC20";
 export type { GreetingsRegistry } from "./GreetingsRegistry";
+export type { IStreamableERC20 } from "./IStreamableERC20";
+export type { StreamableERC20 } from "./StreamableERC20";
 
 export { ERC20__factory } from "./factories/ERC20__factory";
 export { IERC20__factory } from "./factories/IERC20__factory";
 export { GreetingsRegistry__factory } from "./factories/GreetingsRegistry__factory";
+export { IStreamableERC20__factory } from "./factories/IStreamableERC20__factory";
+export { StreamableERC20__factory } from "./factories/StreamableERC20__factory";

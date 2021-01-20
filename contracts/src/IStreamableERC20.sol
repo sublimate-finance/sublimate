@@ -28,9 +28,19 @@ interface IStreamableERC20 is IERC20 {
 	function updateSubscription(address from, address to, uint256 rate, uint256 maxAmount) external returns (bool);
 
 	/**
-	 * @dev Emitted when a subscription from `from` to `to` is updated.
-	 *
-	 * Note that `rate` and `maxAmount` if the subscription is stopped.
+	 * @dev Emitted when a subscription from `from` to `to` is started.
 	 */
-	event SubscriptionUpdated(address indexed from, address indexed to, uint256 rate, uint256 maxAmount);
+	event SubscriptionStarted(address indexed from, address indexed to, uint256 rate, uint256 maxAmount);
+
+
+	/**
+	 * @dev Emitted when a subscription from `from` to `to` is stopped (user runs out of funds).
+	 */
+	event SubscriptionStopped(address indexed from, address indexed to);
+
+
+	/**
+     * @dev Emitted when a subscription from `from` to `to` is canceled by the user.
+    */
+	event SubscriptionCanceled(address indexed from, address indexed to);
 }
