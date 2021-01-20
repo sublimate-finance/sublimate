@@ -37,12 +37,14 @@
 		{/if}
 		<div class="stack">
 			{#if $wallet.state === 'Ready' && !$wallet.connecting}
-				<Button
-					label="Disconnect Wallet"
-					waitOnDisabled={$wallet.connecting}
-					on:click={() => wallet.disconnect()}>
-					Disconnect Wallet
-				</Button>
+				<div>
+					<Button
+						label="Disconnect Wallet"
+						waitOnDisabled={$wallet.connecting}
+						on:click={() => wallet.disconnect()}>
+						Disconnect Wallet
+					</Button>
+				</div>
 			{:else}
 				<div class="wallet-options">
 					{#if $wallet.state === 'Idle'}
