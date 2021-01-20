@@ -21,10 +21,20 @@
 
 		--space-inner: 2.5rem;
 
-		backdrop-filter: var(--overlay-backdrop-filter);
-		background-color: rgba(255, 255, 255, 0.2);
+		/* backdrop-filter: var(--overlay-backdrop-filter); */
+		background-color: rgba(255, 255, 255, 0.3);
 		z-index: 1;
 	}
+	.nav:before {
+		content: '';
+
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+
+		backdrop-filter: var(--overlay-backdrop-filter);
+	}
+
 	li {
 		display: flex;
 		align-items: center;
@@ -33,6 +43,7 @@
 	li:first-child {
 		margin-right: auto;
 	}
+
 	li > :global(*) {
 		--space-inner: 1em;
 	}
