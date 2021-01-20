@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 import "./ERC20/ERC20.sol";
@@ -57,6 +58,7 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 		// (user_status.incomingRate - user_status.outgoingRate) should be a coefficient representing the rate of all subscriptions over time
 		return super.balanceOf(account) + (user_status.incomingRate - user_status.outgoingRate) * (block.number - user_status.blockAtLastUpdate);
 	}
+
 
 	/**
 	 * @dev Updates the subscription from `from` to `to`.
