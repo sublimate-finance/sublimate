@@ -14,12 +14,12 @@
 		border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 
 		padding: 0 var(--space-outer);
-		height: 5rem;
+		height: 4.5rem;
 
 		position: sticky;
 		top: 0;
 
-		--space-inner: 3rem;
+		--space-inner: 2.5rem;
 
 		backdrop-filter: var(--overlay-backdrop-filter);
 		background-color: rgba(255, 255, 255, 0.2);
@@ -36,6 +36,23 @@
 	li > :global(*) {
 		--space-inner: 1em;
 	}
+	li > :global(a) {
+		--border-width: 2px;
+		display: flex;
+		align-self: stretch;
+		align-items: center;
+		padding: 0 calc(var(--space-inner) / 2);
+		margin: 0 calc(-0.5 * var(--border-width));
+		border-bottom: var(--border-width) solid;
+		border-bottom-color: transparent;
+		text-decoration: none;
+	}
+	li > :global(a:hover) {
+		border-bottom-color: currentColor;
+	}
+	li > :global(a.active) {
+		border-bottom-color: var(--accent-color);
+	}
 
 	h1 {
 		visibility: hidden;
@@ -48,7 +65,7 @@
 			<NavLink name={typeof link === 'string' ? link : link.name}>
 				{#if link === 'Home'}
 					<div class="logo stack">
-						<img src="/images/sublimate.svg" alt="Sublimate" width="160" />
+						<img src="/images/sublimate.svg" alt="Sublimate" width="150" />
 						<h1>Sublimate</h1>
 					</div>
 				{:else}
