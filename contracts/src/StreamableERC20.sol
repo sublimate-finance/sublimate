@@ -54,6 +54,7 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 	 * @dev Returns the last updated balance of `account`
 	 */
 	function lastUpdatedBalanceOf(address account) external view override returns (uint256) {
+
 		UserStatus memory user_status = _users[account];
 
 		// get the invalid amounts (the differences between the amount from the expired subscriptions until now), for the subscriptions which are not updated yet.
@@ -98,6 +99,7 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 		}
 
 		return totalInvalidAmount;
+
 	}
 
 
@@ -109,15 +111,17 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 	 * Emits a {SubscriptionUpdated} event.
 	 */
 	function updateSubscription(address from, address to, uint256 rate, uint256 maxAmount) external override returns (bool) {
-		assert(msg.sender == from);
-		_updateUserState(from);
 
-		assert(super.balanceOf(from) >= maxAmount);
+        require(msg.sender == from, "StreamableERC20: Not the subscriber");
+
+        _updateUserState(from);
+
+         require(super.balanceOf(from) >= maxAmount, "StreamableERC20: Balance too low");
+
 
 		if(_shouldCancelSubscription(rate, maxAmount)) {
 			return _handleSubscriptionCancellation(from, to);
 		}
-
 
 		if(_subscriptions[from][to].status == SubscriptionStatus.INACTIVE) {
 			// In case there is a reminder, we will pay it in the last payment
@@ -130,7 +134,6 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 	        UserStatus storage user_from_status = _users[from];
 	        user_from_status.outgoingRate += rate;
 			user_from_status.totalOutgoingAmount += maxAmount;
-
 
 			UserStatus storage user_to_status = _users[to];
 			user_to_status.incomingRate += rate;
@@ -164,6 +167,7 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 		uint256 newActiveSubscriptionsIndex = 0;
 
 
+
 		address[] memory newActiveOutgoingSubscriptions = new address[](activeSubscriptionsLength);
 		for (uint i = 0; i < _activeOutgoingSubscriptions[user].length; i++) {
 
@@ -188,6 +192,7 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 //		_activeOutgoingSubscriptions[user] = newActiveOutgoingSubscriptions[:newActiveSubscriptionsIndex];
 		_activeOutgoingSubscriptions[user] = newActiveOutgoingSubscriptions;
 
+
 	}
 
 
@@ -196,7 +201,6 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 		uint256 activeSubscriptionsLength = _activeIncomingSubscriptions[user].length;
 
 		uint256 newActiveSubscriptionsIndex = 0;
-
 
 		address[] memory newActiveIncomingSubscriptions = new address[](activeSubscriptionsLength);
 
@@ -223,6 +227,7 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 
 //		_activeIncomingSubscriptions[user] = newActiveIncomingSubscriptions[:newActiveSubscriptionsIndex];
 		_activeIncomingSubscriptions[user] = newActiveIncomingSubscriptions;
+
 
 	}
 
@@ -272,6 +277,7 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 		_users[to].incomingRate -= _subscriptions[from][to].rate;
 		_users[to].totalIncomingAmount -= _subscriptions[from][to].maxAmount;
 
+
 		emit SubscriptionCanceled(from, to);
 		return true;
 	}
@@ -280,5 +286,6 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 //	event SubscriptionStarted(address indexed from, address indexed to, uint256 rate, uint256 maxAmount);
 //	event SubscriptionStopped(address indexed from, address indexed to);
 //	event SubscriptionCanceled(address indexed from, address indexed to);
+
 
 }

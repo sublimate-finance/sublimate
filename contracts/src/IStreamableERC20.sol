@@ -47,4 +47,5 @@ interface IStreamableERC20 is IERC20 {
 	event SubscriptionCanceled(address indexed from, address indexed to);
 
 
+
 }
