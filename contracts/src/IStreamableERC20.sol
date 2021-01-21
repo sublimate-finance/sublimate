@@ -41,6 +41,6 @@ interface IStreamableERC20 is IERC20 {
 
 	/**
      * @dev Emitted when a subscription from `from` to `to` is canceled by the user.
-    */
+     */
 	event SubscriptionCanceled(address indexed from, address indexed to);
 }

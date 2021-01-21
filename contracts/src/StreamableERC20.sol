@@ -74,7 +74,9 @@ contract StreamableERC20 is IStreamableERC20, ERC20 {
 	 */
 	function updateSubscription(address from, address to, uint256 rate, uint256 maxAmount) external override returns (bool) {
 		require(msg.sender == from, "StreamableERC20: Not the subscriber");
+
 		_updateUserState(from);
+
 		require(super.balanceOf(from) >= maxAmount, "StreamableERC20: Balance too low");
 
 		// Passing rate = 0, maxAmount = 0 cancels the subscription
@@ -116,7 +118,6 @@ contract StreamableERC20 is IStreamableERC20, ERC20 {
 	}
 
 	function _updateUserState(address user) internal returns (bool) {
-
 		_updateOutgoingSubscriptions(user);
 		_updateIncomingSubscriptions(user);
 		_users[user].blockAtLastUpdate = block.number;
@@ -130,10 +131,8 @@ contract StreamableERC20 is IStreamableERC20, ERC20 {
 
 		uint256 newActiveSubscriptionsIndex = 0;
 
-
 		address[] memory newActiveOutgoingSubscriptions = new address[](activeSubscriptionsLength);
 		for (uint i = 0; i < _activeOutgoingSubscriptions[user].length; i++) {
-
 			address subscriptionToAddress = _activeOutgoingSubscriptions[user][i];
 			Subscription storage subscription = _subscriptions[user][subscriptionToAddress];
 
@@ -153,7 +152,6 @@ contract StreamableERC20 is IStreamableERC20, ERC20 {
 			}
 		}
 		_activeOutgoingSubscriptions[user] = newActiveOutgoingSubscriptions;
-
 	}
 
 
@@ -162,7 +160,6 @@ contract StreamableERC20 is IStreamableERC20, ERC20 {
 		uint256 activeSubscriptionsLength = _activeIncomingSubscriptions[user].length;
 
 		uint256 newActiveSubscriptionsIndex = 0;
-
 
 		address[] memory newActiveIncomingSubscriptions = new address[](activeSubscriptionsLength);
 
@@ -183,12 +180,10 @@ contract StreamableERC20 is IStreamableERC20, ERC20 {
 				// Pay unpaid amount
 				_updateActiveSubscription(subscription, subscriptionFromAddress, user);
 				newActiveIncomingSubscriptions[newActiveSubscriptionsIndex++] = subscriptionFromAddress;
-
 			}
 		}
 
 		_activeIncomingSubscriptions[user] = newActiveIncomingSubscriptions;
-
 	}
 
 	function _updateFinishedSubscription(Subscription storage subscription, address addressFrom, address addressTo, SubscriptionType _type) internal {
@@ -212,7 +207,6 @@ contract StreamableERC20 is IStreamableERC20, ERC20 {
 			_users[addressFrom].outgoingRate -= subscription.rate;
 			_users[addressFrom].totalOutgoingAmount -= subscription.maxAmount;
 		}
-
 	}
 
 	function _updateActiveSubscription(Subscription storage subscription, address addressFrom, address addressTo) internal {
@@ -222,7 +216,6 @@ contract StreamableERC20 is IStreamableERC20, ERC20 {
 		subscription.lastTransferAtBlock = block.number;
 		subscription.amountPaid += amountToPay;
 	}
-
 
 	function _shouldCancelSubscription(uint256 rate, uint256 maxAmount) internal pure returns (bool) {
 		return rate == 0 && maxAmount == 0;
@@ -239,6 +232,7 @@ contract StreamableERC20 is IStreamableERC20, ERC20 {
 		require(_subscriptions[from][to].status == SubscriptionStatus.ACTIVE, "StreamableERC20: Subscription not active");
 
 		_subscriptions[from][to].status = SubscriptionStatus.CANCELED;
+
 		_users[from].outgoingRate -= _subscriptions[from][to].rate;
 		_users[from].totalOutgoingAmount -= _subscriptions[from][to].maxAmount;
 
