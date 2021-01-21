@@ -54,9 +54,50 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 	 * @dev Returns the last updated balance of `account`
 	 */
 	function lastUpdatedBalanceOf(address account) external view override returns (uint256) {
-		UserStatus storage user_status = _users[account];
-		// (user_status.incomingRate - user_status.outgoingRate) should be a coefficient representing the rate of all subscriptions over time
-		return super.balanceOf(account) + (user_status.incomingRate - user_status.outgoingRate) * (block.number - user_status.blockAtLastUpdate);
+		UserStatus memory user_status = _users[account];
+
+		// get the invalid amounts (the differences between the amount from the expired subscriptions until now), for the subscriptions which are not updated yet.
+		// TODO: Refactor into a single function
+		uint256 amountFromActiveIncomingSubscriptionsThatEndedBeforeCurrentBlock = _getInvalidAmountFromExpiredIncomingSubscriptions(account);
+		uint256 amountFromActiveOutgoingSubscriptionsThatEndedBeforeCurrentBlock = _getInvalidAmountFromExpiredOutgoingSubscriptions(account);
+		uint256 totalInvalidAmount = amountFromActiveIncomingSubscriptionsThatEndedBeforeCurrentBlock + amountFromActiveOutgoingSubscriptionsThatEndedBeforeCurrentBlock;
+
+		// The last valid balance + the valid balance since the last update - the invalid balance
+		return super.balanceOf(account) + ((user_status.incomingRate - user_status.outgoingRate) * (block.number - user_status.blockAtLastUpdate)) - totalInvalidAmount;
+	}
+
+	function _getInvalidAmountFromExpiredIncomingSubscriptions(address user) internal view returns (uint256) {
+		uint256 totalInvalidAmount = 0;
+		for (uint i = 0; i < _activeIncomingSubscriptions[user].length; i++) {
+
+			address subscriptionFromAddress = _activeIncomingSubscriptions[user][i];
+			Subscription memory subscription = _subscriptions[subscriptionFromAddress][user];
+
+            // This is needed because we might have some subscriptions flagged canceled in this array, which amounts are already deducted
+			if(subscription.status == SubscriptionStatus.ACTIVE && block.number > subscription.endBlock) {
+				totalInvalidAmount += subscription.rate * (block.number - subscription.endBlock);
+			}
+
+		}
+
+		return totalInvalidAmount;
+	}
+
+	function _getInvalidAmountFromExpiredOutgoingSubscriptions(address user) internal view returns (uint256) {
+		uint256 totalInvalidAmount = 0;
+		for (uint i = 0; i < _activeOutgoingSubscriptions[user].length; i++) {
+
+			address subscriptionToAddress = _activeOutgoingSubscriptions[user][i];
+			Subscription memory subscription = _subscriptions[user][subscriptionToAddress];
+
+			// This is needed because we might have some subscriptions flagged canceled in this array, which amounts are already deducted
+			if(subscription.status == SubscriptionStatus.ACTIVE && block.number > subscription.endBlock) {
+				totalInvalidAmount += subscription.rate * (block.number - subscription.endBlock);
+			}
+
+		}
+
+		return totalInvalidAmount;
 	}
 
 
@@ -144,6 +185,7 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 				newActiveOutgoingSubscriptions[newActiveSubscriptionsIndex++] = subscriptionToAddress;
 			}
 		}
+//		_activeOutgoingSubscriptions[user] = newActiveOutgoingSubscriptions[:newActiveSubscriptionsIndex];
 		_activeOutgoingSubscriptions[user] = newActiveOutgoingSubscriptions;
 
 	}
@@ -179,6 +221,7 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 			}
 		}
 
+//		_activeIncomingSubscriptions[user] = newActiveIncomingSubscriptions[:newActiveSubscriptionsIndex];
 		_activeIncomingSubscriptions[user] = newActiveIncomingSubscriptions;
 
 	}
