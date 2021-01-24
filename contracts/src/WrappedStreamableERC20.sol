@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
-
+import "hardhat/console.sol";
 import "./StreamableERC20.sol";
 
 contract WrappedStreamableERC20 is StreamableERC20 {
@@ -14,6 +14,7 @@ contract WrappedStreamableERC20 is StreamableERC20 {
 	event  Withdrawal(address indexed source, uint amount);
 
 	function deposit() public virtual payable {
+		console.log("Trying deposit: %s amount from %s", msg.value, msg.sender);
 		super._mint(msg.sender, msg.value);
 	}
 

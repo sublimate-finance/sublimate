@@ -24,7 +24,8 @@
     "mocha": "^8.1.1",
     "sublimate-common": "workspace:*",
     "ts-node": "^9.0.0",
-    "typescript": "^3.8.3"
+    "typescript": "^3.8.3",
+	  "ethereum-waffle": "^3.2.2"
   },
   "scripts": {
     "test": "cross-env HARDHAT_DEPLOY_FIXTURE=true HARDHAT_COMPILE=true mocha --bail --recursive test",

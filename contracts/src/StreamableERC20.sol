@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "./ERC20/ERC20.sol";
 import "./IStreamableERC20.sol";
-
+import "hardhat/console.sol";
 // ERC20: balanceOf(), transfer()
 
 contract StreamableERC20 is ERC20, IStreamableERC20 {
@@ -115,7 +115,11 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
         require(msg.sender == from, "StreamableERC20: Not the subscriber");
 
         _updateUserState(from);
-
+		console.log("address from %s", from);
+		console.log("address to %s", to);
+		console.log("address rate %s", rate);
+		console.log("address maxAmount %s", maxAmount);
+		console.log("super balance of", super.balanceOf(from));
          require(super.balanceOf(from) >= maxAmount, "StreamableERC20: Balance too low");
 
 

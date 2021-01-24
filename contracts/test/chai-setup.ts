@@ -1,5 +1,7 @@
-import chaiModule from 'chai'
+import * as chai from "chai";
+import { solidity } from "ethereum-waffle";
+
 import {chaiEthers} from 'chai-ethers'
-chaiModule.use(chaiEthers)
-chaiModule.use(require('chai-bignumber')())
-export = chaiModule
+chai.use(chaiEthers)
+chai.use(solidity)
+export = chai
