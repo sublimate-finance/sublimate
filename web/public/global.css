@@ -69,6 +69,10 @@
 	}
 } */
 
+html, body, * {
+	font-family: var(--base-fonts); /* FIXME: */
+}
+
 a {
 	--text-decoration-opacity: 0.15;
 	color: var(--text-color);
@@ -112,7 +116,6 @@ code {
 	white-space: pre-wrap;
 }
 
-button,
 .button {
 	-webkit-appearance: none;
 	background-color: var(--accent-color);
@@ -149,17 +152,17 @@ button,
 
 	cursor: pointer;
 }
-button:hover,
-button:focus,
+
+
 .button:hover,
 .button:focus {
 	--scale: 1.015;
 }
-button:focus,
+
 .button:focus {
 	--glow: 5px;
 }
-button:active,
+
 .button:active {
 	--depth: 0;
 }
