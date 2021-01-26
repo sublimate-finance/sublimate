@@ -127,12 +127,7 @@ code {
 
 .button {
 	-webkit-appearance: none;
-	background-color: var(--accent-color);
-	background: linear-gradient(
-		175deg,
-		var(--accent-color),
-		var(--accent-color-light)
-	);
+	background-color: var(--text-color);
 	color: #fff;
 	border: none;
 	border-radius: 0.2em;
@@ -145,6 +140,7 @@ code {
 	gap: var(--space-inner);
 
 	font: inherit;
+	font-size: 0.9em;
 	font-weight: bold;
 	text-decoration: none;
 	text-shadow: 0px 2px 1px rgba(0, 0, 0, 0.1);
@@ -161,11 +157,20 @@ code {
 
 	cursor: pointer;
 }
+.button.accented {
+	background-color: var(--accent-color);
+	background: linear-gradient(
+		175deg,
+		var(--accent-color),
+		var(--accent-color-light)
+	);
+}
 
 
 .button:hover,
 .button:focus {
 	--scale: 1.015;
+	filter: brightness(108%);
 }
 
 .button:focus {
