@@ -70,8 +70,14 @@
 	.modal-overlay {
 		position: fixed;
 		inset: 0;
+		backdrop-filter: blur(15px);
+	}
+	.modal-overlay:before {
+		position: fixed;
+		inset: 0;
+		content: '';
 		background-color: var(--accent-color);
-		opacity: 0.3;
+		opacity: 0.4;
 	}
 
 	.modal {
@@ -99,8 +105,8 @@
 
 <svelte:window on:keydown={onKeydown} />
 
-<div class="modal-container" style="--modal-width: {width}" transition:fade={{duration: 300}}>
-	<div on:click={close} class="modal-overlay" />
+<div class="modal-container" style="--modal-width: {width}">
+	<div on:click={close} class="modal-overlay" transition:fade={{duration: 300}} />
 
 	<div class="modal card" transition:scale={{duration: 300}}>
 		{#if title || closeButton}
