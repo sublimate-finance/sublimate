@@ -71,17 +71,18 @@
 </style>
 
 <ul class="nav">
+	<li>
+		<NavLink name={'Home'}>
+			<div class="logo stack">
+				<img src="/images/sublimate.svg" alt="Sublimate" width="150" />
+				<h1>Sublimate</h1>
+			</div>
+		</NavLink>
+	</li>
 	{#each links as link}
-		<li>
+		<li class="font-bold">
 			<NavLink name={typeof link === 'string' ? link : link.name}>
-				{#if link === 'Home'}
-					<div class="logo stack">
-						<img src="/images/sublimate.svg" alt="Sublimate" width="150" />
-						<h1>Sublimate</h1>
-					</div>
-				{:else}
-					{typeof link === 'string' ? link : link.title}
-				{/if}
+				{typeof link === 'string' ? link : link.title}
 			</NavLink>
 		</li>
 	{/each}
