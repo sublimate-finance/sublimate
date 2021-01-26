@@ -227,6 +227,12 @@ section {
 	touch-action: none;
 }
 
+
+img, svg, video, canvas, audio, iframe, embed, object {
+	display: inline;
+}
+
+
 table {
 	border-collapse: separate;
 	border-spacing: var(--space-inner);
