@@ -36,7 +36,7 @@
 {/if}
 
 {#if modalIsOpen}
-	<Modal on:close={() => modalIsOpen = false}>
+	<Modal title="Connect Wallet" width="30rem" on:close={() => modalIsOpen = false}>
 		{#if $wallet.address}
 			<div>
 				You're signed in as
