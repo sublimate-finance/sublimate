@@ -95,14 +95,34 @@ import Footer from '../components/Footer.svelte'
 </section>
 
 <div class="bg-white">
-	<section class="flex flex-col px-8 py-8 space-y-4 mb-32">
+	<section class="flex flex-col items-center px-8 py-16 space-y-4 mb-32">
 		<span class="text-gray-900 font-bold">All transactions</span>
-		<div class="flex flex-row space-x-4">
-			<div class="flex flex-row">
-				<!-- block, day, month, year -->
+		<div class="flex flex-row space-x-8 w-full">
+			<div class="flex flex-row w-1/2 justify-end">
+				<div class="flex flex-row items-center px-6 py-1 bg-primary-100 bg-opacity-25 shadow-inner rounded-md space-x-4 text-gray-600">
+					<button class="w-16">block</button>
+					<button class="w-16 text-gray-900 px-3 p-1 bg-white rounded-full">day</button>
+					<button class="w-16">month</button>
+					<button class="w-16">year</button>
+				</div>
 			</div>
-			<div class="flex flex-row">
-		
+			<div class="flex flex-row w-1/2 justify-start">
+				<div class="flex flex-row items-center w-64">
+					<button class="flex flex-row w-1/2 items-center justify-center px-4 py-2 bg-primary-100 bg-opacity-25 rounded-l-md shadow-inner">
+						Filter
+					</button>
+					<button class="flex flex-row w-1/2 items-center justify-center px-4 py-2 bg-primary-100 bg-opacity-10 rounded-r-md ">
+						By rate
+					</button>
+				</div>
+			</div>
+		</div>
+		<div class="flex flex-row space-x-0 w-full max-w-6xl mx-auto bg-primary-100 bg-opacity-10 rounded-md p-4">
+			<div class="flex flex-col w-full items-start">
+				<span class="font-bold">Donations</span>
+			</div>
+			<div class="flex flex-col w-full items-end">
+				<span class="font-bold">Supporting</span>
 			</div>
 		</div>
 		<div class="flex flex-row">
