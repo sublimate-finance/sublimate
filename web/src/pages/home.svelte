@@ -23,9 +23,12 @@
 		padding: 4rem;
 		--space-inner: 2rem;
 		min-height: 70vh;
-		justify-items: center;
 		text-align: center;
 		align-content: center;
+	}
+
+	section.centered {
+		justify-items: center;
 	}
 
 	section.accented {
@@ -43,7 +46,7 @@
 	}
 </style>
 
-<section id="top">
+<!-- <section id="top">
 	<h2>Reward creativity.<br>Make every second count.</h2>
 	<div>
 		<Button href="explore">Start accepting donations</Button>
@@ -51,6 +54,19 @@
 
 	<p>Accept continuous financial support from your audience.</p>
 	<img src="images/wallet-illustration.png" />
+</section> -->
+
+<section id="top" class="centered">
+	<img src="images/wallet-illustration.png" />
+
+	<h2>Make every second count.</h2>
+
+	<p>Accept <b>continuous financial support</b> from your audience, <br>so you can focus on <b>making amazing things</b>.</p>
+
+	<div>
+		<Button href="#creators">Learn more</Button>
+		<Button href="dashboard" class="accented">Start a creator page</Button>
+	</div>
 </section>
 
 <section id="creators" class="accented">
@@ -59,6 +75,9 @@
 		{#each creators as creatorInfo}
 			<CreatorSummary {...creatorInfo} />
 		{/each}
+	</div>
+	<div>
+		<Button href="explore">Explore Creators</Button>
 	</div>
 </section>
 
