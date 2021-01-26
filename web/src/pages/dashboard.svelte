@@ -30,7 +30,7 @@
 		</div>
 	</div>
 	<div class="flex flex-col w-1/2">
-		<div class="neumorphic">
+		<div class="card neumorphic">
 			<img src="/images/chart.png" class="w-full h-auto" alt="chart" />
 		</div>
 	</div>

@@ -263,6 +263,11 @@ main {
 	text-transform: uppercase;
 }
 
+.neumorphic {
+	box-shadow: inset #E791F544 0 2px 4px;
+}
+
+
 .row,
 .bar {
 	display: flex;

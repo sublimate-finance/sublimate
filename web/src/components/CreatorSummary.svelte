@@ -24,9 +24,8 @@
 		font-weight: normal;
 	}
 
-	.card.style-indented {
+	.creators .card {
 		background: linear-gradient(#E791F522, #9C82E522);
-		box-shadow: inset #E791F544 0 2px 4px;
 		--space-outer: 1.5rem;
 	}
 </style>
@@ -35,11 +34,11 @@
 	<img src={image.toString()} alt="name" width="100" />
 	<h3>{name}</h3>
 	<h4 class="summary">{summary}</h4>
-	<div class="row">
-		<div class="card style-indented">
+	<div class="row creators">
+		<div class="card neumorphic">
 			<span><strong>{incomingRate} {incomingToken}</strong>/month</span>
 		</div>
-		<div class="card style-indented">
+		<div class="card neumorphic">
 			{subscriberCount} subscriber{subscriberCount === 1 ? '' : 's'}
 		</div>
 	</div>
