@@ -110,6 +110,14 @@ h2 {
 	font-size: 1.5em;
 }
 
+h3 {
+	font-size: 1.25em;
+}
+
+h4 {
+	font-size: 1.1em;
+}
+
 pre,
 code {
 	font-family: var(--monospace-fonts);
@@ -233,9 +241,10 @@ main {
 
 .card {
 	display: grid;
-	gap: var(--space-inner);
 	align-content: start;
+	grid-auto-columns: 100%;
 	padding: var(--space-outer);
+	gap: var(--space-inner);
 
 	background-image: var(--card-background-image);
 	background-color: var(--card-background-color);
@@ -265,6 +274,16 @@ main {
 
 .neumorphic {
 	box-shadow: inset #E791F544 0 2px 4px;
+}
+
+
+.columns {
+	display: flex;
+	flex-direction: columns;
+	gap: var(--space-inner);
+}
+.columns > * {
+	flex: 1;
 }
 
 
