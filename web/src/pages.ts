@@ -20,6 +20,12 @@ export default [
 			import('./pages/test.svelte'),
 	},
 	{
+		name: 'Dashboard',
+		path: 'dashboard',
+		asyncComponent: (): Promise<ComponentModule> =>
+			import('./pages/dashboard.svelte')
+	},
+	{
 		name: 'Creator',
 		path: 'creator',
 		asyncComponent: (): Promise<ComponentModule> =>
