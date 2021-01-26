@@ -48,6 +48,9 @@
 	<div>
 		<Button href="explore">Start accepting donations</Button>
 	</div>
+
+	<p>Accept continuous financial support from your audience.</p>
+	<img src="images/wallet-illustration.png" />
 </section>
 
 <section id="creators" class="accented">
