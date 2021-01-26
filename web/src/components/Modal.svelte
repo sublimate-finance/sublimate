@@ -70,7 +70,7 @@
 	.modal-overlay {
 		position: fixed;
 		inset: 0;
-		backdrop-filter: blur(15px);
+		backdrop-filter: blur(2px);
 	}
 	.modal-overlay:before {
 		position: fixed;
@@ -81,7 +81,7 @@
 	}
 
 	.modal {
-		backdrop-filter: blur(--overlay-backdrop-filter);
+		backdrop-filter: var(--overlay-backdrop-filter);
 		position: relative;
 		--space-inner: 1rem;
 
@@ -95,9 +95,9 @@
 	}
 
 	.modal-close {
-		position: absolute;
+		/* position: absolute;
 		right: 0;
-		top: 0;
+		top: 0; */
 		cursor: pointer;
 		fill: currentColor;
 	}
@@ -110,7 +110,7 @@
 
 	<div class="modal card" transition:scale={{duration: 300}}>
 		{#if title || closeButton}
-			<div class="bar modal">
+			<div class="bar modal-title">
 				{#if title}
 					<h3>{title}</h3>
 				{/if}
@@ -127,8 +127,11 @@
 		<div class="modal-content" bind:this={modal}>
 			<slot />
 		</div>
-		<div class="flex justify-end pt-2">
-			<slot name="footer" />
-		</div>
+
+		<!-- {#if $$slots.footer}
+			<div class="footer">
+				<slot name="footer" />
+			</div>
+		{/if} -->
 	</div>
 </div>
