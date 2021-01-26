@@ -46,6 +46,8 @@ module.exports = {
 			black: colors.black,
 			gray: colors.warmGray,
 			white: colors.white,
+			red: colors.red,
+			green: colors.green,
 			primary: {
 				100: "#A37EF9",
 				200: "#7F62F6",
@@ -106,6 +108,5 @@ module.exports = {
 		},
 	],
 	corePlugins: {
-		preflight: false
 	}
 }
