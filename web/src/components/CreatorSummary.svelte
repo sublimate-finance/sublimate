@@ -67,7 +67,6 @@
 	}
 
 	.creators .card {
-		background: linear-gradient(#E791F522, #9C82E522);
 		--space-outer: 1.5rem;
 	}
 </style>
