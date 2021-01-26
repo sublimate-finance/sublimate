@@ -24,7 +24,7 @@
 				<img src="/images/copy.svg" alt="copy" class="w-6 h-6 mb-1" />
 			</button>
 			<button class="flex flex-row items-center justify-between p-8 px-12 space-x-2 bg-gradient-to-br from-purple-100 to-purple-300 border-0 text-gray-900 rounded-md">
-				<span class="text-base"><b class="font-bold">Embed button code </span>
+				<span class="text-base"><b class="font-bold">Embed button code</b></span>
 				<img src="/images/copy.svg" alt="copy" class="w-6 h-6 mb-1" />
 			</button>
 		</div>
