@@ -21,10 +21,10 @@
 	section {
 		font-size: 1.5em;
 		padding: 4rem;
-		/* justify-items: center; */
-		/* grid-template-columns: minmax(auto, 120rem); */
 		--space-inner: 2rem;
 		min-height: 70vh;
+		justify-items: center;
+		text-align: center;
 		align-content: center;
 	}
 
