@@ -35,7 +35,7 @@
 		}
 	},
 	"scripts": {
-		"preinstall": "npx only-allow pnpm",
+		"// preinstall": "npx only-allow pnpm",
 		"setup": "npx change-name sublimate && pnpm install",
 		"set-name": "npx change-name sublimate",
 		"prepare": "node ./.setup.js",
