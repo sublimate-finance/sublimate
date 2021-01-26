@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const defaultTheme = require('tailwindcss/defaultTheme')
-const tailwindUI = require('@tailwindcss/ui')
+const colors = require("tailwindcss/colors")
 
 module.exports = {
 	purge: process.env.NODE_ENV === 'production' && {
@@ -40,6 +40,20 @@ module.exports = {
 	},
 	experimental: 'all',
 	theme: {
+		colors: {
+			transparent: "transparent",
+			current: "currentColor",
+			black: colors.black,
+			gray: colors.warmGray,
+			white: colors.white,
+			primary: {
+				100: "#A37EF9",
+				200: "#7F62F6",
+			},
+			secondary: {
+				//
+			},
+		},
 		extend: {
 			fontFamily: {
 				sans: ['Inter var', ...defaultTheme.fontFamily.sans],
@@ -62,7 +76,6 @@ module.exports = {
 		},
 	},
 	plugins: [
-		tailwindUI({}),
 		function ({addVariant, e}) {
 			const variants = [
 				{
