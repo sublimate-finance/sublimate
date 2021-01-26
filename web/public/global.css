@@ -227,6 +227,16 @@ section {
 	touch-action: none;
 }
 
+table {
+	border-collapse: separate;
+	border-spacing: var(--space-inner);
+	width: 100%;
+}
+tr > :first-child {
+	text-align: left;
+}
+
+
 hr {
 	background: none;
 	border: none;
