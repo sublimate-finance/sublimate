@@ -10,8 +10,6 @@
 	.nav {
 		display: flex;
 		align-items: stretch;
-		margin-left: auto;
-		margin-right: 1rem;
 	}
 
 	li {

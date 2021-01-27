@@ -18,7 +18,8 @@
 		position: sticky;
 		top: 0;
 
-		--space-inner: 2.5rem;
+		gap: var(--space-inner);
+		--space-inner: 2.25rem;
 
 		/* backdrop-filter: var(--overlay-backdrop-filter); */
 		background-color: rgba(255, 255, 255, 0.8);
@@ -35,6 +36,7 @@
 	}
 
 	header :global(.nav) {
+		margin-left: auto;
 		align-self: stretch;
 	}
 </style>
