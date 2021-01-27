@@ -1,27 +1,22 @@
-# Template example
-type MessageEntry @entity {
-	id: ID!
-	message: String!
-	timestamp: BigInt!
-}
-
-
 type User @entity {
 	id: ID! # address
 
 	balance: BigInt! # tokens
 
 	incomingRate: BigInt! # tokens per block
-	maxIncomingAmount: BigInt! # tokens
+	totalMaxIncomingAmount: BigInt! # tokens
 	outgoingRate: BigInt! # tokens per block
-	maxOutgoingAmount: BigInt! # tokens
+	totalMaxOutgoingAmount: BigInt! # tokens
+	
+	blockAtLastUpdate: BigInt! # block
+	availableAmount: BigInt!
 
 	outgoingSubscriptions: [Subscription!]! @derivedFrom(field: "from")
 	incomingSubscriptions: [Subscription!]! @derivedFrom(field: "to")
 }
 
 enum SubscriptionStatus {
-	INACTIVE # Subscription not created yet
+	UNDEFINED # Subscription not created yet
 	ACTIVE # Subscription is active
 	STOPPED # Subscription is stopped
 	CANCELED # Subscription got canceled by the user
@@ -32,6 +27,8 @@ type Subscription @entity {
 	id: ID!
 
 	status: SubscriptionStatus!
+
+	token: Bytes! # ERC-20 contract address
 
 	from: Bytes! # address
 	to: Bytes! # address
