@@ -33,7 +33,7 @@
                         </div>
                     </td>
                     <td><div class="flex flex-row items-center justify-center"><b class="font-bold">7.85 ETH</b>/month</div></td>
-                    <td><div class="flex flex-row items-center justify-center">12</td>
+                    <td><div class="flex flex-row items-center justify-center">12</div></td>
                     <td>90%</td>
                 </tr>
                 <tr>
