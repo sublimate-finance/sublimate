@@ -9,64 +9,101 @@
 		image: 'https://picsum.photos/200/200',
 		cover: 'https://picsum.photos/1920/1080'
 	}
+
+	let chartTimeInterval = '1d'
+
+	let rateTimeInterval = 'day'
+
+	import Select from '../components/Select.svelte'
 </script>
 
+<style>
+	.card {
+		--space-inner: 2.5em;
+	}
+
+	.card .row {
+		--space-inner: 1em;
+	}
+	.card .column {
+		--space-inner: 0.5em;
+	}
+
+	.chart {
+		overflow: hidden;
+		height: 20rem;
+	}
+</style>
+
 <section class="flex flex-row">
-	<div class="flex flex-col w-full space-y-16 max-w-md bg-white p-8 px-16">
-		<div class="flex flex-row w-full space-x-6">
-			<img class="w-16 h-16 block rounded-full" src={creator.image} alt="avatar" />
+	<div class="card">
+		<div class="row">
+			<img src={creator.image} alt="Avatar" class="block rounded-full" width="80" height="80" />
 			<div class="flex-1 flex flex-col justify-center space-y-2">
-				<div class="flex flex-row items-center w-full justify-between">
-					<span class="font-bold text-gray-900 text-lg">{ creator.name }</span>
+				<div class="bar">
+					<h2>{creator.name}</h2>
 					<img src="/images/edit.svg" alt="edit" class="w-4 h-4" />
 				</div>
-				<div class="flex flex-row items-center w-full justify-between">
+				<div class="bar">
 					<span class="text-primary-200">{ creator.summary }</span>
 					<img src="/images/edit.svg" alt="edit" class="w-4 h-4" />
 				</div>
 			</div>
 		</div>
-		<div class="flex flex-col space-y-8 w-full">
-			<div class="flex flex-col space-y-2 w-full">
-				<span class="text-gray-900 font-bold">Overall information</span>
-				<div class="flex flex-row items-center space-x-2 text-sm">
-					<span class="p-3 rounded-md shadow-inner"><b class="font-bold">13,324.04</b> ETH</span>
-					<span>collected since January 2017.</span>
-				</div>
-				<div class="flex flex-row items-center space-x-2 text-sm">
-					<span class="p-3 rounded-md shadow-inner"><b class="font-bold">24.04</b> ETH</span>
-					<span>collected in the last</span>
-					<span class="p-3 rounded-md shadow-inner"><b class="font-bold">24 hours.</b></span>
-				</div>
-				<div class="flex flex-row items-center px-6 py-1 bg-primary-100 bg-opacity-5 shadow-inner rounded-md space-x-4 text-gray-600">
-					<button class="w-16">block</button>
-					<button class="w-16 text-gray-900 px-3 p-1 bg-white rounded-full shadow-inner font-bold">day</button>
-					<button class="w-16">month</button>
-					<button class="w-16">year</button>
-				</div>
+		<div class="column">
+			<h3>Quick Stats</h3>
+			<!-- <p>
+				<span class="boxed neumorphic">13,324.04 ETH</span>
+				<span>collected since January 2017.</span>
+			</p>
+			<p>
+				<span class="boxed neumorphic">24.04 ETH</span>
+				<span>collected in the last</span>
+				<span class="boxed neumorphic">24 hours</span>.
+			</p> -->
+			<div class="flex flex-row items-center space-x-2 text-sm">
+				<span class="p-3 rounded-md shadow-inner"><b class="font-bold">13,324.04</b> ETH</span>
+				<span>collected since January 2017.</span>
 			</div>
-			<div class="flex flex-col space-y-2 w-full">
-				<span class="text-gray-900 font-bold">Share your Sublimate link</span>
-				<button class="flex flex-row items-center justify-between px-4 py-3 space-x-2 bg-primary-100 bg-opacity-10 text-gray-900 rounded-md">
-					<span>Embed button code</span>
-					<img src="/images/copy.svg" alt="copy" class="w-4 h-4 mb-1" />
-				</button>
-				<button class="flex flex-row items-center justify-between px-4 py-3 space-x-2 bg-primary-100 bg-opacity-10 text-gray-900 rounded-md">
-					<span>sublimate.finance/0x16A3...DfTA</span>
-					<img src="/images/copy.svg" alt="copy" class="w-4 h-4 mb-1" />
-				</button>
+			<div class="flex flex-row items-center space-x-2 text-sm">
+				<span class="p-3 rounded-md shadow-inner"><b class="font-bold">24.04</b> ETH</span>
+				<span>collected in the last</span>
+				<span class="p-3 rounded-md shadow-inner"><b class="font-bold">24 hours.</b></span>
 			</div>
-			<div class="flex flex-col space-y-2 w-full">
-				<div class="flex flex-row items-center space-x-2">
-					<span class="text-gray-900 font-bold">Change your cover</span>
-					<img src="/images/edit.svg" alt="edit" class="w-4 h-4" />
-				</div>
-				<div class="w-full h-20 shadow-inner rounded-md" style={`background-image: url(${creator.cover}); background-position: center; background-size: cover;`} />
+
+			<div class="boxed neumorphic">
+				<Select options={['block', 'day', 'month', 'year']} bind:value={rateTimeInterval} />
 			</div>
 		</div>
+		<div class="column">
+			<h3>Share your Sublimate link</h3>
+			<button class="bar boxed neumorphic">
+				<span>Embed button code</span>
+				<img src="/images/copy.svg" alt="copy" class="w-4 h-4 mb-1" />
+			</button>
+			<button class="bar boxed neumorphic">
+				<span>sublimate.finance/0x16A3...DfTA</span>
+				<img src="/images/copy.svg" alt="copy" class="w-4 h-4 mb-1" />
+			</button>
+		</div>
+		<div class="column">
+			<div class="bar">
+				<h3>Cover image</h3>
+				<img src="/images/edit.svg" alt="edit" class="w-4 h-4" />
+			</div>
+			<div class="w-full h-20 shadow-inner rounded-md" style={`background-image: url(${creator.cover}); background-position: center; background-size: cover;`} />
+		</div>
 	</div>
-	<div class="flex-1 flex flex-col space-y-8 p-8 items-center">
-		<img src="/images/chart.png" class="w-full h-auto" alt="chart" />
+	<div class="column flex-1 p-8">
+		<div class="bar">
+			<h2>$10,000.00</h2>
+			<div class="bar">
+				<Select options={['1h', '1d', '1m', '1w', '1y']} bind:value={chartTimeInterval} />
+			</div>
+		</div>
+		<div class="chart boxed neumorphic">
+			<img src="/images/chart.png" class="w-full h-auto" alt="chart" />
+		</div>
 		<ProfileSummary user={creator} />
 	</div>
 </section>
