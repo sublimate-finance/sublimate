@@ -282,18 +282,18 @@ main {
 	align-items: center;
 	flex-wrap: wrap;
 	gap: var(--space-inner);
-	width: 100%;
+	/* width: 100%; */
 }
 .bar > :first-child {
 	flex: 1;
 	margin-right: auto;
 }
-.bar > h2:first-child,
+/* .bar > h2:first-child,
 .bar > h3:first-child {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-}
+} */
 .bar > :not(:first-child) {
 	flex: 0 auto;
 }
