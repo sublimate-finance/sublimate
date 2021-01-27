@@ -10,10 +10,9 @@
 		cover: 'https://picsum.photos/1920/1080'
 	}
 
-	let chartTimeInterval = '1d'
-
 	let rateTimeInterval = 'day'
 
+	import CreatorChart from '../components/CreatorChart.svelte'
 	import Select from '../components/Select.svelte'
 </script>
 
@@ -27,11 +26,6 @@
 	}
 	.card .column {
 		--space-inner: 0.5em;
-	}
-
-	.chart {
-		overflow: hidden;
-		height: 20rem;
 	}
 </style>
 
@@ -95,15 +89,7 @@
 		</div>
 	</div>
 	<div class="column flex-1 p-8">
-		<div class="bar">
-			<h2>$10,000.00</h2>
-			<div class="bar">
-				<Select options={['1h', '1d', '1m', '1w', '1y']} bind:value={chartTimeInterval} />
-			</div>
-		</div>
-		<div class="chart boxed neumorphic">
-			<img src="/images/chart.png" class="w-full h-auto" alt="chart" />
-		</div>
+		<CreatorChart />
 		<ProfileSummary user={creator} />
 	</div>
 </section>
