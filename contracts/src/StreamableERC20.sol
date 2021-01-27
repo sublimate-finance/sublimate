@@ -9,6 +9,7 @@ import "hardhat/console.sol";
 contract StreamableERC20 is ERC20, IStreamableERC20 {
 
     mapping (address => UserStatus) private _users;
+	mapping (address => uint256) private _availableBalances;
 
     struct UserStatus {
         uint256 incomingRate;
@@ -16,7 +17,6 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
         uint256 outgoingRate;
         uint256 totalOutgoingAmount;
         uint256 blockAtLastUpdate;
-		uint256 availableAmount;
     }
 
 	enum SubscriptionType {
@@ -65,18 +65,17 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 
 		// get the invalid amounts (the differences between the amount from the expired subscriptions until now), for the subscriptions which are not updated yet.
 		// TODO: Refactor into a single function
-		uint256 amountFromActiveIncomingSubscriptionsThatEndedBeforeCurrentBlock = _getInvalidAmountFromExpiredIncomingSubscriptions(account);
+		uint256 invalidIncomingAmount = _getInvalidAmountFromExpiredIncomingSubscriptions(account);
 
-		console.log("amount inc subs %s", amountFromActiveIncomingSubscriptionsThatEndedBeforeCurrentBlock);
+		console.log("amount inc subs %s", invalidIncomingAmount);
 
-		uint256 amountFromActiveOutgoingSubscriptionsThatEndedBeforeCurrentBlock = _getInvalidAmountFromExpiredOutgoingSubscriptions(account);
+		uint256 invalidOutgoingAmount = _getInvalidAmountFromExpiredOutgoingSubscriptions(account);
 
-		console.log("amount outgoing subs %s", amountFromActiveOutgoingSubscriptionsThatEndedBeforeCurrentBlock);
+		console.log("amount outgoing subs %s", invalidOutgoingAmount);
 
+		// reverse logic here, to compensate for the real balances, the substraction of the invalid incoming from invalid outgoing is not mistake
+		int totalInvalidAmount = int(invalidOutgoingAmount) - int(invalidIncomingAmount);
 
-		uint256 totalInvalidAmount = amountFromActiveIncomingSubscriptionsThatEndedBeforeCurrentBlock + amountFromActiveOutgoingSubscriptionsThatEndedBeforeCurrentBlock;
-
-		console.log("total invalid amount %s", totalInvalidAmount);
 		console.log("balance of account %s", super.balanceOf(account));
 		console.log("current block number %s", block.number);
 
@@ -90,7 +89,7 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 		console.logInt(blockDifference);
 		int rateTimesBlockDifferences = totalRateDifference * blockDifference;
 		console.logInt(rateTimesBlockDifferences);
-		uint result =  uint(int(super.balanceOf(account)) + rateTimesBlockDifferences - int(totalInvalidAmount));
+		uint result =  uint(int(super.balanceOf(account)) + rateTimesBlockDifferences + totalInvalidAmount);
 		console.log("Result is %s", result);
 		return result;
 	}
@@ -132,28 +131,60 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 
 
 	/**
+	 * @dev Cancels subscription started from `from` to `to`.
+	 *
+	 * Returns a boolean value indicating whether the operation succeeded.
+	 *
+	 * Emits a {SubscriptionCanceled} event.
+	 */
+	function cancelSubscription(address from, address to) external override {
+		require(msg.sender == from, "Only the subscriber can cancel the subscription.");
+		require(_subscriptions[from][to].status == SubscriptionStatus.ACTIVE, "Only active subscriptions can be canceled.");
+		_updateIncomingAndOutgoingSubscriptions(from);
+		_updateBlockAtLastUpdate(from);
+		_updateBlockAtLastUpdate(to);
+
+		_subscriptions[from][to].status = SubscriptionStatus.CANCELED;
+		_users[from].outgoingRate -= _subscriptions[from][to].rate;
+		_users[from].totalOutgoingAmount -= _subscriptions[from][to].maxAmount;
+
+		uint256 unpaidAmount = _subscriptions[from][to].maxAmount - _subscriptions[from][to].amountPaid;
+		console.log("unpaid amount %s", unpaidAmount);
+		_increaseAvailableBalance(from, unpaidAmount);
+
+		console.log("available balance %", _availableBalances[from]);
+
+		_users[to].incomingRate -= _subscriptions[from][to].rate;
+		_users[to].totalIncomingAmount -= _subscriptions[from][to].maxAmount;
+
+		emit SubscriptionCanceled(from, to);
+	}
+
+	/**
 	 * @dev Updates the subscription from `from` to `to`.
 	 *
 	 * Returns a boolean value indicating whether the operation succeeded.
 	 *
 	 * Emits a {SubscriptionUpdated} event.
 	 */
-	function updateSubscription(address from, address to, uint256 rate, uint256 maxAmount) external override returns (bool) {
+	function updateSubscription(address from, address to, uint256 rate, uint256 maxAmount) external override {
 
-        require(msg.sender == from, "StreamableERC20: Not the subscriber");
+        require(msg.sender == from, "Only the address owner can start a subscription.");
+        require(rate > 0, "The subscription rate must be greater than 0.");
+        require(maxAmount > 0, "The max amount must be greater than 0.");
+        require(maxAmount >= rate, "The max amount must be greater than or equal to the rate.");
+        require(availableBalance(from) >= maxAmount, "Insufficient balance.");
 
-		_updateUsersState(from, to);
+		_updateIncomingAndOutgoingSubscriptions(from);
+		_updateBlockAtLastUpdate(from);
+		_updateBlockAtLastUpdate(to);
 		console.log("address from %s", from);
 		console.log("address to %s", to);
 		console.log("address rate %s", rate);
 		console.log("address maxAmount %s", maxAmount);
 		console.log("super balance of", super.balanceOf(from));
-         require(super.balanceOf(from) >= maxAmount, "StreamableERC20: Balance too low");
+		require(super.balanceOf(from) >= maxAmount, "Insufficient balance.");
 
-
-		if(_shouldCancelSubscription(rate, maxAmount)) {
-			return _handleSubscriptionCancellation(from, to);
-		}
 
 		if(_subscriptions[from][to].status == SubscriptionStatus.INACTIVE) {
 			// In case there is a reminder, we will pay it in the last payment
@@ -166,16 +197,15 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 	        UserStatus storage user_from_status = _users[from];
 	        user_from_status.outgoingRate += rate;
 			user_from_status.totalOutgoingAmount += maxAmount;
+			_decreaseAvailableBalance(from, maxAmount);
+
 
 			UserStatus storage user_to_status = _users[to];
 			user_to_status.incomingRate += rate;
 			user_to_status.totalIncomingAmount += maxAmount;
 
 			emit SubscriptionStarted(from, to, rate, maxAmount);
-			return true;
 		}
-
-		return false;
 
 	}
 
@@ -183,15 +213,15 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 		return (_subscriptions[from][to].rate, _subscriptions[from][to].maxAmount);
 	}
 
-	function _updateUsersState(address userFrom, address userTo) internal returns (bool) {
-
-		_updateOutgoingSubscriptions(userFrom);
-		_updateIncomingSubscriptions(userFrom);
-		_users[userFrom].blockAtLastUpdate = block.number;
-		_users[userTo].blockAtLastUpdate = block.number;
-
-	    return false;
+	function _updateIncomingAndOutgoingSubscriptions(address user) internal {
+		_updateOutgoingSubscriptions(user);
+		_updateIncomingSubscriptions(user);
 	}
+
+	function _updateBlockAtLastUpdate(address user) internal {
+		_users[user].blockAtLastUpdate = block.number;
+	}
+
 
 	function _updateOutgoingSubscriptions(address user) internal {
 		uint256 currentBlock = block.number;
@@ -227,7 +257,6 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 
 
 	}
-
 
 	function _updateIncomingSubscriptions(address user) internal {
 		uint256 currentBlock = block.number;
@@ -274,6 +303,10 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 		uint256 amountToPay = numBlocksSinceLastPayment * subscription.rate + (subscription.maxAmount - (subscription.endBlock - subscription.startBlock) * subscription.rate);
 
 		super._transfer(addressFrom, addressTo, amountToPay);
+
+		// increase available balance for the receiver
+	    _increaseAvailableBalance(addressTo, amountToPay);
+
 		subscription.lastTransferAtBlock = subscription.endBlock;
 		subscription.amountPaid += amountToPay;
 		subscription.status = SubscriptionStatus.FINISHED;
@@ -292,28 +325,26 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 		uint256 numBlocksSinceLastPayment = block.number - subscription.lastTransferAtBlock;
 		uint256 amountToPay = numBlocksSinceLastPayment * subscription.rate;
 		super._transfer(addressFrom, addressTo, amountToPay);
-		subscription.lastTransferAtBlock = block.number;
+
+        // increase available balance for the receiver
+		_increaseAvailableBalance(addressTo, amountToPay);
+
+	    subscription.lastTransferAtBlock = block.number;
 		subscription.amountPaid += amountToPay;
 	}
 
-
-	function _shouldCancelSubscription(uint256 rate, uint256 maxAmount) internal pure returns (bool) {
-		return rate == 0 && maxAmount == 0;
+	function _increaseAvailableBalance(address user, uint256 amount) internal virtual {
+		_availableBalances[user] = _availableBalances[user] + amount;
 	}
 
-	function _handleSubscriptionCancellation(address from, address to) internal returns (bool) {
-		assert(_subscriptions[from][to].status == SubscriptionStatus.ACTIVE);
-		_subscriptions[from][to].status = SubscriptionStatus.CANCELED;
-		_users[from].outgoingRate -= _subscriptions[from][to].rate;
-		_users[from].totalOutgoingAmount -= _subscriptions[from][to].maxAmount;
-
-		_users[to].incomingRate -= _subscriptions[from][to].rate;
-		_users[to].totalIncomingAmount -= _subscriptions[from][to].maxAmount;
-
-
-		emit SubscriptionCanceled(from, to);
-		return true;
+	function _decreaseAvailableBalance(address user, uint256 amount) internal virtual {
+		_availableBalances[user] = _availableBalances[user] - amount;
 	}
+
+	function availableBalance(address user) public view returns (uint256) {
+		return _availableBalances[user];
+	}
+
 
 //
 //	event SubscriptionStarted(address indexed from, address indexed to, uint256 rate, uint256 maxAmount);

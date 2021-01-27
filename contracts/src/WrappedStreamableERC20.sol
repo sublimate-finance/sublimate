@@ -14,14 +14,34 @@ contract WrappedStreamableERC20 is StreamableERC20 {
 	event  Withdrawal(address indexed source, uint amount);
 
 	function deposit() public virtual payable {
-		console.log("Trying deposit: %s amount from %s", msg.value, msg.sender);
-		super._mint(msg.sender, msg.value);
+		_mint(msg.sender, msg.value);
 	}
 
 	function withdraw(uint amount) public virtual {
-		require(super.balanceOf(msg.sender) >= amount, "Requested amount larger than available balance.");
-		super._burn(msg.sender, amount);
+		_updateIncomingAndOutgoingSubscriptions(msg.sender);
+		_updateBlockAtLastUpdate(msg.sender);
+		require(super.availableBalance(msg.sender) >= amount, "Requested amount larger than available balance.");
+		_burn(msg.sender, amount);
 		payable(msg.sender).transfer(amount);
+	}
+
+	/** @dev Creates `amount` tokens and assigns them to `account`, increasing
+	 * the total supply. Also increases users available balance.
+	 *
+	 * Emits a {Transfer} event with `from` set to the zero address.
+	 *
+	 * Requirements:
+	 *
+	 * - `to` cannot be the zero address.
+	 */
+	function _mint(address account, uint256 amount) internal virtual override {
+		ERC20._mint(account, amount);
+		StreamableERC20._increaseAvailableBalance(account, amount);
+	}
+
+	function _burn(address account, uint256 amount) internal virtual override {
+		ERC20._burn(account, amount);
+		StreamableERC20._decreaseAvailableBalance(account, amount);
 	}
 
 

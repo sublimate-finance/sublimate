@@ -216,6 +216,24 @@ const _abi = [
         type: "address",
       },
     ],
+    name: "cancelSubscription",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "from",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "to",
+        type: "address",
+      },
+    ],
     name: "getSubscription",
     outputs: [
       {
@@ -341,13 +359,7 @@ const _abi = [
       },
     ],
     name: "updateSubscription",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },

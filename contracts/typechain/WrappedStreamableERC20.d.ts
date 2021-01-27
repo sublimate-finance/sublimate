@@ -25,7 +25,9 @@ interface WrappedStreamableERC20Interface extends ethers.utils.Interface {
   functions: {
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
+    "availableBalance(address)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
+    "cancelSubscription(address,address)": FunctionFragment;
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
     "deposit()": FunctionFragment;
@@ -49,7 +51,15 @@ interface WrappedStreamableERC20Interface extends ethers.utils.Interface {
     functionFragment: "approve",
     values: [string, BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "availableBalance",
+    values: [string]
+  ): string;
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "cancelSubscription",
+    values: [string, string]
+  ): string;
   encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "decreaseAllowance",
@@ -93,7 +103,15 @@ interface WrappedStreamableERC20Interface extends ethers.utils.Interface {
 
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "availableBalance",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "cancelSubscription",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "decreaseAllowance",
@@ -186,12 +204,34 @@ export class WrappedStreamableERC20 extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    availableBalance(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    "availableBalance(address)"(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     balanceOf(account: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "balanceOf(address)"(
       account: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    cancelSubscription(
+      from: string,
+      to: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "cancelSubscription(address,address)"(
+      from: string,
+      to: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
     decimals(overrides?: CallOverrides): Promise<[number]>;
 
@@ -336,12 +376,31 @@ export class WrappedStreamableERC20 extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  availableBalance(user: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  "availableBalance(address)"(
+    user: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   "balanceOf(address)"(
     account: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  cancelSubscription(
+    from: string,
+    to: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "cancelSubscription(address,address)"(
+    from: string,
+    to: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
   decimals(overrides?: CallOverrides): Promise<number>;
 
@@ -486,12 +545,34 @@ export class WrappedStreamableERC20 extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    availableBalance(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "availableBalance(address)"(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     "balanceOf(address)"(
       account: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    cancelSubscription(
+      from: string,
+      to: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "cancelSubscription(address,address)"(
+      from: string,
+      to: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     decimals(overrides?: CallOverrides): Promise<number>;
 
@@ -591,7 +672,7 @@ export class WrappedStreamableERC20 extends Contract {
       rate: BigNumberish,
       maxAmount: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     "updateSubscription(address,address,uint256,uint256)"(
       from: string,
@@ -599,7 +680,7 @@ export class WrappedStreamableERC20 extends Contract {
       rate: BigNumberish,
       maxAmount: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     withdraw(amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
@@ -659,11 +740,33 @@ export class WrappedStreamableERC20 extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    availableBalance(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "availableBalance(address)"(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     "balanceOf(address)"(
       account: string,
       overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    cancelSubscription(
+      from: string,
+      to: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "cancelSubscription(address,address)"(
+      from: string,
+      to: string,
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     decimals(overrides?: CallOverrides): Promise<BigNumber>;
@@ -807,6 +910,16 @@ export class WrappedStreamableERC20 extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
+    availableBalance(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "availableBalance(address)"(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     balanceOf(
       account: string,
       overrides?: CallOverrides
@@ -815,6 +928,18 @@ export class WrappedStreamableERC20 extends Contract {
     "balanceOf(address)"(
       account: string,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    cancelSubscription(
+      from: string,
+      to: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "cancelSubscription(address,address)"(
+      from: string,
+      to: string,
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;

@@ -25,6 +25,7 @@ interface IStreamableERC20Interface extends ethers.utils.Interface {
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
+    "cancelSubscription(address,address)": FunctionFragment;
     "getSubscription(address,address)": FunctionFragment;
     "lastUpdatedBalanceOf(address)": FunctionFragment;
     "totalSupply()": FunctionFragment;
@@ -42,6 +43,10 @@ interface IStreamableERC20Interface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "cancelSubscription",
+    values: [string, string]
+  ): string;
   encodeFunctionData(
     functionFragment: "getSubscription",
     values: [string, string]
@@ -70,6 +75,10 @@ interface IStreamableERC20Interface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "cancelSubscription",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getSubscription",
     data: BytesLike
@@ -151,6 +160,18 @@ export class IStreamableERC20 extends Contract {
       account: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    cancelSubscription(
+      from: string,
+      to: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "cancelSubscription(address,address)"(
+      from: string,
+      to: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
     getSubscription(
       from: string,
@@ -252,6 +273,18 @@ export class IStreamableERC20 extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  cancelSubscription(
+    from: string,
+    to: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "cancelSubscription(address,address)"(
+    from: string,
+    to: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   getSubscription(
     from: string,
     to: string,
@@ -352,6 +385,18 @@ export class IStreamableERC20 extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    cancelSubscription(
+      from: string,
+      to: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "cancelSubscription(address,address)"(
+      from: string,
+      to: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     getSubscription(
       from: string,
       to: string,
@@ -410,7 +455,7 @@ export class IStreamableERC20 extends Contract {
       rate: BigNumberish,
       maxAmount: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     "updateSubscription(address,address,uint256,uint256)"(
       from: string,
@@ -418,7 +463,7 @@ export class IStreamableERC20 extends Contract {
       rate: BigNumberish,
       maxAmount: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
   };
 
   filters: {
@@ -472,6 +517,18 @@ export class IStreamableERC20 extends Contract {
     "balanceOf(address)"(
       account: string,
       overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    cancelSubscription(
+      from: string,
+      to: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "cancelSubscription(address,address)"(
+      from: string,
+      to: string,
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     getSubscription(
@@ -576,6 +633,18 @@ export class IStreamableERC20 extends Contract {
     "balanceOf(address)"(
       account: string,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    cancelSubscription(
+      from: string,
+      to: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "cancelSubscription(address,address)"(
+      from: string,
+      to: string,
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     getSubscription(

@@ -19,6 +19,16 @@ interface IStreamableERC20 is IERC20 {
      */
     function getSubscription(address from, address to) external view returns (uint256, uint256);
 
+
+	/**
+	 * @dev Cancels subscription started from `from` to `to`.
+	 *
+	 * Returns a boolean value indicating whether the operation succeeded.
+	 *
+	 * Emits a {SubscriptionCanceled} event.
+	 */
+	function cancelSubscription(address from, address to) external;
+
 	/**
 	 * @dev Updates the subscription from `from` to `to`.
 	 *
@@ -26,7 +36,7 @@ interface IStreamableERC20 is IERC20 {
 	 *
 	 * Emits a {SubscriptionUpdated} event.
 	 */
-	function updateSubscription(address from, address to, uint256 rate, uint256 maxAmount) external returns (bool);
+	function updateSubscription(address from, address to, uint256 rate, uint256 maxAmount) external;
 
 	/**
 	 * @dev Emitted when a subscription from `from` to `to` is started.
