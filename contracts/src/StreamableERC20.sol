@@ -16,6 +16,7 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
         uint256 outgoingRate;
         uint256 totalOutgoingAmount;
         uint256 blockAtLastUpdate;
+		uint256 availableAmount;
     }
 
 	enum SubscriptionType {
@@ -56,15 +57,42 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 	function lastUpdatedBalanceOf(address account) external view override returns (uint256) {
 
 		UserStatus memory user_status = _users[account];
+		console.log("user status incomming rate: %s", user_status.incomingRate);
+		console.log("user status incomming amount: %s", user_status.totalIncomingAmount);
+		console.log("user status outgoing rate: %s", user_status.outgoingRate);
+		console.log("user status total outgoing amount: %s", user_status.totalOutgoingAmount);
+		console.log("user status block at last update: %s", user_status.blockAtLastUpdate);
 
 		// get the invalid amounts (the differences between the amount from the expired subscriptions until now), for the subscriptions which are not updated yet.
 		// TODO: Refactor into a single function
 		uint256 amountFromActiveIncomingSubscriptionsThatEndedBeforeCurrentBlock = _getInvalidAmountFromExpiredIncomingSubscriptions(account);
+
+		console.log("amount inc subs %s", amountFromActiveIncomingSubscriptionsThatEndedBeforeCurrentBlock);
+
 		uint256 amountFromActiveOutgoingSubscriptionsThatEndedBeforeCurrentBlock = _getInvalidAmountFromExpiredOutgoingSubscriptions(account);
+
+		console.log("amount outgoing subs %s", amountFromActiveOutgoingSubscriptionsThatEndedBeforeCurrentBlock);
+
+
 		uint256 totalInvalidAmount = amountFromActiveIncomingSubscriptionsThatEndedBeforeCurrentBlock + amountFromActiveOutgoingSubscriptionsThatEndedBeforeCurrentBlock;
 
+		console.log("total invalid amount %s", totalInvalidAmount);
+		console.log("balance of account %s", super.balanceOf(account));
+		console.log("current block number %s", block.number);
+
+
 		// The last valid balance + the valid balance since the last update - the invalid balance
-		return super.balanceOf(account) + ((user_status.incomingRate - user_status.outgoingRate) * (block.number - user_status.blockAtLastUpdate)) - totalInvalidAmount;
+		int totalRateDifference = int(user_status.incomingRate) - int(user_status.outgoingRate);
+		int blockDifference = int(block.number - user_status.blockAtLastUpdate);
+
+		console.logInt(totalRateDifference);
+
+		console.logInt(blockDifference);
+		int rateTimesBlockDifferences = totalRateDifference * blockDifference;
+		console.logInt(rateTimesBlockDifferences);
+		uint result =  uint(int(super.balanceOf(account)) + rateTimesBlockDifferences - int(totalInvalidAmount));
+		console.log("Result is %s", result);
+		return result;
 	}
 
 	function _getInvalidAmountFromExpiredIncomingSubscriptions(address user) internal view returns (uint256) {
@@ -114,7 +142,7 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 
         require(msg.sender == from, "StreamableERC20: Not the subscriber");
 
-        _updateUserState(from);
+		_updateUsersState(from, to);
 		console.log("address from %s", from);
 		console.log("address to %s", to);
 		console.log("address rate %s", rate);
@@ -141,7 +169,7 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 
 			UserStatus storage user_to_status = _users[to];
 			user_to_status.incomingRate += rate;
-			user_from_status.totalIncomingAmount += maxAmount;
+			user_to_status.totalIncomingAmount += maxAmount;
 
 			emit SubscriptionStarted(from, to, rate, maxAmount);
 			return true;
@@ -155,11 +183,12 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 		return (_subscriptions[from][to].rate, _subscriptions[from][to].maxAmount);
 	}
 
-	function _updateUserState(address user) internal returns (bool) {
+	function _updateUsersState(address userFrom, address userTo) internal returns (bool) {
 
-		_updateOutgoingSubscriptions(user);
-		_updateIncomingSubscriptions(user);
-		_users[user].blockAtLastUpdate = block.number;
+		_updateOutgoingSubscriptions(userFrom);
+		_updateIncomingSubscriptions(userFrom);
+		_users[userFrom].blockAtLastUpdate = block.number;
+		_users[userTo].blockAtLastUpdate = block.number;
 
 	    return false;
 	}
