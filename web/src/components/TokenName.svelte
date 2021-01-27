@@ -20,8 +20,8 @@
 	}
 
 	.token-name {
-		font-weight: 300;
-		font-size: 0.8em;
+		/* font-weight: 300;
+		font-size: 0.8em; */
 
 		overflow: hidden;
 		text-overflow: ellipsis;

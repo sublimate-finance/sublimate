@@ -6,6 +6,7 @@
 	export let tokenAddress: Ethereum.ContractAddress
 	export let tokenIcon: string
 	export let tokenName: string
+	export let rateInterval: string | undefined
 
 	export let value: number | string | BigInt = '...'
 	export let showDecimalPlaces = 3
@@ -47,8 +48,11 @@
 		white-space: nowrap;
 	}
 
-	.token-name {
-		font-weight: 300;
+	.token-value {
+		font-weight: 500;
+	}
+
+	.token-name, .rate-slash, .rate-interval {
 		font-size: 0.8em;
 	}
 
@@ -64,7 +68,7 @@
 		<TokenIcon {token} {tokenAddress} {tokenIcon} />
 		<span>
 			<span class="token-value">{isDebt ? '−' : ''}{formatValue(value)}</span>
-			<span class="token-name">{token || '___'}</span>
+			<span class="token-name">{token || '___'}</span>{#if rateInterval}<span class="rate-slash">/</span><span class="rate-interval">{rateInterval}</span>{/if}
 		</span>
 	{/if}
 </span>

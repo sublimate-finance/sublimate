@@ -1,5 +1,5 @@
 <script lang="ts">
-	const creators = [{
+	const featuredCreators = [{
 		name: 'money.eth',
 		summary: 'DeFi Builder, Curve.fi',
 		image: 'https://picsum.photos/200/200',
@@ -23,7 +23,7 @@
 	}]
 
 	import Button from '../components/Button.svelte'
-	import CreatorSummary from '../components/CreatorSummary.svelte'
+	import CreatorCards from '../components/CreatorCards.svelte'
 </script>
 
 <style>
@@ -47,11 +47,8 @@
 		color: white;
 	}
 
-	.creators {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(16em, 1fr));
-		font-size: 0.8em;
-		gap: var(--space-inner);
+	#creators :global(.creator-cards) {
+		font-size: 0.6em;
 	}
 </style>
 
@@ -80,11 +77,7 @@
 
 <section id="creators" class="accented">
 	<h2>We love our developers and content creators</h2>
-	<div class="creators">
-		{#each creators as creatorInfo}
-			<CreatorSummary {...creatorInfo} />
-		{/each}
-	</div>
+	<CreatorCards creators={featuredCreators} />
 	<div>
 		<Button href="explore">Explore Creators</Button>
 	</div>

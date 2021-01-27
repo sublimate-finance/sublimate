@@ -159,6 +159,7 @@ select {
 section {
 	display: grid;
 	gap: var(--space-inner);
+	padding: var(--space-outer);
 	grid-template-columns: 100%;
 }
 
@@ -177,9 +178,24 @@ img, svg, video, canvas, audio, iframe, embed, object {
 
 
 table {
-	border-collapse: separate;
-	border-spacing: var(--space-inner);
-	width: 100%;
+	--space-inner: 1em;
+	/* border-collapse: separate; */
+	border-spacing: 0;
+	/* width: 100%; */
+	margin: calc(-1 * var(--space-inner) / 2);
+}
+thead {
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+	padding-bottom: var(--space-inner);
+}
+tbody {
+	padding-top: var(--space-inner);
+}
+/* tr:nth-child(2n) {
+	background-color: rgba(0, 0, 0, 0.02);
+} */
+tr > * {
+	padding: calc(var(--space-inner) / 2);
 }
 tr > :first-child {
 	text-align: left;
@@ -237,6 +253,13 @@ main {
 	text-transform: uppercase;
 }
 
+.boxed {
+	text-align: center;
+	padding: 0.75em 1em;
+	border-radius: 0.5em;
+	width: 100%;
+}
+
 
 .column {
 	display: grid;
@@ -247,6 +270,7 @@ main {
 	display: flex;
 	flex-direction: columns;
 	gap: var(--space-inner);
+	width: 100%;
 }
 .columns > * {
 	flex: 1;
