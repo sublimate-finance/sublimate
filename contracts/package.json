@@ -5,6 +5,7 @@
   "private": true,
   "devDependencies": {
     "@ethersproject/bignumber": "^5.0.13",
+  	"@ethersproject/contracts": "^5.0.9",
     "@ethersproject/bytes": "^5.0.9",
     "@ethersproject/providers": "^5.0.19",
     "@ethersproject/solidity": "^5.0.8",

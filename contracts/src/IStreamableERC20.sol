@@ -41,20 +41,23 @@ interface IStreamableERC20 is IERC20 {
 	/**
 	 * @dev Emitted when a subscription from `from` to `to` is started.
 	 */
-
-	event SubscriptionStarted(address indexed from, address indexed to, uint256 rate, uint256 maxAmount);
+	event SubscriptionStarted(address indexed from, address indexed to, uint256 indexed rate, uint256 indexed maxAmount, uint256 indexed startBlock, uint256 indexed endBlock, uint256 indexed lastTransferAtBlock, uint256 indexed amountPaid);
 
 
 	/**
-	 * @dev Emitted when a subscription from `from` to `to` is stopped (user runs out of funds).
+	 * @dev Emitted when a subscription from `from` to `to` is updated.
 	 */
-	event SubscriptionStopped(address indexed from, address indexed to);
-
+	event SubscriptionUpdated(address indexed from, address indexed to, uint256 indexed rate, uint256 indexed maxAmount, uint256 indexed startBlock, uint256 indexed endBlock, uint256 indexed lastTransferAtBlock, uint256 indexed amountPaid);
 
 	/**
      * @dev Emitted when a subscription from `from` to `to` is canceled by the user.
     */
-	event SubscriptionCanceled(address indexed from, address indexed to);
+	event SubscriptionCanceled(address indexed from, address indexed to, uint256 indexed rate, uint256 indexed maxAmount, uint256 indexed startBlock, uint256 indexed endBlock, uint256 indexed lastTransferAtBlock, uint256 indexed amountPaid);
+
+	/**
+     * @dev Emitted when the user's status is changed.
+    */
+	event UserStatusChanged(address indexed account, address uint256 incomingRate, uint256 indexed totalMaxIncomingAmount, uint256 indexed outgoingRate,  uint256 indexed totalMaxOutgoingAmount, uint256 indexed blockAtLastUpdate);
 
 
 

@@ -13,9 +13,9 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 
     struct UserStatus {
         uint256 incomingRate;
-        uint256 totalIncomingAmount;
+        uint256 totalMaxIncomingAmount;
         uint256 outgoingRate;
-        uint256 totalOutgoingAmount;
+        uint256 totalMaxOutgoingAmount;
         uint256 blockAtLastUpdate;
     }
 
@@ -57,40 +57,22 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 	function lastUpdatedBalanceOf(address account) external view override returns (uint256) {
 
 		UserStatus memory user_status = _users[account];
-		console.log("user status incomming rate: %s", user_status.incomingRate);
-		console.log("user status incomming amount: %s", user_status.totalIncomingAmount);
-		console.log("user status outgoing rate: %s", user_status.outgoingRate);
-		console.log("user status total outgoing amount: %s", user_status.totalOutgoingAmount);
-		console.log("user status block at last update: %s", user_status.blockAtLastUpdate);
-
 		// get the invalid amounts (the differences between the amount from the expired subscriptions until now), for the subscriptions which are not updated yet.
 		// TODO: Refactor into a single function
 		uint256 invalidIncomingAmount = _getInvalidAmountFromExpiredIncomingSubscriptions(account);
 
-		console.log("amount inc subs %s", invalidIncomingAmount);
 
 		uint256 invalidOutgoingAmount = _getInvalidAmountFromExpiredOutgoingSubscriptions(account);
 
-		console.log("amount outgoing subs %s", invalidOutgoingAmount);
-
 		// reverse logic here, to compensate for the real balances, the substraction of the invalid incoming from invalid outgoing is not mistake
 		int totalInvalidAmount = int(invalidOutgoingAmount) - int(invalidIncomingAmount);
-
-		console.log("balance of account %s", super.balanceOf(account));
-		console.log("current block number %s", block.number);
-
 
 		// The last valid balance + the valid balance since the last update - the invalid balance
 		int totalRateDifference = int(user_status.incomingRate) - int(user_status.outgoingRate);
 		int blockDifference = int(block.number - user_status.blockAtLastUpdate);
 
-		console.logInt(totalRateDifference);
-
-		console.logInt(blockDifference);
 		int rateTimesBlockDifferences = totalRateDifference * blockDifference;
-		console.logInt(rateTimesBlockDifferences);
 		uint result =  uint(int(super.balanceOf(account)) + rateTimesBlockDifferences + totalInvalidAmount);
-		console.log("Result is %s", result);
 		return result;
 	}
 
@@ -141,6 +123,7 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 		require(msg.sender == from, "Only the subscriber can cancel the subscription.");
 		require(_subscriptions[from][to].status == SubscriptionStatus.ACTIVE, "Only active subscriptions can be canceled.");
 		_updateIncomingAndOutgoingSubscriptions(from);
+		_updateIncomingAndOutgoingSubscriptions(to);
 		_updateBlockAtLastUpdate(from);
 		_updateBlockAtLastUpdate(to);
 
@@ -149,15 +132,12 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 		_users[from].totalOutgoingAmount -= _subscriptions[from][to].maxAmount;
 
 		uint256 unpaidAmount = _subscriptions[from][to].maxAmount - _subscriptions[from][to].amountPaid;
-		console.log("unpaid amount %s", unpaidAmount);
 		_increaseAvailableBalance(from, unpaidAmount);
 
-		console.log("available balance %", _availableBalances[from]);
-
 		_users[to].incomingRate -= _subscriptions[from][to].rate;
-		_users[to].totalIncomingAmount -= _subscriptions[from][to].maxAmount;
+		_users[to].totalMaxIncomingAmount -= _subscriptions[from][to].maxAmount;
 
-		emit SubscriptionCanceled(from, to);
+		emit SubscriptionCanceled(from, to, _subscriptions[from][to].rate, _subscriptions[from][to].maxAmount, _subscriptions[from][to].startBlock, _subscriptions[from][to].endBlock, _subscriptions[from][to].lastTransferAtBlock, _subscriptions[from][to].amountPaid);
 	}
 
 	/**
@@ -176,19 +156,17 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
         require(availableBalance(from) >= maxAmount, "Insufficient balance.");
 
 		_updateIncomingAndOutgoingSubscriptions(from);
+		// TODO: Think if this should happen later
+		_updateIncomingAndOutgoingSubscriptions(to);
 		_updateBlockAtLastUpdate(from);
 		_updateBlockAtLastUpdate(to);
-		console.log("address from %s", from);
-		console.log("address to %s", to);
-		console.log("address rate %s", rate);
-		console.log("address maxAmount %s", maxAmount);
-		console.log("super balance of", super.balanceOf(from));
-		require(super.balanceOf(from) >= maxAmount, "Insufficient balance.");
 
 
 		if(_subscriptions[from][to].status == SubscriptionStatus.INACTIVE) {
+			require(super.balanceOf(from) >= maxAmount, "Insufficient balance.");
 			// In case there is a reminder, we will pay it in the last payment
 			uint256 blockEnd = block.number + (maxAmount / rate);
+
 			Subscription memory sub = Subscription(rate, maxAmount, block.number, blockEnd, block.number, 0, SubscriptionStatus.ACTIVE);
 			_subscriptions[from][to] = sub;
 			_activeOutgoingSubscriptions[from].push(to);
@@ -199,12 +177,20 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 			user_from_status.totalOutgoingAmount += maxAmount;
 			_decreaseAvailableBalance(from, maxAmount);
 
-
 			UserStatus storage user_to_status = _users[to];
 			user_to_status.incomingRate += rate;
-			user_to_status.totalIncomingAmount += maxAmount;
+			user_to_status.totalMaxIncomingAmount += maxAmount;
 
-			emit SubscriptionStarted(from, to, rate, maxAmount);
+			emit SubscriptionStarted(from, to, rate, maxAmount, block.number, blockEnd, block.number, 0);
+		} else if(_subscriptions[from][to].status == SubscriptionStatus.ACTIVE) {
+			Subscription storage subscription = _subscriptions[from][to];
+			// TODO: Write checks for rate and max amount and balance
+			// TODO: Write code for updating user status
+			uint256 blockEnd = subscription.startBlock + (maxAmount / rate);
+			subscription.endBlock = blockEnd;
+			subscription.rate = rate;
+			subscription.maxAmount = maxAmount;
+			emit SubscriptionUpdated(from, to, rate, maxAmount, block.number, blockEnd, block.number, subscription.amountPaid);
 		}
 
 	}
@@ -289,7 +275,6 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 
 		}
 
-//		_activeIncomingSubscriptions[user] = newActiveIncomingSubscriptions[:newActiveSubscriptionsIndex];
 		_activeIncomingSubscriptions[user] = newActiveIncomingSubscriptions;
 
 
@@ -315,7 +300,7 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 
 		if(_type == SubscriptionType.INCOMING) {
 			_users[addressTo].incomingRate -= subscription.rate;
-			_users[addressTo].totalIncomingAmount -= subscription.maxAmount;
+			_users[addressTo].totalMaxIncomingAmount -= subscription.maxAmount;
 		} else {
 			_users[addressFrom].outgoingRate -= subscription.rate;
 			_users[addressFrom].totalOutgoingAmount -= subscription.maxAmount;
@@ -346,12 +331,6 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 	function availableBalance(address user) public view returns (uint256) {
 		return _availableBalances[user];
 	}
-
-
-//
-//	event SubscriptionStarted(address indexed from, address indexed to, uint256 rate, uint256 maxAmount);
-//	event SubscriptionStopped(address indexed from, address indexed to);
-//	event SubscriptionCanceled(address indexed from, address indexed to);
 
 
 }
