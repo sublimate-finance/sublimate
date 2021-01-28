@@ -251,6 +251,7 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 				_updateActiveSubscription(subscription, user, subscriptionToAddress);
 				newActiveOutgoingSubscriptions[newActiveSubscriptionsIndex++] = subscriptionToAddress;
 			}
+			_updateBlockAtLastUpdate(subscriptionToAddress);
 		}
 //		_activeOutgoingSubscriptions[user] = newActiveOutgoingSubscriptions[:newActiveSubscriptionsIndex];
 		_activeOutgoingSubscriptions[user] = newActiveOutgoingSubscriptions;
@@ -283,8 +284,9 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 				// Pay unpaid amount
 				_updateActiveSubscription(subscription, subscriptionFromAddress, user);
 				newActiveIncomingSubscriptions[newActiveSubscriptionsIndex++] = subscriptionFromAddress;
-
 			}
+			_updateBlockAtLastUpdate(subscriptionFromAddress);
+
 		}
 
 //		_activeIncomingSubscriptions[user] = newActiveIncomingSubscriptions[:newActiveSubscriptionsIndex];

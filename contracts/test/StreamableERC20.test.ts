@@ -701,156 +701,164 @@ describe('strETH', function () {
 		})
 
 
-		// it('should be allowed for the subscriber if the total amount is less than the available balance', async function () {
-		// 	const from = parent.accounts[0].address;
-		// 	const toFirst = parent.accounts[1].address;
-		// 	const toSecond = parent.accounts[1].address;
-		// 	const rate = amount('1');
-		// 	const maxAmountFirstSub = amount('3');
-		// 	const maxAmountSecondSub = amount('6');
-		//
-		// 	await parent.contract.updateSubscription(from, toFirst, rate, maxAmountFirstSub, {from: from});
-		// 	await parent.contract.updateSubscription(from, toSecond, rate, maxAmountSecondSub, {from: from});
-		//
-		// 	await mine_blocks(10, parent.provider);
-		//
-		//
-		// 	const expectedBalanceFrom = amount('9');
-		// 	const balanceFrom = await parent.contract.balanceOf(from);
-		// 	expect(balanceFrom).to.equal(expectedBalanceFrom);
-		//
-		// 	const expectedLastUpdatedBalanceFrom = amount('1');
-		// 	const lastUpdatedBalanceFrom = await this.contract.lastUpdatedBalanceOf(from);
-		// 	expect(lastUpdatedBalanceFrom).to.equal(expectedLastUpdatedBalanceFrom);
-		//
-		// 	const expectedBalanceToFirst = amount('1');
-		// 	const balanceToFirst = await parent.contract.balanceOf(toFirst);
-		// 	expect(balanceToFirst).to.equal(expectedBalanceToFirst);
-		//
-		//
-		// 	const lastUpdatedBalanceToFirst = await this.contract.lastUpdatedBalanceOf(toFirst);
-		// 	expect(lastUpdatedBalanceToFirst).to.equal(maxAmountFirstSub);
-		//
-		//
-		// 	const expectedBalanceToSecond = amount('0');
-		//
-		// 	const balanceToSecond = await parent.contract.balanceOf(toSecond);
-		// 	expect(balanceToSecond).to.equal(expectedBalanceToSecond);
-		//
-		// 	const lastUpdatedBalanceToSecond = await this.contract.lastUpdatedBalanceOf(toSecond);
-		// 	expect(lastUpdatedBalanceToSecond).to.equal(maxAmountSecondSub);
-		//
-		//
-		// });
-		//
-		// it('should not be allowed for the subscriber if he does not have enough balance', async function () {
-		//
-		// 	const from = parent.accounts[0].address;
-		// 	const toFirst = parent.accounts[1].address;
-		// 	const toSecond = parent.accounts[1].address;
-		// 	const rate = amount('1');
-		// 	const maxAmountFirstSub = amount('5');
-		// 	const maxAmountSecondSub = amount('6');
-		//
-		// 	await parent.contract.updateSubscription(from, toFirst, rate, maxAmountFirstSub, {from: from});
-		// 	await expect(parent.contract.updateSubscription(from, toSecond, rate, maxAmountSecondSub, {from: from})).to.be.revertedWith('Insufficient balance.');
-		//
-		// 	await mine_blocks(10, parent.provider);
-		//
-		//
-		// 	const expectedBalanceFrom = amount('9');
-		// 	const balanceFrom = await parent.contract.balanceOf(from);
-		// 	expect(balanceFrom).to.equal(expectedBalanceFrom);
-		//
-		// 	const expectedLastUpdatedBalanceFrom = amount('5');
-		// 	const lastUpdatedBalanceFrom = await this.contract.lastUpdatedBalanceOf(from);
-		// 	expect(lastUpdatedBalanceFrom).to.equal(expectedLastUpdatedBalanceFrom);
-		//
-		// 	const expectedBalanceToFirst = amount('1');
-		// 	const balanceToFirst = await parent.contract.balanceOf(toFirst);
-		// 	expect(balanceToFirst).to.equal(expectedBalanceToFirst);
-		//
-		// 	const lastUpdatedBalanceToFirst = await this.contract.lastUpdatedBalanceOf(toFirst);
-		// 	expect(lastUpdatedBalanceToFirst).to.equal(maxAmountFirstSub);
-		//
-		// 	const balanceToSecond = await parent.contract.balanceOf(toSecond);
-		// 	expect(balanceToSecond).to.equal(0);
-		//
-		// 	const lastUpdatedBalanceToSecond = await this.contract.lastUpdatedBalanceOf(toSecond);
-		// 	expect(lastUpdatedBalanceToSecond).to.equal(0);
-		//
-		// });
-		//
-		// it('should result in balances updated successfully when the subscriber cancels a subscription', async function () {
-		// 	const from = parent.accounts[0].address;
-		// 	const toFirst = parent.accounts[1].address;
-		// 	const toSecond = parent.accounts[1].address;
-		// 	const rate = amount('1');
-		// 	const maxAmountFirstSub = amount('5');
-		// 	const maxAmountSecondSub = amount('5');
-		//
-		// 	await parent.contract.updateSubscription(from, toFirst, rate, maxAmountFirstSub, {from: from});
-		// 	await parent.contract.updateSubscription(from, toSecond, rate, maxAmountSecondSub, {from: from});
-		//
-		//
-		// 	await mine_blocks(3, parent.provider);
-		// 	await parent.contract.cancelSubscription(from, toSecond);
-		//
-		// 	await mine_blocks(5, parent.provider);
-		//
-		//
-		// 	const expectedAmountFrom = amount('1');
-		// 	const balanceFrom = await parent.contract.balanceOf(from);
-		// 	expect(balanceFrom).to.equal(expectedAmountFrom);
-		//
-		// 	const balanceToFirst = await parent.contract.balanceOf(toFirst);
-		// 	expect(balanceToFirst).to.equal(maxAmountFirstSub);
-		//
-		// 	const lastUpdatedBalanceToFirst = await this.contract.lastUpdatedBalanceOf(toFirst);
-		// 	expect(lastUpdatedBalanceToFirst).to.equal(maxAmountFirstSub);
-		//
-		//
-		// 	const expectedAmount = amount('4');
-		// 	const balanceToSecond = await parent.contract.balanceOf(toSecond);
-		// 	expect(balanceToSecond).to.equal(expectedAmount);
-		//
-		// 	const lastUpdatedBalanceToSecond = await this.contract.lastUpdatedBalanceOf(toSecond);
-		// 	expect(lastUpdatedBalanceToSecond).to.equal(expectedAmount);
-		//
-		// });
-		//
-		// it('should result in balances updated successfully when the subscriber withdraws certain amount', async function () {
-		// 	const from = parent.accounts[0].address;
-		// 	const toFirst = parent.accounts[1].address;
-		// 	const toSecond = parent.accounts[1].address;
-		// 	const rate = amount('1');
-		// 	const maxAmountFirstSub = amount('2');
-		// 	const maxAmountSecondSub = amount('5');
-		//
-		// 	await parent.contract.updateSubscription(from, toFirst, rate, maxAmountFirstSub, {from: from});
-		// 	await parent.contract.updateSubscription(from, toSecond, rate, maxAmountSecondSub, {from: from});
-		//
-		// 	await mine_blocks(5, parent.provider);
-		//
-		// 	await parent.contract.withdraw(from, amount('3'), {from: from});
-		//
-		// 	const expectedAmountFrom = amount('0');
-		// 	const balanceFrom = await parent.contract.balanceOf(from);
-		// 	expect(balanceFrom).to.equal(expectedAmountFrom);
-		//
-		// 	const balanceToFirst = await parent.contract.balanceOf(toFirst);
-		// 	expect(balanceToFirst).to.equal(maxAmountFirstSub);
-		//
-		// 	const lastUpdatedBalanceToFirst = await this.contract.lastUpdatedBalanceOf(toFirst);
-		// 	expect(lastUpdatedBalanceToFirst).to.equal(maxAmountFirstSub);
-		//
-		//
-		// 	const balanceToSecond = await parent.contract.balanceOf(toSecond);
-		// 	expect(balanceToSecond).to.equal(maxAmountSecondSub);
-		//
-		// 	const lastUpdatedBalanceToSecond = await this.contract.lastUpdatedBalanceOf(toSecond);
-		// 	expect(lastUpdatedBalanceToSecond).to.equal(maxAmountSecondSub);
-		// });
+		it('should be allowed for the subscriber if the total amount is less than the available balance', async function () {
+			const from = parent.accounts[0].address;
+			const toFirst = parent.accounts[1].address;
+			const toSecond = parent.accounts[2].address;
+			const rate = amount('1');
+			const maxAmountFirstSub = amount('3');
+			const maxAmountSecondSub = amount('6');
+
+			await parent.contract.updateSubscription(from, toFirst, rate, maxAmountFirstSub, {from: from});
+			await parent.contract.updateSubscription(from, toSecond, rate, maxAmountSecondSub, {from: from});
+
+			await mine_blocks(10, parent.provider);
+
+
+			const expectedBalanceFrom = amount('9');
+			const balanceFrom = await parent.contract.balanceOf(from);
+			expect(balanceFrom).to.equal(expectedBalanceFrom);
+
+			const expectedLastUpdatedBalanceFrom = amount('1');
+			const lastUpdatedBalanceFrom = await this.contract.lastUpdatedBalanceOf(from);
+			expect(lastUpdatedBalanceFrom).to.equal(expectedLastUpdatedBalanceFrom);
+
+			const expectedBalanceToFirst = amount('1');
+			const balanceToFirst = await parent.contract.balanceOf(toFirst);
+			expect(balanceToFirst).to.equal(expectedBalanceToFirst);
+
+
+			const lastUpdatedBalanceToFirst = await this.contract.lastUpdatedBalanceOf(toFirst);
+			expect(lastUpdatedBalanceToFirst).to.equal(maxAmountFirstSub);
+
+
+			const expectedBalanceToSecond = amount('0');
+
+			const balanceToSecond = await parent.contract.balanceOf(toSecond);
+			expect(balanceToSecond).to.equal(expectedBalanceToSecond);
+
+			const lastUpdatedBalanceToSecond = await this.contract.lastUpdatedBalanceOf(toSecond);
+			expect(lastUpdatedBalanceToSecond).to.equal(maxAmountSecondSub);
+
+
+		});
+
+		it('should not be allowed for the subscriber if he does not have enough balance', async function () {
+
+			const from = parent.accounts[0].address;
+			const toFirst = parent.accounts[1].address;
+			const toSecond = parent.accounts[2].address;
+			const rate = amount('1');
+			const maxAmountFirstSub = amount('5');
+			const maxAmountSecondSub = amount('6');
+
+			await parent.contract.updateSubscription(from, toFirst, rate, maxAmountFirstSub, {from: from});
+			await expect(parent.contract.updateSubscription(from, toSecond, rate, maxAmountSecondSub, {from: from})).to.be.revertedWith('Insufficient balance.');
+
+			await mine_blocks(10, parent.provider);
+
+
+			const expectedBalanceFrom = amount('10');
+			const balanceFrom = await parent.contract.balanceOf(from);
+			expect(balanceFrom).to.equal(expectedBalanceFrom);
+
+			const expectedLastUpdatedBalanceFrom = amount('5');
+			const lastUpdatedBalanceFrom = await this.contract.lastUpdatedBalanceOf(from);
+			expect(lastUpdatedBalanceFrom).to.equal(expectedLastUpdatedBalanceFrom);
+
+			const expectedBalanceToFirst = amount('0');
+			const balanceToFirst = await parent.contract.balanceOf(toFirst);
+			expect(balanceToFirst).to.equal(expectedBalanceToFirst);
+
+			const lastUpdatedBalanceToFirst = await this.contract.lastUpdatedBalanceOf(toFirst);
+			expect(lastUpdatedBalanceToFirst).to.equal(maxAmountFirstSub);
+
+			const balanceToSecond = await parent.contract.balanceOf(toSecond);
+			expect(balanceToSecond).to.equal(0);
+
+			const lastUpdatedBalanceToSecond = await this.contract.lastUpdatedBalanceOf(toSecond);
+			expect(lastUpdatedBalanceToSecond).to.equal(0);
+
+		});
+
+		it('should result in balances updated successfully when the subscriber cancels a subscription', async function () {
+			const from = parent.accounts[0].address;
+			const toFirst = parent.accounts[1].address;
+			const toSecond = parent.accounts[2].address;
+			const rate = amount('1');
+			const maxAmountFirstSub = amount('5');
+			const maxAmountSecondSub = amount('5');
+
+			await parent.contract.updateSubscription(from, toFirst, rate, maxAmountFirstSub, {from: from});
+			await parent.contract.updateSubscription(from, toSecond, rate, maxAmountSecondSub, {from: from});
+
+
+			await mine_blocks(3, parent.provider);
+			await parent.contract.cancelSubscription(from, toSecond);
+
+			await mine_blocks(5, parent.provider);
+
+
+
+
+			const expectedAmountFrom = amount('1');
+			const balanceFrom = await parent.contract.balanceOf(from);
+			expect(balanceFrom).to.equal(expectedAmountFrom);
+
+			const lastUpdatedBalanceFrom = await this.contract.lastUpdatedBalanceOf(from);
+			expect(lastUpdatedBalanceFrom).to.equal(expectedAmountFrom);
+
+			const balanceToFirst = await parent.contract.balanceOf(toFirst);
+			expect(balanceToFirst).to.equal(maxAmountFirstSub);
+
+			const lastUpdatedBalanceToFirst = await this.contract.lastUpdatedBalanceOf(toFirst);
+			expect(lastUpdatedBalanceToFirst).to.equal(maxAmountFirstSub);
+
+
+			const expectedAmount = amount('4');
+			const balanceToSecond = await parent.contract.balanceOf(toSecond);
+			expect(balanceToSecond).to.equal(expectedAmount);
+
+			const lastUpdatedBalanceToSecond = await this.contract.lastUpdatedBalanceOf(toSecond);
+			expect(lastUpdatedBalanceToSecond).to.equal(expectedAmount);
+
+		});
+
+		it('should result in balances updated successfully when the subscriber withdraws certain amount', async function () {
+			const from = parent.accounts[0].address;
+			const toFirst = parent.accounts[1].address;
+			const toSecond = parent.accounts[2].address;
+			const rate = amount('1');
+			const maxAmountFirstSub = amount('2');
+			const maxAmountSecondSub = amount('5');
+
+			await parent.contract.updateSubscription(from, toFirst, rate, maxAmountFirstSub, {from: from});
+			await parent.contract.updateSubscription(from, toSecond, rate, maxAmountSecondSub, {from: from});
+
+			await mine_blocks(5, parent.provider);
+
+			await parent.contract.withdraw(amount('3'), {from: from});
+
+			const expectedAmountFrom = amount('0');
+			const balanceFrom = await parent.contract.balanceOf(from);
+			expect(balanceFrom).to.equal(expectedAmountFrom);
+
+			const lastUpdatedBalanceFrom = await this.contract.lastUpdatedBalanceOf(from);
+			expect(lastUpdatedBalanceFrom).to.equal(expectedAmountFrom);
+
+			const balanceToFirst = await parent.contract.balanceOf(toFirst);
+			expect(balanceToFirst).to.equal(maxAmountFirstSub);
+
+			const lastUpdatedBalanceToFirst = await this.contract.lastUpdatedBalanceOf(toFirst);
+			expect(lastUpdatedBalanceToFirst).to.equal(maxAmountFirstSub);
+
+
+			const balanceToSecond = await parent.contract.balanceOf(toSecond);
+			expect(balanceToSecond).to.equal(maxAmountSecondSub);
+
+			const lastUpdatedBalanceToSecond = await this.contract.lastUpdatedBalanceOf(toSecond);
+			expect(lastUpdatedBalanceToSecond).to.equal(maxAmountSecondSub);
+		});
 
 		// it('should allow the receiver to withdraw available balances while the subscriptions are running successfully', async function () {
 		// 	const from = parent.accounts[0].address;
