@@ -150,10 +150,11 @@ interface WrappedStreamableERC20Interface extends ethers.utils.Interface {
   events: {
     "Approval(address,address,uint256)": EventFragment;
     "Deposit(address,uint256)": EventFragment;
-    "SubscriptionCanceled(address,address)": EventFragment;
-    "SubscriptionStarted(address,address,uint256,uint256)": EventFragment;
-    "SubscriptionStopped(address,address)": EventFragment;
+    "SubscriptionCanceled(address,address,uint256,uint256,uint256,uint256,uint256,uint256)": EventFragment;
+    "SubscriptionStarted(address,address,uint256,uint256,uint256,uint256,uint256,uint256)": EventFragment;
+    "SubscriptionUpdated(address,address,uint256,uint256,uint256,uint256,uint256,uint256)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
+    "UserStatusChanged(address,uint256,uint256,uint256,uint256,uint256)": EventFragment;
     "Withdrawal(address,uint256)": EventFragment;
   };
 
@@ -161,8 +162,9 @@ interface WrappedStreamableERC20Interface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SubscriptionCanceled"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SubscriptionStarted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SubscriptionStopped"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SubscriptionUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UserStatusChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdrawal"): EventFragment;
 }
 
@@ -699,18 +701,49 @@ export class WrappedStreamableERC20 extends Contract {
 
     Deposit(destination: string | null, amount: null): EventFilter;
 
-    SubscriptionCanceled(from: string | null, to: string | null): EventFilter;
+    SubscriptionCanceled(
+      from: string | null,
+      to: string | null,
+      rate: null,
+      maxAmount: null,
+      startBlock: null,
+      endBlock: null,
+      lastTransferAtBlock: BigNumberish | null,
+      amountPaid: null
+    ): EventFilter;
 
     SubscriptionStarted(
       from: string | null,
       to: string | null,
       rate: null,
-      maxAmount: null
+      maxAmount: null,
+      startBlock: null,
+      endBlock: null,
+      lastTransferAtBlock: BigNumberish | null,
+      amountPaid: null
     ): EventFilter;
 
-    SubscriptionStopped(from: string | null, to: string | null): EventFilter;
+    SubscriptionUpdated(
+      from: string | null,
+      to: string | null,
+      rate: null,
+      maxAmount: null,
+      startBlock: null,
+      endBlock: null,
+      lastTransferAtBlock: BigNumberish | null,
+      amountPaid: null
+    ): EventFilter;
 
     Transfer(from: string | null, to: string | null, value: null): EventFilter;
+
+    UserStatusChanged(
+      account: string | null,
+      incomingRate: BigNumberish | null,
+      totalMaxIncomingAmount: null,
+      outgoingRate: null,
+      totalMaxOutgoingAmount: null,
+      blockAtLastUpdate: BigNumberish | null
+    ): EventFilter;
 
     Withdrawal(source: string | null, amount: null): EventFilter;
   };
