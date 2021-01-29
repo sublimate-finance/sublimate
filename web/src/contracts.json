@@ -3,7 +3,7 @@
   "chainId": "1337",
   "contracts": {
     "GreetingsRegistry": {
-      "address": "0xc5a5C42992dECbae36851359345FE25997F5C42d",
+      "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
       "abi": [
         {
           "anonymous": false,
@@ -192,7 +192,7 @@
       ]
     },
     "GreetingsRegistry_Implementation": {
-      "address": "0x09635F643e140090A9A8Dcd712eD6285858ceBef",
+      "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
       "abi": [
         {
           "inputs": [
@@ -266,7 +266,7 @@
       ]
     },
     "GreetingsRegistry_Proxy": {
-      "address": "0xc5a5C42992dECbae36851359345FE25997F5C42d",
+      "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
       "abi": [
         {
           "inputs": [
@@ -831,13 +831,33 @@
           "outputs": [
             {
               "internalType": "uint256",
-              "name": "",
+              "name": "rate",
               "type": "uint256"
             },
             {
               "internalType": "uint256",
-              "name": "",
+              "name": "maxAmount",
               "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "startBlock",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "endBlock",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amountPaid",
+              "type": "uint256"
+            },
+            {
+              "internalType": "enum IStreamableERC20.SubscriptionStatus",
+              "name": "status",
+              "type": "uint8"
             }
           ],
           "stateMutability": "view",
@@ -1477,13 +1497,33 @@
           "outputs": [
             {
               "internalType": "uint256",
-              "name": "",
+              "name": "rate",
               "type": "uint256"
             },
             {
               "internalType": "uint256",
-              "name": "",
+              "name": "maxAmount",
               "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "startBlock",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "endBlock",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amountPaid",
+              "type": "uint256"
+            },
+            {
+              "internalType": "enum IStreamableERC20.SubscriptionStatus",
+              "name": "status",
+              "type": "uint8"
             }
           ],
           "stateMutability": "view",
