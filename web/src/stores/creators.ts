@@ -23,6 +23,11 @@ export const creators = [
 				subscriberCount: 400,
 			}]
 		},
+		outgoingSubscriptions: {
+			aggregated: {
+
+			}
+		},
 		transactions: []
 	},
 	{

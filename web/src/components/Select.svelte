@@ -1,11 +1,18 @@
 <script lang="ts">
 	export let options = []
 	export let value
+
+	// Display options
+	export let style: 'full' | 'pill' = 'pill'
 </script>
 
 <style>
-	label {
+	/* label {
 		display: contents;
+	} */
+
+	label.style-full {
+		display: grid;
 	}
 
 	input[type="radio"] {
@@ -14,15 +21,21 @@
 
 	span {
 		display: inline-flex;
+		justify-content: center;
 
 		background-color: transparent;
-		border-radius: 1rem;
-		padding: 0.2em 0.8em;
 		opacity: 0.66;
 
 		transition: 0.3s;
 
 		cursor: pointer;
+	}
+	.style-pill span {
+		border-radius: 1rem;
+		padding: 0.2em 0.8em;
+	}
+	.style-full span {
+		padding: 0.75em 1em;
 	}
 	span:hover {
 		opacity: 0.9;
@@ -39,7 +52,7 @@
 </style>
 
 {#each options as option}
-	<label class="select-option">
+	<label class="select-option style-{style}">
 		<input type="radio" bind:group={value} value={option}>
 		<span>{option}</span>
 	</label>

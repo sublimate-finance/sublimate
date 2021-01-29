@@ -5,13 +5,11 @@
 
 	const creator = creators[0]
 
-	let rateTimeInterval = TimeInterval.Day
-
 	import AllTransactions from '../components/AllTransactions.svelte'
 	import CreatorChart from '../components/CreatorChart.svelte'
 	import Footer from '../components/Footer.svelte'
-	import IncomingSubscriptionsSummary from '../components/IncomingSubscriptionsSummary.svelte'
 	import ProfileSummary from '../components/ProfileSummary.svelte'
+	import SubscriptionsSummary from '../components/SubscriptionsSummary.svelte'
 	import Select from '../components/Select.svelte'
 </script>
 
@@ -44,31 +42,6 @@
 			</div>
 		</div>
 		<div class="column">
-			<h3>Quick Stats</h3>
-			<!-- <p>
-				<span class="boxed neumorphic">13,324.04 ETH</span>
-				<span>collected since January 2017.</span>
-			</p>
-			<p>
-				<span class="boxed neumorphic">24.04 ETH</span>
-				<span>collected in the last</span>
-				<span class="boxed neumorphic">24 hours</span>.
-			</p> -->
-			<div class="flex flex-row items-center space-x-2 text-sm">
-				<span class="p-3 rounded-md shadow-inner"><b class="font-bold">13,324.04</b> ETH</span>
-				<span>collected since January 2017.</span>
-			</div>
-			<div class="flex flex-row items-center space-x-2 text-sm">
-				<span class="p-3 rounded-md shadow-inner"><b class="font-bold">24.04</b> ETH</span>
-				<span>collected in the last</span>
-				<span class="p-3 rounded-md shadow-inner"><b class="font-bold">24 hours.</b></span>
-			</div>
-
-			<div class="boxed neumorphic">
-				<Select options={timeIntervals} bind:value={rateTimeInterval} />
-			</div>
-		</div>
-		<div class="column">
 			<h3>Share your Sublimate link</h3>
 			<button class="bar boxed neumorphic">
 				<span>Embed button code</span>
@@ -91,6 +64,7 @@
 		<CreatorChart />
 
 		<!-- <ProfileSummary {profile} /> -->
+		<SubscriptionsSummary incomingSubscriptions={creator.incomingSubscriptions} outgoingSubscriptions={creator.outgoingSubscriptions} />
 	</div>
 </section>
 

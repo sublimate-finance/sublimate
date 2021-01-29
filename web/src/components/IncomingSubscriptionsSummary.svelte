@@ -60,23 +60,6 @@
 	import TokenValue from './TokenValue.svelte'
 </script>
 
-<style>
-	.creator-card {
-		--space-inner: 0.75em;
-		justify-items: center;
-		text-align: center;
-	}
-
-	img {
-		border-radius: 50%;
-	}
-
-	.summary {
-		color: var(--accent-color);
-		font-weight: normal;
-	}
-</style>
-
 <div class="columns">
 	<div class="boxed neumorphic">
 		≈ <TokenValue value={convertTokenRate(incomingSubscriptions.aggregated.currency, incomingSubscriptions.aggregated.rate, timeInterval, baseCurrency)} token={baseCurrency} rateInterval={timeInterval} />

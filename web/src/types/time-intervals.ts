@@ -6,5 +6,3 @@ export enum TimeInterval {
 }
 
 export const timeIntervals = Object.values(TimeInterval)
-
-console.log(TimeInterval, Object.values(TimeInterval), Object.entries(TimeInterval))
