@@ -51,7 +51,7 @@
 							},
 						}
 					}),
-      }))
+			}))
 
 	import Address from './Address.svelte'
 	import Blockie from './Blockie.svelte'

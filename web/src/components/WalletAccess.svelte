@@ -61,7 +61,7 @@
 				id: v,
 				name: v,
 			}
-    })
+		})
 
 	import Button from '../components/Button.svelte'
 	import Toast from '../components/Toast.svelte'
