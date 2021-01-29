@@ -322,9 +322,11 @@ main {
 	outline: none;
 
 	display: inline-flex;
+	justify-content: center;
 	align-items: center;
 	padding: 0.5em 1.25em;
 	gap: var(--space-inner);
+	text-align: center;
 
 	font: inherit;
 	font-size: 0.9em;
