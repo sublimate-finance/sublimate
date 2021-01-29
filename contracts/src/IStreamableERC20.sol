@@ -41,22 +41,22 @@ interface IStreamableERC20 is IERC20 {
 	/**
 	 * @dev Emitted when a subscription from `from` to `to` is started.
 	 */
-	event SubscriptionStarted(address indexed from, address indexed to, uint256 indexed rate, uint256 indexed maxAmount, uint256 indexed startBlock, uint256 indexed endBlock, uint256 indexed lastTransferAtBlock, uint256 indexed amountPaid);
+	event SubscriptionStarted(address indexed from, address indexed to, uint256 rate, uint256 maxAmount, uint256 startBlock, uint256 endBlock, uint256 indexed lastTransferAtBlock, uint256 amountPaid);
 
 
 	/**
 	 * @dev Emitted when a subscription from `from` to `to` is updated.
 	 */
-	event SubscriptionUpdated(address indexed from, address indexed to, uint256 indexed rate, uint256 indexed maxAmount, uint256 indexed startBlock, uint256 indexed endBlock, uint256 indexed lastTransferAtBlock, uint256 indexed amountPaid);
+	event SubscriptionUpdated(address indexed from, address indexed to, uint256 rate, uint256 maxAmount, uint256 startBlock, uint256 endBlock, uint256 indexed lastTransferAtBlock, uint256 amountPaid);
 
 	/**
      * @dev Emitted when a subscription from `from` to `to` is canceled by the user.
     */
-	event SubscriptionCanceled(address indexed from, address indexed to, uint256 indexed rate, uint256 indexed maxAmount, uint256 indexed startBlock, uint256 indexed endBlock, uint256 indexed lastTransferAtBlock, uint256 indexed amountPaid);
+	event SubscriptionCanceled(address indexed from, address indexed to, uint256 rate, uint256 maxAmount, uint256 startBlock, uint256 endBlock, uint256 indexed lastTransferAtBlock, uint256 amountPaid);
 
 	/**
      * @dev Emitted when the user's status is changed.
     */
-	event UserStatusChanged(address indexed account, uint256 indexed incomingRate, uint256 indexed totalMaxIncomingAmount, uint256 indexed outgoingRate,  uint256 indexed totalMaxOutgoingAmount, uint256 indexed blockAtLastUpdate);
+	event UserStatusChanged(address indexed account, uint256 indexed incomingRate, uint256 totalMaxIncomingAmount, uint256 outgoingRate, uint256 totalMaxOutgoingAmount, uint256 indexed blockAtLastUpdate);
 
 }
