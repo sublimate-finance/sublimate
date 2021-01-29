@@ -3,7 +3,8 @@ export const creators = [
 		profile: {
 			name: 'money.eth',
 			summary: 'DeFi Builder, Curve.fi',
-			image: 'https://picsum.photos/200/200',
+			avatar: 'https://picsum.photos/200/200',
+			cover: 'https://picsum.photos/1920/1080'
 		},
 		incomingSubscriptions: {
 			aggregated: {
@@ -27,7 +28,8 @@ export const creators = [
 		profile: {
 			name: '0x15A3FD40...',
 			summary: 'NFT Creator at Aavegotchi',
-			image: undefined,
+			avatar: undefined,
+			cover: 'https://picsum.photos/1920/1080?1'
 		},
 		incomingSubscriptions: {
 			aggregated: {
@@ -51,7 +53,7 @@ export const creators = [
 		profile: {
 			name: 'money.eth',
 			summary: 'DeFi Builder, Curve.fi',
-			image: 'https://picsum.photos/200/200',
+			avatar: 'https://picsum.photos/200/200',
 		},
 		incomingSubscriptions: {
 			aggregated: {
@@ -75,7 +77,7 @@ export const creators = [
 		profile: {
 			name: '0x15A3FD40...',
 			summary: 'NFT Creator at Aavegotchi',
-			image: undefined,
+			avatar: undefined,
 		},
 		incomingSubscriptions: {
 			aggregated: {
@@ -99,7 +101,7 @@ export const creators = [
 		profile: {
 			name: 'money.eth',
 			summary: 'DeFi Builder, Curve.fi',
-			image: 'https://picsum.photos/200/200',
+			avatar: 'https://picsum.photos/200/200',
 		},
 		incomingSubscriptions: {
 			aggregated: {
@@ -123,7 +125,7 @@ export const creators = [
 		profile: {
 			name: '0x15A3FD40...',
 			summary: 'NFT Creator at Aavegotchi',
-			image: undefined,
+			avatar: undefined,
 		},
 		incomingSubscriptions: {
 			aggregated: {
@@ -147,7 +149,7 @@ export const creators = [
 		profile: {
 			name: 'money.eth',
 			summary: 'DeFi Builder, Curve.fi',
-			image: 'https://picsum.photos/200/200',
+			avatar: 'https://picsum.photos/200/200',
 		},
 		incomingSubscriptions: {
 			aggregated: {
@@ -171,7 +173,7 @@ export const creators = [
 		profile: {
 			name: '0x15A3FD40...',
 			summary: 'NFT Creator at Aavegotchi',
-			image: undefined,
+			avatar: undefined,
 		},
 		incomingSubscriptions: {
 			aggregated: {
@@ -195,7 +197,7 @@ export const creators = [
 		profile: {
 			name: 'money.eth',
 			summary: 'DeFi Builder, Curve.fi',
-			image: 'https://picsum.photos/200/200',
+			avatar: 'https://picsum.photos/200/200',
 		},
 		incomingSubscriptions: {
 			aggregated: {

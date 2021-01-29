@@ -3,7 +3,7 @@
 	import AllTransactions from '../components/AllTransactions.svelte'
 	import Footer from '../components/Footer.svelte'
 
-	const creator = {
+	const profile = {
 		name: 'money.eth',
 		summary: 'Defi Builder at Curve.fi.',
 		avatar: 'https://picsum.photos/200/200',
@@ -12,12 +12,12 @@
 </script>
 
 <section class="flex flex-col pb-24">
-	<div class="w-full h-40 shadow-inner" style={`background-image: url(${creator.cover}); background-position: center; background-size: cover;`} />
+	<div class="w-full h-40 shadow-inner" style={`background-image: url(${profile.cover}); background-position: center; background-size: cover;`} />
 	<div class="relative flex flex-col items-center">
-		<img src={creator.avatar} alt="avatar" class="w-24 h-24 absolute top-0 left-1/2 transform -translate-x-1/2 -mt-20 border-4 border-white border-solid rounded-full" />
+		<img src={profile.avatar} alt="avatar" class="w-24 h-24 absolute top-0 left-1/2 transform -translate-x-1/2 -mt-20 border-4 border-white border-solid rounded-full" />
 		<div class="flex flex-col items-center space-y-2 mt-10">
-			<span class="font-bold text-gray-900">{creator.name}</span>
-			<span class="text-primary-200">{creator.summary}</span>
+			<span class="font-bold text-gray-900">{profile.name}</span>
+			<span class="text-primary-200">{profile.summary}</span>
 		</div>
 	</div>
 	<div class="flex flex-row px-32 space-x-16 w-full mt-10">
@@ -31,15 +31,15 @@
 		</div>
 		<div class="flex-1 flex-col space-y-4 items-start">
 			<span class="text-gray-900 font-bold">Profile summary</span>
-			<ProfileSummary user={creator} />
+			<ProfileSummary user={profile} />
 		</div>
 	</div>
 </section>
 
 <div class="bg-white">
 	<section class="w-full px-8 py-16 mb-32">
-		<AllTransactions user={creator} />
+		<AllTransactions user={profile} />
 	</section>
-	
+
 	<Footer />
 </div>

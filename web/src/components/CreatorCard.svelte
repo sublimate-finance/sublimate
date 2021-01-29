@@ -5,7 +5,8 @@
 	export let profile: {
 		name: string
 		summary: string
-		image: string | URL
+		avatar: string | URL
+		cover: string | URL
 	}
 	export let incomingSubscriptions
 
@@ -36,7 +37,7 @@
 </style>
 
 <article class="creator-card card">
-	<img src={profile.image?.toString() ?? `https://picsum.photos/200/200?${profile.name}`} alt={profile.name} width="100" />
+	<img src={profile.avatar?.toString() ?? `https://picsum.photos/200/200?${profile.name}`} alt={profile.name} width="100" />
 	<h3>{profile.name}</h3>
 	<h4 class="summary">{profile.summary}</h4>
 	<IncomingSubscriptionsSummary {incomingSubscriptions} {timeInterval} {baseCurrency} />
