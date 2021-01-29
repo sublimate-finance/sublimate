@@ -129,7 +129,7 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 
 		_subscriptions[from][to].status = SubscriptionStatus.CANCELED;
 		_users[from].outgoingRate -= _subscriptions[from][to].rate;
-		_users[from].totalOutgoingAmount -= _subscriptions[from][to].maxAmount;
+		_users[from].totalMaxOutgoingAmount -= _subscriptions[from][to].maxAmount;
 
 		uint256 unpaidAmount = _subscriptions[from][to].maxAmount - _subscriptions[from][to].amountPaid;
 		_increaseAvailableBalance(from, unpaidAmount);
@@ -174,7 +174,7 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 
 	        UserStatus storage user_from_status = _users[from];
 	        user_from_status.outgoingRate += rate;
-			user_from_status.totalOutgoingAmount += maxAmount;
+			user_from_status.totalMaxOutgoingAmount += maxAmount;
 			_decreaseAvailableBalance(from, maxAmount);
 
 			UserStatus storage user_to_status = _users[to];
@@ -303,7 +303,7 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 			_users[addressTo].totalMaxIncomingAmount -= subscription.maxAmount;
 		} else {
 			_users[addressFrom].outgoingRate -= subscription.rate;
-			_users[addressFrom].totalOutgoingAmount -= subscription.maxAmount;
+			_users[addressFrom].totalMaxOutgoingAmount -= subscription.maxAmount;
 		}
 
 	}
