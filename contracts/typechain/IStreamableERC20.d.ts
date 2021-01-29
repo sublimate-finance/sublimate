@@ -179,13 +179,31 @@ export class IStreamableERC20 extends Contract {
       from: string,
       to: string,
       overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber]>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, number] & {
+        rate: BigNumber;
+        maxAmount: BigNumber;
+        startBlock: BigNumber;
+        endBlock: BigNumber;
+        amountPaid: BigNumber;
+        status: number;
+      }
+    >;
 
     "getSubscription(address,address)"(
       from: string,
       to: string,
       overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber]>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, number] & {
+        rate: BigNumber;
+        maxAmount: BigNumber;
+        startBlock: BigNumber;
+        endBlock: BigNumber;
+        amountPaid: BigNumber;
+        status: number;
+      }
+    >;
 
     lastUpdatedBalanceOf(
       account: string,
@@ -291,13 +309,31 @@ export class IStreamableERC20 extends Contract {
     from: string,
     to: string,
     overrides?: CallOverrides
-  ): Promise<[BigNumber, BigNumber]>;
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, number] & {
+      rate: BigNumber;
+      maxAmount: BigNumber;
+      startBlock: BigNumber;
+      endBlock: BigNumber;
+      amountPaid: BigNumber;
+      status: number;
+    }
+  >;
 
   "getSubscription(address,address)"(
     from: string,
     to: string,
     overrides?: CallOverrides
-  ): Promise<[BigNumber, BigNumber]>;
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, number] & {
+      rate: BigNumber;
+      maxAmount: BigNumber;
+      startBlock: BigNumber;
+      endBlock: BigNumber;
+      amountPaid: BigNumber;
+      status: number;
+    }
+  >;
 
   lastUpdatedBalanceOf(
     account: string,
@@ -403,13 +439,31 @@ export class IStreamableERC20 extends Contract {
       from: string,
       to: string,
       overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber]>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, number] & {
+        rate: BigNumber;
+        maxAmount: BigNumber;
+        startBlock: BigNumber;
+        endBlock: BigNumber;
+        amountPaid: BigNumber;
+        status: number;
+      }
+    >;
 
     "getSubscription(address,address)"(
       from: string,
       to: string,
       overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber]>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, number] & {
+        rate: BigNumber;
+        maxAmount: BigNumber;
+        startBlock: BigNumber;
+        endBlock: BigNumber;
+        amountPaid: BigNumber;
+        status: number;
+      }
+    >;
 
     lastUpdatedBalanceOf(
       account: string,

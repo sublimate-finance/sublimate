@@ -377,13 +377,33 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "",
+        name: "rate",
         type: "uint256",
       },
       {
         internalType: "uint256",
-        name: "",
+        name: "maxAmount",
         type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "startBlock",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "endBlock",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "amountPaid",
+        type: "uint256",
+      },
+      {
+        internalType: "enum IStreamableERC20.SubscriptionStatus",
+        name: "status",
+        type: "uint8",
       },
     ],
     stateMutability: "view",

@@ -9,6 +9,14 @@ import "./ERC20/IERC20.sol";
  */
 interface IStreamableERC20 is IERC20 {
 
+	enum SubscriptionStatus {
+		INACTIVE, // Subscription not created yet - Used for checks if there is a subscription between subscriber and subscribee
+		ACTIVE, // Subscription is active
+		STOPPED, // Subscription is stopped - Run out of assets before it reached end date/max amount
+		CANCELED, // Subscription got canceled by the user
+		FINISHED // Subscription finished normally - this is relevant for the current limited model
+	}
+
 	/**
 	 * @dev Returns the last updated balance of `account`
 	 */
@@ -17,7 +25,7 @@ interface IStreamableERC20 is IERC20 {
     /**
      * @dev Returns the rate and maxAmount of the current subscription from `from` to `to`.
      */
-    function getSubscription(address from, address to) external view returns (uint256, uint256);
+    function getSubscription(address from, address to) external view returns (uint256 rate, uint256 maxAmount, uint256 startBlock, uint256 endBlock, uint256 amountPaid, SubscriptionStatus status);
 
 
 	/**

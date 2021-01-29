@@ -4,6 +4,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
 import {accounts} from "../utils/network";
 import {JsonRpcProvider} from "@ethersproject/providers";
+import {start} from "repl";
 
 
 
@@ -35,6 +36,10 @@ describe('strETH', function () {
 		}
 	}
 
+	const getStartingBlock = async (provider: any) => {
+		return await provider.getBlockNumber() + 1;
+	}
+
 	const expectBalance = async (expectedBalance: BigNumber, address: string, contract: Contract) => {
 		const balance = await contract.balanceOf(address);
 		expect(expectedBalance).to.equal(balance);
@@ -45,10 +50,16 @@ describe('strETH', function () {
 		expect(expectedBalance).to.equal(balance);
 	}
 
-	const expectSubscription = async (from: string, to: string, rate: BigNumber, maxAmount: BigNumber, contract: Contract) => {
-		const [_rate, _maxAmount] = await contract.getSubscription(from, to);
+
+	const expectSubscription = async (from: string, to: string, rate: BigNumber, maxAmount: BigNumber, startBlock: BigNumber, endBlock: BigNumber, amountPaid: BigNumber, status: any, contract: Contract) => {
+		const [_rate, _maxAmount, _startBlock, _endBlock, _amountPaid, _status] = await contract.getSubscription(from, to);
+		console.log("Subscription params", _rate, _maxAmount, _startBlock, _endBlock, _amountPaid, _status);
 		expect(_rate).to.eq(rate)
 		expect(_maxAmount).to.eq(maxAmount);
+		expect(_startBlock).to.eq(startBlock);
+		expect(_endBlock).to.eq(endBlock);
+		expect(_amountPaid).to.eq(amountPaid);
+		expect(_status).to.eq(status);
 	}
 
 	it('should be deployed correctly', async function () {
@@ -263,12 +274,6 @@ describe('strETH', function () {
 			await parent.contract.updateSubscription(parent.accounts[0].address, parent.accounts[1].address, amount('1'), amount('10'), {from: parent.accounts[0].address})
 		}
 
-		async function expectSubscription(this: any, from: string, to: string, rate: BigNumber, maxAmount: BigNumber) {
-			const [_rate, _maxAmount] = this.contract.getSubscription(from, this.accounts[1].address)
-			expect(_rate).to.eq(rate)
-			expect(_maxAmount).to.eq(amount('10'))
-		}
-		//
 
 		it('should emit SubscriptionStarted event when creating new subscription', async function () {
 			const rate = amount('1');
@@ -281,8 +286,11 @@ describe('strETH', function () {
 		it('should change user balances by subscription rate successfully after 1 block', async function () {
 			const rate = amount('1');
 			const maxAmount = amount('10');
+			const startBlock = await getStartingBlock(parent.contract.provider);
 
 			await parent.contract.updateSubscription(this.from, this.to, rate, maxAmount, {from: this.from});
+
+			await expectSubscription(this.from, this.to, rate, maxAmount, startBlock, startBlock + 10, amount('0'), 1, parent.contract);
 
 			await mineBlocks(1, parent.provider);
 
@@ -296,8 +304,11 @@ describe('strETH', function () {
 			const rate = amount('1');
 			const maxAmount = amount('10');
 			const fiveEth = amount('5');
+			const startBlock = await getStartingBlock(parent.contract.provider);
 
 			await parent.contract.updateSubscription(this.from, this.to, rate, maxAmount, {from: this.from});
+
+			await expectSubscription(this.from, this.to, rate, maxAmount, startBlock, startBlock + 10, amount('0'), 1, parent.contract);
 
 			await mineBlocks(5, parent.provider);
 
@@ -310,8 +321,10 @@ describe('strETH', function () {
 		it('should return the correct balances after the subscription ends regularly (without state changing interaction) after one block', async function () {
 			const rate = amount('1');
 			const maxAmount = amount('10');
+			const startBlock = await getStartingBlock(parent.contract.provider);
 
 			await parent.contract.updateSubscription(this.from, this.to, rate, maxAmount, {from: this.from});
+			await expectSubscription(this.from, this.to, rate, maxAmount, startBlock, startBlock + 10, amount('0'), 1, parent.contract);
 
 			// Mine more blocks than the subscription lasts
 			await mineBlocks(11, parent.provider);
@@ -324,8 +337,10 @@ describe('strETH', function () {
 		it('should return the correct balances after the subscription ends regularly (without state changing interaction) after five blocks', async function () {
 			const rate = amount('1');
 			const maxAmount = amount('10');
+			const startBlock = await getStartingBlock(parent.contract.provider);
 
 			await parent.contract.updateSubscription(this.from, this.to, rate, maxAmount, {from: this.from});
+			await expectSubscription(this.from, this.to, rate, maxAmount, startBlock, startBlock + 10, amount('0'), 1, parent.contract);
 
 			// Mine more blocks than the subscription lasts
 			await mineBlocks(15, parent.provider);
@@ -339,11 +354,14 @@ describe('strETH', function () {
 		it('should emit SubscriptionCanceled event when canceling active subscription', async function () {
 			const rate = amount('1');
 			const maxAmount = amount('10');
-			const startBlock = await parent.contract.provider.getBlockNumber() + 1;
+			const startBlock = await getStartingBlock(parent.contract.provider);
 			const endBlock = startBlock + 10;
 			await parent.contract.updateSubscription(this.from, this.to, rate, maxAmount, {from: this.from});
+			await expectSubscription(this.from, this.to, rate, maxAmount, startBlock, endBlock, amount('0'), 1, parent.contract);
 
 			await expect(parent.contract.cancelSubscription(this.from, this.to, {from: this.from})).to.emit(parent.contract, "SubscriptionCanceled").withArgs(this.from, this.to, rate, maxAmount, startBlock, endBlock, startBlock + 1, rate );
+			await expectSubscription(this.from, this.to, rate, maxAmount, startBlock, endBlock, amount('1'), 3, parent.contract);
+
 		});
 
 		it('should be reverted when canceling non-active subscription', async function () {
@@ -354,9 +372,12 @@ describe('strETH', function () {
 
 			const rate = amount('1');
 			const maxAmount = amount('10');
+			const startBlock = await getStartingBlock(parent.contract.provider);
 
 			await parent.contract.updateSubscription(this.from, this.to, rate, maxAmount, {from: this.from});
+			await expectSubscription(this.from, this.to, rate, maxAmount, startBlock, startBlock + 10, amount('0'), 1, parent.contract);
 			await parent.contract.cancelSubscription(this.from, this.to, {from: this.from});
+			await expectSubscription(this.from, this.to, rate, maxAmount, startBlock, startBlock + 10, amount('1'), 3, parent.contract);
 
 			await expectLastUpdatedBalance(maxAmount.sub(rate), this.from, parent.contract);
 			await expectLastUpdatedBalance(rate, this.to, parent.contract);
@@ -366,9 +387,13 @@ describe('strETH', function () {
 
 			const rate = amount('1');
 			const maxAmount = amount('10');
+			const startBlock = await getStartingBlock(parent.contract.provider);
 
 			await parent.contract.updateSubscription(this.from, this.to, rate, maxAmount, {from: this.from});
+			await expectSubscription(this.from, this.to, rate, maxAmount, startBlock, startBlock + 10, amount('0'), 1, parent.contract);
+
 			await parent.contract.cancelSubscription(this.from, this.to, {from: this.from});
+			await expectSubscription(this.from, this.to, rate, maxAmount, startBlock, startBlock + 10, amount('1'), 3, parent.contract);
 
 			await mineBlocks(20, parent.provider);
 
@@ -406,54 +431,53 @@ describe('strETH', function () {
 			const rate = amount('1');
 			const maxAmount = amount('5');
 			const startBlock = await parent.provider.getBlockNumber() + 1;
-
 			await parent.contract.updateSubscription(this.from, this.to, rate, maxAmount, {from: this.from});
+			await expectSubscription(this.from, this.to, rate, maxAmount, startBlock, startBlock + 5, amount('0'), 1, parent.contract);
 
 			await mineBlocks(2, parent.provider);
 
-			const newMaxAmount = amount('10');
-			const endBlock = startBlock + 10;
+			const newMaxAmount = amount('5');
 			const nextBlock = await parent.provider.getBlockNumber() + 1;
+			const endBlock = nextBlock + 5;
 			await expect(parent.contract.updateSubscription(this.from, this.to, rate, newMaxAmount, {from: this.from})).to.emit(parent.contract, "SubscriptionUpdated").withArgs(this.from, this.to, rate, newMaxAmount, startBlock, endBlock, nextBlock, amount('3'));
-
 
 		});
 		//
-		// it('should be successful when the maxAmount is increased and the subscriber has enough balance', async function () {
-		// 	const rate = amount('1');
-		// 	const maxAmount = amount('5');
-		// 	const startBlock = await parent.provider.getBlockNumber() + 1;
+		it('should be successful when the maxAmount is increased and the subscriber has enough balance', async function () {
+			const rate = amount('1');
+			const maxAmount = amount('5');
+			const startBlock = await parent.provider.getBlockNumber() + 1;
+			await parent.contract.updateSubscription(this.from, this.to, rate, maxAmount, {from: this.from});
+			await expectSubscription(this.from, this.to, rate, maxAmount, startBlock, startBlock + 5, amount('0'), 1, parent.contract);
+
+			await mineBlocks(2, parent.provider);
+
+			const newMaxAmount = amount('5');
+			const nextBlock = await parent.provider.getBlockNumber() + 1;
+			const endBlock = nextBlock + 5;
+
+			await parent.contract.updateSubscription(this.from, this.to, rate, newMaxAmount, {from: this.from});
+			await expectSubscription(this.from, this.to, rate, newMaxAmount, startBlock, endBlock, amount('3'), 1, parent.contract);
+
+		});
 		//
-		// 	await parent.contract.updateSubscription(this.from, this.to, rate, maxAmount, {from: this.from});
-		//
-		// 	// TODO Extend params
-		// 	await expectSubscription(this.from, this.to, rate, maxAmount, parent.contract);
-		//
-		// 	// Verify
-		// 	await mineBlocks(2, parent.provider);
-		//
-		// 	const newMaxAmount = amount('10');
-		// 	const endBlock = startBlock + 10;
-		// 	const nextBlock = await parent.provider.getBlockNumber() + 1;
-		//
-		//
-		// 	await parent.contract.updateSubscription(this.from, this.to, rate, newMaxAmount, {from: this.from});
-		//
-		// });
-		//
-		// it('should be successful when the rate is increased and the subscriber has enough balance', async function () {
-		// 	const rate = amount('1');
-		// 	const maxAmount = amount('10');
-		//
-		// 	await parent.contract.updateSubscription(this.from, this.to, rate, maxAmount, {from: this.from});
-		//
-		// 	await mineBlocks(1, parent.provider);
-		//
-		// 	await expectLastUpdatedBalance(maxAmount.sub(rate), this.from, parent.contract);
-		// 	await expectLastUpdatedBalance(rate, this.to, parent.contract);
-		//
-		//
-		// });
+		it('should be successful when the rate is increased and the subscriber has enough balance', async function () {
+			const rate = amount('1');
+			const maxAmount = amount('5');
+			const startBlock = await parent.provider.getBlockNumber() + 1;
+			await parent.contract.updateSubscription(this.from, this.to, rate, maxAmount, {from: this.from});
+			await expectSubscription(this.from, this.to, rate, maxAmount, startBlock, startBlock + 5, amount('0'), 1, parent.contract);
+
+			await mineBlocks(2, parent.provider);
+
+			const newRate = amount('2');
+			const endBlock = await parent.provider.getBlockNumber() + 1;
+
+			await parent.contract.updateSubscription(this.from, this.to, newRate, maxAmount, {from: this.from});
+			await expectSubscription(this.from, this.to, newRate, maxAmount, startBlock, endBlock, amount('3'), 1, parent.contract);
+
+
+		});
 		// //
 		// it('should be successful when the maxAmount and the rate are increased and the subscriber has enough balance', async function () {
 		// 	const rate = amount('1');
