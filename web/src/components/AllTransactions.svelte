@@ -1,6 +1,6 @@
 <script>
 	import TransactionRow from './TransactionRow.svelte'
-	export let user
+	export let profile
 </script>
 
 <div class="flex flex-col items-center w-full space-y-4">

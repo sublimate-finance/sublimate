@@ -1,5 +1,5 @@
 <script>
-	export let user
+	export let profile
 </script>
 
 <div class="flex flex-col rounded-md overflow-hidden w-full">

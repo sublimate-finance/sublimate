@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { TimeInterval, timeIntervals } from '../types/time-intervals'
 
-	const creator = {
+	const profile = {
 		name: 'money.eth',
 		summary: 'DeFi Builder, Curve.fi',
-		image: 'https://picsum.photos/200/200',
+		avatar: 'https://picsum.photos/200/200',
 		cover: 'https://picsum.photos/1920/1080'
 	}
 
@@ -33,14 +33,14 @@
 <section class="flex flex-row">
 	<div class="card">
 		<div class="row">
-			<img src={creator.image} alt="Avatar" class="block rounded-full" width="80" height="80" />
+			<img src={profile.avatar} alt="Avatar" class="block rounded-full" width="80" height="80" />
 			<div class="flex-1 flex flex-col justify-center space-y-2">
 				<div class="bar">
-					<h2>{creator.name}</h2>
+					<h2>{profile.name}</h2>
 					<img src="/images/edit.svg" alt="edit" class="w-4 h-4" />
 				</div>
 				<div class="bar">
-					<span class="text-primary-200">{ creator.summary }</span>
+					<span class="text-primary-200">{profile.summary}</span>
 					<img src="/images/edit.svg" alt="edit" class="w-4 h-4" />
 				</div>
 			</div>
@@ -86,18 +86,18 @@
 				<h3>Cover image</h3>
 				<img src="/images/edit.svg" alt="edit" class="w-4 h-4" />
 			</div>
-			<div class="w-full h-20 shadow-inner rounded-md" style={`background-image: url(${creator.cover}); background-position: center; background-size: cover;`} />
+			<div class="w-full h-20 shadow-inner rounded-md" style={`background-image: url(${profile.cover}); background-position: center; background-size: cover;`} />
 		</div>
 	</div>
 	<div class="column flex-1 p-8">
 		<CreatorChart />
-		<ProfileSummary user={creator} />
+		<ProfileSummary {profile} />
 	</div>
 </section>
 
 <div class="bg-white">
 	<section class="w-full px-8 py-16 mb-32">
-		<AllTransactions user={creator} />
+		<AllTransactions {profile} />
 	</section>
 
 	<Footer />
