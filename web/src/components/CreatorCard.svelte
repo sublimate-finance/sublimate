@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { TimeInterval } from '../types/time-intervals'
+
 	export let name: string
 	export let summary: string
 	export let image: string | URL
@@ -23,7 +25,7 @@
 		'ETH': 2000 * 1e-18,
 		'DAI': 1 * 1e-18
 	}
-	$: averageBlocksPerTimeInterval = {
+	const averageBlocksPerTimeInterval: Record<TimeInterval, number> = {
 		'year': 1000,
 		'month': 1000 / 12,
 		'day': 1000 / 365.25,
@@ -46,7 +48,7 @@
 
 
 	// Display options
-	export let timeInterval: 'block' | 'day' | 'month' | 'year' = 'day'
+	export let timeInterval = TimeInterval.Day
 	export let baseCurrency = 'ETH'
 
 

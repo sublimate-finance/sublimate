@@ -1,12 +1,13 @@
 <script lang="ts">
 	import type { Ethereum } from '../types/ethereum'
 	import type { TickerSymbol } from '../types/currency'
+	import { TimeInterval } from '../types/time-intervals'
 
 	export let token: TickerSymbol
 	export let tokenAddress: Ethereum.ContractAddress
 	export let tokenIcon: string
 	export let tokenName: string
-	export let rateInterval: string | undefined
+	export let rateInterval: TimeInterval | undefined
 
 	export let value: number | string | BigInt = '...'
 	export let showDecimalPlaces = 3
@@ -28,7 +29,7 @@
 			return value?.toString()
 		}
 	}
-	
+
 	import TokenIcon from './TokenIcon.svelte'
 </script>
 

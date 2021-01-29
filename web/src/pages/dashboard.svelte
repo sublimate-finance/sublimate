@@ -1,7 +1,5 @@
 <script lang="ts">
-	import AllTransactions from '../components/AllTransactions.svelte'
-	import ProfileSummary from '../components/ProfileSummary.svelte'
-	import Footer from '../components/Footer.svelte'
+	import { TimeInterval, timeIntervals } from '../types/time-intervals'
 
 	const creator = {
 		name: 'money.eth',
@@ -10,9 +8,12 @@
 		cover: 'https://picsum.photos/1920/1080'
 	}
 
-	let rateTimeInterval = 'day'
+	let rateTimeInterval = TimeInterval.Day
 
+	import AllTransactions from '../components/AllTransactions.svelte'
 	import CreatorChart from '../components/CreatorChart.svelte'
+	import Footer from '../components/Footer.svelte'
+	import ProfileSummary from '../components/ProfileSummary.svelte'
 	import Select from '../components/Select.svelte'
 </script>
 
@@ -66,7 +67,7 @@
 			</div>
 
 			<div class="boxed neumorphic">
-				<Select options={['block', 'day', 'month', 'year']} bind:value={rateTimeInterval} />
+				<Select options={timeIntervals} bind:value={rateTimeInterval} />
 			</div>
 		</div>
 		<div class="column">
@@ -98,6 +99,6 @@
 	<section class="w-full px-8 py-16 mb-32">
 		<AllTransactions user={creator} />
 	</section>
-	
+
 	<Footer />
 </div>
