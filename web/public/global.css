@@ -211,9 +211,7 @@ hr {
 
 main {
 	display: grid;
-	gap: var(--space-inner);
 	margin: 0 auto;
-	padding: 2rem;
 
 	position: relative;
 	width: 100%;
