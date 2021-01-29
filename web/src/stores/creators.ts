@@ -22,7 +22,8 @@ export const creators = [
 				rate: 500,
 				subscriberCount: 400,
 			}]
-		}
+		},
+		transactions: []
 	},
 	{
 		profile: {
