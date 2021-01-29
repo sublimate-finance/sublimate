@@ -104,11 +104,16 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 
 	}
 
+	/**
+	 * @dev Returns the rate, maxAmount, startBlock, endBlock, amountPaid and status of the current subscription from `from` to `to`.
+	 */
+	function getSubscription(address from, address to) external view override returns (uint256 rate, uint256 maxAmount, uint256 startBlock, uint256 endBlock, uint256 amountPaid, SubscriptionStatus status) {
+		return (_subscriptions[from][to].rate, _subscriptions[from][to].maxAmount, _subscriptions[from][to].startBlock, _subscriptions[from][to].endBlock, _subscriptions[from][to].amountPaid, _subscriptions[from][to].status);
+	}
+
 
 	/**
 	 * @dev Cancels subscription started from `from` to `to`.
-	 *
-	 * Returns a boolean value indicating whether the operation succeeded.
 	 *
 	 * Emits a {SubscriptionCanceled} event.
 	 */
@@ -136,9 +141,8 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 	/**
 	 * @dev Updates the subscription from `from` to `to`.
 	 *
-	 * Returns a boolean value indicating whether the operation succeeded.
 	 *
-	 * Emits a {SubscriptionUpdated} event.
+	 * Emits a {SubscriptionStarted} and {SubscriptionUpdated} events.
 	 */
 	function updateSubscription(address from, address to, uint256 rate, uint256 maxAmount) external override {
 
@@ -159,67 +163,82 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 		require(super.balanceOf(from) >= maxAmount, "Insufficient balance.");
 
 		if(_subscriptions[from][to].status == SubscriptionStatus.INACTIVE) {
-			// In case there is a reminder, we will pay it in the last payment
-			uint256 blockEnd = block.number + (maxAmount / rate);
-
-			Subscription memory sub = Subscription(rate, maxAmount, block.number, blockEnd, block.number, 0, SubscriptionStatus.ACTIVE);
-			_subscriptions[from][to] = sub;
-			_activeOutgoingSubscriptions[from].push(to);
-			_activeIncomingSubscriptions[to].push(from);
-
-	        UserStatus storage user_from_status = _users[from];
-	        user_from_status.outgoingRate += rate;
-			user_from_status.totalMaxOutgoingAmount += maxAmount;
-			_decreaseAvailableBalance(from, maxAmount);
-
-			UserStatus storage user_to_status = _users[to];
-			user_to_status.incomingRate += rate;
-			user_to_status.totalMaxIncomingAmount += maxAmount;
-
-			emit SubscriptionStarted(from, to, rate, maxAmount, block.number, blockEnd, block.number, 0);
+			_handleCreateSubscription(from, to, rate, maxAmount);
 		} else if(_subscriptions[from][to].status == SubscriptionStatus.ACTIVE) {
-			Subscription storage subscription = _subscriptions[from][to];
-
-			uint256 blockEnd = block.number + (maxAmount / rate);
-			require(blockEnd > block.number, "The subscription is expired.");
-
-			uint256 unpaidAmount = subscription.maxAmount - subscription.amountPaid;
-			uint256 amountLeftToPayUpdated = maxAmount - subscription.amountPaid;
-			uint256 newAvailableBalance = _availableBalances[from] - unpaidAmount +  amountLeftToPayUpdated;
-
-			if(maxAmount > subscription.maxAmount) {
-				require(super.balanceOf(from) >= newAvailableBalance, "Insufficient balance.");
-			}
-            // update available balance
-			_updateAvailableBalance(from, newAvailableBalance);
-
-            // update user status
-			UserStatus storage user_from_status = _users[from];
-			user_from_status.outgoingRate -= subscription.rate;
-			user_from_status.outgoingRate += rate;
-			user_from_status.totalMaxOutgoingAmount -= subscription.maxAmount;
-			user_from_status.totalMaxOutgoingAmount += maxAmount;
-
-			UserStatus storage user_to_status = _users[to];
-			user_to_status.incomingRate -= subscription.rate;
-			user_to_status.incomingRate += rate;
-			user_to_status.totalMaxIncomingAmount -= subscription.maxAmount;
-			user_to_status.totalMaxIncomingAmount += maxAmount;
-
-
-			// update subscription
-			subscription.endBlock = blockEnd;
-			subscription.rate = rate;
-			subscription.maxAmount = maxAmount;
-			emit SubscriptionUpdated(from, to, rate, maxAmount, subscription.startBlock, blockEnd, block.number, subscription.amountPaid);
+			_handleSubscriptionUpdate(from, to, rate, maxAmount);
 		}
 
 	}
 
+	 /**
+	 * @dev Handle creation of new subscription.
+	 *
+	 * Private helper function
+	 *
+	 * Emits a {SubscriptionStarted} event.
+	 */
+	function _handleCreateSubscription(address from, address to, uint256 rate, uint256 maxAmount) private {
+		// In case there is a reminder, we will pay it in the last payment
 
-	function getSubscription(address from, address to) external view override returns (uint256 rate, uint256 maxAmount, uint256 startBlock, uint256 endBlock, uint256 amountPaid, SubscriptionStatus status) {
-		return (_subscriptions[from][to].rate, _subscriptions[from][to].maxAmount, _subscriptions[from][to].startBlock, _subscriptions[from][to].endBlock, _subscriptions[from][to].amountPaid, _subscriptions[from][to].status);
+		uint256 blockEnd = block.number + (maxAmount / rate);
+
+		Subscription memory sub = Subscription(rate, maxAmount, block.number, blockEnd, block.number, 0, SubscriptionStatus.ACTIVE);
+		_subscriptions[from][to] = sub;
+		_activeOutgoingSubscriptions[from].push(to);
+		_activeIncomingSubscriptions[to].push(from);
+
+		UserStatus storage user_from_status = _users[from];
+		user_from_status.outgoingRate += rate;
+		user_from_status.totalMaxOutgoingAmount += maxAmount;
+		_decreaseAvailableBalance(from, maxAmount);
+
+		UserStatus storage user_to_status = _users[to];
+		user_to_status.incomingRate += rate;
+		user_to_status.totalMaxIncomingAmount += maxAmount;
+		emit SubscriptionStarted(from, to, rate, maxAmount, block.number, blockEnd, block.number, 0);
 	}
+
+	 /**
+	 * @dev Handle update of existing subscription.
+	 *
+	 * Private helper function
+	 *
+	 * Emits a {SubscriptionUpdated} event.
+	 */
+	function _handleSubscriptionUpdate(address from, address to, uint256 rate, uint256 maxAmount) private {
+		Subscription storage subscription = _subscriptions[from][to];
+
+		uint256 unpaidAmount = subscription.maxAmount - subscription.amountPaid;
+		uint256 newAvailableBalance = availableBalance(from) + unpaidAmount -  maxAmount;
+
+		if(maxAmount > subscription.maxAmount) {
+			require(super.balanceOf(from) >= newAvailableBalance, "Insufficient balance.");
+		}
+		// update available balance
+		_updateAvailableBalance(from, newAvailableBalance);
+
+		// update user status
+		UserStatus storage user_from_status = _users[from];
+		user_from_status.outgoingRate -= subscription.rate;
+		user_from_status.outgoingRate += rate;
+		user_from_status.totalMaxOutgoingAmount -= subscription.maxAmount;
+		user_from_status.totalMaxOutgoingAmount += maxAmount;
+
+		UserStatus storage user_to_status = _users[to];
+		user_to_status.incomingRate -= subscription.rate;
+		user_to_status.incomingRate += rate;
+		user_to_status.totalMaxIncomingAmount -= subscription.maxAmount;
+		user_to_status.totalMaxIncomingAmount += maxAmount;
+
+		uint256 blockEnd = block.number + (maxAmount / rate);
+
+		// update subscription
+		subscription.endBlock = blockEnd;
+		subscription.rate = rate;
+		subscription.maxAmount = maxAmount;
+		emit SubscriptionUpdated(from, to, rate, maxAmount, subscription.startBlock, blockEnd, block.number, subscription.amountPaid);
+	}
+
 
 	function _updateIncomingAndOutgoingSubscriptions(address user) internal {
 		_updateOutgoingSubscriptions(user);

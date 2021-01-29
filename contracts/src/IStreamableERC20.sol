@@ -23,7 +23,7 @@ interface IStreamableERC20 is IERC20 {
 	function lastUpdatedBalanceOf(address account) external view returns (uint256);
 
     /**
-     * @dev Returns the rate and maxAmount of the current subscription from `from` to `to`.
+     * @dev Returns the rate, maxAmount, startBlock, endBlock, amountPaid and status of the current subscription from `from` to `to`.
      */
     function getSubscription(address from, address to) external view returns (uint256 rate, uint256 maxAmount, uint256 startBlock, uint256 endBlock, uint256 amountPaid, SubscriptionStatus status);
 
@@ -31,16 +31,12 @@ interface IStreamableERC20 is IERC20 {
 	/**
 	 * @dev Cancels subscription started from `from` to `to`.
 	 *
-	 * Returns a boolean value indicating whether the operation succeeded.
-	 *
 	 * Emits a {SubscriptionCanceled} event.
 	 */
 	function cancelSubscription(address from, address to) external;
 
 	/**
 	 * @dev Updates the subscription from `from` to `to`.
-	 *
-	 * Returns a boolean value indicating whether the operation succeeded.
 	 *
 	 * Emits a {SubscriptionUpdated} event.
 	 */

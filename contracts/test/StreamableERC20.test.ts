@@ -2,17 +2,13 @@ import {expect} from './chai-setup'
 import {ethers, deployments, getUnnamedAccounts, artifacts} from 'hardhat'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
-import {accounts} from "../utils/network";
 import {JsonRpcProvider} from "@ethersproject/providers";
-import {start} from "repl";
 
 
 
-describe('strETH', function () {
+describe('StreamableERC20', function () {
 
 	before(async function () {
-		// const strETH = await ethers.getContractFactory('strETH')
-		// this.contract = await strETH.deploy()
 		this.accounts = await ethers.getSigners()
 	})
 
@@ -21,8 +17,7 @@ describe('strETH', function () {
 		this.contract = await strETH.deploy()
 		this.provider = this.contract.provider;
 		await this.contract.deployed();
-		// await deployments.fixture('strETH');
-		// this.contract = await ethers.getContract('strETH')
+
 
 	})
 
@@ -53,7 +48,6 @@ describe('strETH', function () {
 
 	const expectSubscription = async (from: string, to: string, rate: BigNumber, maxAmount: BigNumber, startBlock: BigNumber, endBlock: BigNumber, amountPaid: BigNumber, status: any, contract: Contract) => {
 		const [_rate, _maxAmount, _startBlock, _endBlock, _amountPaid, _status] = await contract.getSubscription(from, to);
-		console.log("Subscription params", _rate, _maxAmount, _startBlock, _endBlock, _amountPaid, _status);
 		expect(_rate).to.eq(rate)
 		expect(_maxAmount).to.eq(maxAmount);
 		expect(_startBlock).to.eq(startBlock);
@@ -260,19 +254,12 @@ describe('strETH', function () {
 		before(async function () {
 			this.from = parent.accounts[0].address;
 			this.to = parent.accounts[1].address;
-			// connect to the contract as other signer, in order to be able to change the transaction `from` part
 			this.depositAmount = amount('10');
 		})
 
 		beforeEach(async function () {
 			await parent.contract.deposit({value: this.depositAmount, from: this.from});
 		})
-
-		async function subscribe(this: any) {
-			// subscribe from [0] to [1] with 1 ETH / block, maximum of 10 ETH
-			// await deployments.fixture('strETH');
-			await parent.contract.updateSubscription(parent.accounts[0].address, parent.accounts[1].address, amount('1'), amount('10'), {from: parent.accounts[0].address})
-		}
 
 
 		it('should emit SubscriptionStarted event when creating new subscription', async function () {
@@ -303,7 +290,7 @@ describe('strETH', function () {
 		it('should change user balances by subscription rate successfully after 5 block', async function () {
 			const rate = amount('1');
 			const maxAmount = amount('10');
-			const fiveEth = amount('5');
+			const ethAmount = amount('5');
 			const startBlock = await getStartingBlock(parent.contract.provider);
 
 			await parent.contract.updateSubscription(this.from, this.to, rate, maxAmount, {from: this.from});
@@ -312,8 +299,8 @@ describe('strETH', function () {
 
 			await mineBlocks(5, parent.provider);
 
-			await expectLastUpdatedBalance(maxAmount.sub(fiveEth), this.from, parent.contract);
-			await expectLastUpdatedBalance(fiveEth, this.to, parent.contract);
+			await expectLastUpdatedBalance(maxAmount.sub(ethAmount), this.from, parent.contract);
+			await expectLastUpdatedBalance(ethAmount, this.to, parent.contract);
 
 
 		});
@@ -356,6 +343,7 @@ describe('strETH', function () {
 			const maxAmount = amount('10');
 			const startBlock = await getStartingBlock(parent.contract.provider);
 			const endBlock = startBlock + 10;
+
 			await parent.contract.updateSubscription(this.from, this.to, rate, maxAmount, {from: this.from});
 			await expectSubscription(this.from, this.to, rate, maxAmount, startBlock, endBlock, amount('0'), 1, parent.contract);
 
@@ -376,6 +364,7 @@ describe('strETH', function () {
 
 			await parent.contract.updateSubscription(this.from, this.to, rate, maxAmount, {from: this.from});
 			await expectSubscription(this.from, this.to, rate, maxAmount, startBlock, startBlock + 10, amount('0'), 1, parent.contract);
+
 			await parent.contract.cancelSubscription(this.from, this.to, {from: this.from});
 			await expectSubscription(this.from, this.to, rate, maxAmount, startBlock, startBlock + 10, amount('1'), 3, parent.contract);
 
@@ -411,7 +400,6 @@ describe('strETH', function () {
 		before(async function () {
 			this.from = parent.accounts[0].address;
 			this.to = parent.accounts[1].address;
-			// connect to the contract as other signer, in order to be able to change the transaction `from` part
 			this.depositAmount = amount('10');
 		})
 
@@ -419,126 +407,79 @@ describe('strETH', function () {
 			await parent.contract.deposit({value: this.depositAmount, from: this.from});
 		})
 
-		async function subscribe(this: any) {
-			// subscribe from [0] to [1] with 1 ETH / block, maximum of 10 ETH
-			// await deployments.fixture('strETH');
-			await parent.contract.updateSubscription(parent.accounts[0].address, parent.accounts[1].address, amount('1'), amount('10'), {from: parent.accounts[0].address})
-		}
-
-		//
 
 		it('should emit SubscriptionUpdated event when the subscription is valid', async function () {
 			const rate = amount('1');
 			const maxAmount = amount('5');
-			const startBlock = await parent.provider.getBlockNumber() + 1;
+			const startBlock = await getStartingBlock(parent.contract.provider);
+
 			await parent.contract.updateSubscription(this.from, this.to, rate, maxAmount, {from: this.from});
 			await expectSubscription(this.from, this.to, rate, maxAmount, startBlock, startBlock + 5, amount('0'), 1, parent.contract);
 
 			await mineBlocks(2, parent.provider);
 
 			const newMaxAmount = amount('5');
-			const nextBlock = await parent.provider.getBlockNumber() + 1;
+			const nextBlock = await getStartingBlock(parent.contract.provider);
 			const endBlock = nextBlock + 5;
 			await expect(parent.contract.updateSubscription(this.from, this.to, rate, newMaxAmount, {from: this.from})).to.emit(parent.contract, "SubscriptionUpdated").withArgs(this.from, this.to, rate, newMaxAmount, startBlock, endBlock, nextBlock, amount('3'));
 
 		});
-		//
-		it('should be successful when the maxAmount is increased and the subscriber has enough balance', async function () {
+		it('should be successful when the subscription is updated and the subscriber has enough balance', async function () {
 			const rate = amount('1');
 			const maxAmount = amount('5');
-			const startBlock = await parent.provider.getBlockNumber() + 1;
+			const startBlock = await getStartingBlock(parent.contract.provider);
+
 			await parent.contract.updateSubscription(this.from, this.to, rate, maxAmount, {from: this.from});
 			await expectSubscription(this.from, this.to, rate, maxAmount, startBlock, startBlock + 5, amount('0'), 1, parent.contract);
 
 			await mineBlocks(2, parent.provider);
 
-			const newMaxAmount = amount('5');
-			const nextBlock = await parent.provider.getBlockNumber() + 1;
-			const endBlock = nextBlock + 5;
+			// update the subscription by 5 tokens with the same rate
+			const endBlock = await parent.provider.getBlockNumber() + 6;
 
-			await parent.contract.updateSubscription(this.from, this.to, rate, newMaxAmount, {from: this.from});
-			await expectSubscription(this.from, this.to, rate, newMaxAmount, startBlock, endBlock, amount('3'), 1, parent.contract);
+			await parent.contract.updateSubscription(this.from, this.to, rate, maxAmount, {from: this.from});
+			await expectSubscription(this.from, this.to, rate, maxAmount, startBlock, endBlock, amount('3'), 1, parent.contract);
 
 		});
-		//
-		it('should be successful when the rate is increased and the subscriber has enough balance', async function () {
+		it('should be successful when the subscription is updated with increased rate and the subscriber has enough balance', async function () {
 			const rate = amount('1');
 			const maxAmount = amount('5');
-			const startBlock = await parent.provider.getBlockNumber() + 1;
+			const startBlock = await getStartingBlock(parent.contract.provider);
+
 			await parent.contract.updateSubscription(this.from, this.to, rate, maxAmount, {from: this.from});
 			await expectSubscription(this.from, this.to, rate, maxAmount, startBlock, startBlock + 5, amount('0'), 1, parent.contract);
 
 			await mineBlocks(2, parent.provider);
 
+			// update the subscription by 2 tokens with 2 tokens per block
+			// it should finish in 1 blocks and stream 2 tokens per block
 			const newRate = amount('2');
-			const endBlock = await parent.provider.getBlockNumber() + 1;
+			const newMaxAmount = amount('2');
+			const endBlock = await parent.provider.getBlockNumber() + 2;
 
-			await parent.contract.updateSubscription(this.from, this.to, newRate, maxAmount, {from: this.from});
-			await expectSubscription(this.from, this.to, newRate, maxAmount, startBlock, endBlock, amount('3'), 1, parent.contract);
-
+			await parent.contract.updateSubscription(this.from, this.to, newRate, newMaxAmount, {from: this.from});
+			await expectSubscription(this.from, this.to, newRate, newMaxAmount, startBlock, endBlock, amount('3'), 1, parent.contract);
 
 		});
-		// //
-		// it('should be successful when the maxAmount and the rate are increased and the subscriber has enough balance', async function () {
-		// 	const rate = amount('1');
-		// 	const maxAmount = amount('10');
-		//
-		// 	await parent.contract.updateSubscription(this.from, this.to, rate, maxAmount, {from: this.from});
-		//
-		// 	await mineBlocks(1, parent.provider);
-		//
-		// 	await expectLastUpdatedBalance(maxAmount.sub(rate), this.from, parent.contract);
-		// 	await expectLastUpdatedBalance(rate, this.to, parent.contract);
-		//
-		//
-		// });
-		//
-		// it('should be successful when the maxAmount is decreased and the subscription is active', async function () {
-		// 	const rate = amount('1');
-		// 	const maxAmount = amount('10');
-		//
-		// 	await parent.contract.updateSubscription(this.from, this.to, rate, maxAmount, {from: this.from});
-		//
-		// 	// Mine more blocks than the subscription lasts
-		// 	await mineBlocks(11, parent.provider);
-		//
-		// 	await expectLastUpdatedBalance(amount('0'), this.from, parent.contract);
-		// 	await expectLastUpdatedBalance(maxAmount, this.to, parent.contract);
-		//
-		// });
-		//
-		// it('should be successful when the rate is decreased and the subscription is active', async function () {
-		// 	const rate = amount('1');
-		// 	const maxAmount = amount('10');
-		//
-		// 	await parent.contract.updateSubscription(this.from, this.to, rate, maxAmount, {from: this.from});
-		//
-		// 	// Mine more blocks than the subscription lasts
-		// 	await mineBlocks(11, parent.provider);
-		//
-		// 	await expectLastUpdatedBalance(amount('0'), this.from, parent.contract);
-		// 	await expectLastUpdatedBalance(maxAmount, this.to, parent.contract);
-		//
-		// });
-		//
-		//
-		// it('should be successful when the maxAmount and the rate are decreased and the subscription is active', async function () {
-		// 	const rate = amount('1');
-		// 	const maxAmount = amount('10');
-		//
-		// 	await parent.contract.updateSubscription(this.from, this.to, rate, maxAmount, {from: this.from});
-		//
-		// 	// Mine more blocks than the subscription lasts
-		// 	await mineBlocks(11, parent.provider);
-		//
-		// 	await expectLastUpdatedBalance(amount('0'), this.from, parent.contract);
-		// 	await expectLastUpdatedBalance(maxAmount, this.to, parent.contract);
-		//
-		// });
 
+		it('should be reverted if the subscriber does not have enough balance', async function () {
+			const rate = amount('1');
+			const maxAmount = amount('5');
+			const startBlock = await getStartingBlock(parent.contract.provider);
+
+			await parent.contract.updateSubscription(this.from, this.to, rate, maxAmount, {from: this.from});
+			await expectSubscription(this.from, this.to, rate, maxAmount, startBlock, startBlock + 5, amount('0'), 1, parent.contract);
+
+			await mineBlocks(2, parent.provider);
+
+			// update the subscription by 10 tokens with rate of 1 token per block
+			// it should finish in 10 blocks and stream 1 token per block (the reminder will be sent at the end)
+			const newMaxAmount = amount('10');
+
+			await expect(parent.contract.updateSubscription(this.from, this.to, rate, newMaxAmount, {from: this.from})).to.be.revertedWith("Insufficient balance.");
+		});
 
 	})
-
 
 
 	describe("withdrawing as a subscriber", function (this: any) {
@@ -548,7 +489,6 @@ describe('strETH', function () {
 		before(async function () {
 			this.from = parent.accounts[0].address;
 			this.to = parent.accounts[1].address;
-			// connect to the contract as other signer, in order to be able to change the transaction `from` part
 			this.depositAmount = amount('10');
 		})
 
@@ -561,8 +501,10 @@ describe('strETH', function () {
 
 			const rate = amount('1');
 			const ethAmount = amount('5');
+			const startBlock = await getStartingBlock(parent.contract.provider);
 
 			await parent.contract.updateSubscription(this.from, this.to, rate, ethAmount, {from: this.from});
+			await expectSubscription(this.from, this.to, rate, ethAmount, startBlock, startBlock + 5, amount('0'), 1, parent.contract);
 
 			await mineBlocks(10, parent.provider);
 
@@ -570,15 +512,15 @@ describe('strETH', function () {
 				.to.emit(parent.contract, 'Transfer')
 				.withArgs(this.from, "0x0000000000000000000000000000000000000000", ethAmount);
 
-			// connect to the contract as other signer, in order to be able to change the transaction `from` part
-
 		});
 
 		it('should be successful when withdrawing less than the available amount', async function () {
 			const rate = amount('1');
 			const ethAmount = amount('5');
+			const startBlock = await getStartingBlock(parent.contract.provider);
 
 			await parent.contract.updateSubscription(this.from, this.to, rate, ethAmount, {from: this.from});
+			await expectSubscription(this.from, this.to, rate, ethAmount, startBlock, startBlock + 5, amount('0'), 1, parent.contract);
 
 			await mineBlocks(10, parent.provider);
 
@@ -593,8 +535,10 @@ describe('strETH', function () {
 		it('should be successful when withdrawing equal to the available amount', async function () {
 			const rate = amount('1');
 			const ethAmount = amount('5');
+			const startBlock = await getStartingBlock(parent.contract.provider);
 
 			await parent.contract.updateSubscription(this.from, this.to, rate, ethAmount, {from: this.from});
+			await expectSubscription(this.from, this.to, rate, ethAmount, startBlock, startBlock + 5, amount('0'), 1, parent.contract);
 
 			await mineBlocks(10, parent.provider);
 
@@ -610,8 +554,10 @@ describe('strETH', function () {
 		it('should be reverted when trying to withdraw more than the available amount', async function () {
 			const rate = amount('1');
 			const ethAmount = amount('5');
+			const startBlock = await getStartingBlock(parent.contract.provider);
 
 			await parent.contract.updateSubscription(this.from, this.to, rate, ethAmount, {from: this.from});
+			await expectSubscription(this.from, this.to, rate, ethAmount, startBlock, startBlock + 5, amount('0'), 1, parent.contract);
 
 			await mineBlocks(10, parent.provider);
 
@@ -622,12 +568,15 @@ describe('strETH', function () {
 		it('should be successful when withdrawing within the available amount after canceled subscription', async function () {
 			const rate = amount('1');
 			const ethAmount = amount('10');
+			const startBlock = await getStartingBlock(parent.contract.provider);
 
 			await parent.contract.updateSubscription(this.from, this.to, rate, ethAmount, {from: this.from});
+			await expectSubscription(this.from, this.to, rate, ethAmount, startBlock, startBlock + 10, amount('0'), 1, parent.contract);
 
 			await mineBlocks(5, parent.provider);
 
 			await parent.contract.cancelSubscription(this.from, this.to, {from: this.from});
+			await expectSubscription(this.from, this.to, rate, ethAmount, startBlock, startBlock + 10, amount('6'), 3, parent.contract);
 
 			// The amount should be 4 because of the 5 mined blocks + 1 block for the cancelSubscription tx
 			await parent.contract.withdraw(amount('4'), {from: this.from});
@@ -640,8 +589,11 @@ describe('strETH', function () {
 		it('should be successful when withdrawing within the available amount when active subscription exists', async function () {
 			const rate = amount('1');
 			const ethAmount = amount('5');
+			const startBlock = await getStartingBlock(parent.contract.provider);
 
 			await parent.contract.updateSubscription(this.from, this.to, rate, ethAmount, {from: this.from});
+			await expectSubscription(this.from, this.to, rate, ethAmount, startBlock, startBlock + 5, amount('0'), 1, parent.contract);
+
 			await mineBlocks(3, parent.provider);
 			await parent.contract.withdraw(amount('5'), {from: this.from});
 
@@ -654,8 +606,10 @@ describe('strETH', function () {
 		it('should be reverted when trying to withdraw more than the available amount when active subscription exists', async function () {
 			const rate = amount('1');
 			const ethAmount = amount('10');
+			const startBlock = await getStartingBlock(parent.contract.provider);
 
 			await parent.contract.updateSubscription(this.from, this.to, rate, ethAmount, {from: this.from});
+			await expectSubscription(this.from, this.to, rate, ethAmount, startBlock, startBlock + 10, amount('0'), 1, parent.contract);
 
 			await mineBlocks(3, parent.provider);
 
@@ -664,15 +618,14 @@ describe('strETH', function () {
 		});
 
 		it('should be reverted when trying to withdraw less than the total balance but more than the reserved amount when active subscription exists', async function () {
-
 			const rate = amount('1');
 			const ethAmount = amount('10');
+			const startBlock = await getStartingBlock(parent.contract.provider);
+
 			await parent.contract.updateSubscription(this.from, this.to, rate, ethAmount, {from: this.from});
+			await expectSubscription(this.from, this.to, rate, ethAmount, startBlock, startBlock + 10, amount('0'), 1, parent.contract);
 			await expect(parent.contract.withdraw(amount('5'), {from: this.from})).to.be.revertedWith("Requested amount larger than available balance.");
 		});
-
-
-
 
 	});
 
@@ -681,22 +634,23 @@ describe('strETH', function () {
 		before(async function () {
 			this.from = parent.accounts[0].address;
 			this.to = parent.accounts[1].address;
-
-			// connect to the contract as other signer, in order to be able to change the transaction `from` part
 			this.depositAmount = amount('10');
 		})
 
 		beforeEach(async function () {
 			await parent.contract.deposit({value: this.depositAmount, from: this.from});
-			this.toContract = await parent.contract.connect(parent.accounts[1]);
 
+			// connect to the contract as other signer, in order to be able to change the transaction `from` part
+			this.toContract = await parent.contract.connect(parent.accounts[1]);
 		})
 
 		it('should be successful when withdrawing less than the available amount', async function () {
 			const rate = amount('1');
 			const maxAmount = amount('5');
+			const startBlock = await getStartingBlock(parent.contract.provider);
 
 			await parent.contract.updateSubscription(this.from, this.to, rate, maxAmount, {from: this.from});
+			await expectSubscription(this.from, this.to, rate, maxAmount, startBlock, startBlock + 5, amount('0'), 1, parent.contract);
 
 			await mineBlocks(10, parent.provider);
 
@@ -711,8 +665,10 @@ describe('strETH', function () {
 
 			const rate = amount('1');
 			const maxAmount = amount('5');
+			const startBlock = await getStartingBlock(parent.contract.provider);
 
 			await parent.contract.updateSubscription(this.from, this.to, rate, maxAmount, {from: this.from});
+			await expectSubscription(this.from, this.to, rate, maxAmount, startBlock, startBlock + 5, amount('0'), 1, parent.contract);
 
 			await mineBlocks(10, parent.provider);
 
@@ -725,9 +681,11 @@ describe('strETH', function () {
 		});
 		it('should be reverted when trying to withdraw more than the available amount', async function () {
 			const rate = amount('1');
-			const ethAmount = amount('5');
+			const maxAmount = amount('5');
+			const startBlock = await getStartingBlock(parent.contract.provider);
 
-			await parent.contract.updateSubscription(this.from, this.to, rate, ethAmount, {from: this.from});
+			await parent.contract.updateSubscription(this.from, this.to, rate, maxAmount, {from: this.from});
+			await expectSubscription(this.from, this.to, rate, maxAmount, startBlock, startBlock + 5, amount('0'), 1, parent.contract);
 
 			await mineBlocks(10, parent.provider);
 
@@ -736,13 +694,16 @@ describe('strETH', function () {
 		});
 		it('should be successful when trying to withdraw within the available amount after canceled subscription', async function () {
 			const rate = amount('1');
-			const ethAmount = amount('10');
+			const maxAmount = amount('10');
+			const startBlock = await getStartingBlock(parent.contract.provider);
 
-			await parent.contract.updateSubscription(this.from, this.to, rate, ethAmount, {from: this.from});
+			await parent.contract.updateSubscription(this.from, this.to, rate, maxAmount, {from: this.from});
+			await expectSubscription(this.from, this.to, rate, maxAmount, startBlock, startBlock + 10, amount('0'), 1, parent.contract);
 
 			await mineBlocks(5, parent.provider);
 
 			await parent.contract.cancelSubscription(this.from, this.to, {from: this.from});
+			await expectSubscription(this.from, this.to, rate, maxAmount, startBlock, startBlock + 10, amount('6'), 3, parent.contract);
 
 
 			const withdrawAmount = amount('5');
@@ -757,9 +718,11 @@ describe('strETH', function () {
 		it('should be successful when trying to withdraw within the available amount when active subscription exists', async function () {
 
 			const rate = amount('1');
-			const ethAmount = amount('5');
+			const maxAmount = amount('5');
+			const startBlock = await getStartingBlock(parent.contract.provider);
 
-			await parent.contract.updateSubscription(this.from, this.to, rate, ethAmount, {from: this.from});
+			await parent.contract.updateSubscription(this.from, this.to, rate, maxAmount, {from: this.from});
+			await expectSubscription(this.from, this.to, rate, maxAmount, startBlock, startBlock + 5, amount('0'), 1, parent.contract);
 
 			await mineBlocks(3, parent.provider);
 
@@ -773,9 +736,11 @@ describe('strETH', function () {
 		});
 		it('should be reverted when trying to withdraw more than the available amount when active subscription exists', async function () {
 			const rate = amount('1');
-			const ethAmount = amount('10');
+			const maxAmount = amount('10');
+			const startBlock = await getStartingBlock(parent.contract.provider);
 
-			await parent.contract.updateSubscription(this.from, this.to, rate, ethAmount, {from: this.from});
+			await parent.contract.updateSubscription(this.from, this.to, rate, maxAmount, {from: this.from});
+			await expectSubscription(this.from, this.to, rate, maxAmount, startBlock, startBlock + 10, amount('0'), 1, parent.contract);
 
 			await mineBlocks(3, parent.provider);
 
@@ -794,11 +759,9 @@ describe('strETH', function () {
 			this.fromSecond = parent.accounts[5].address;
 			this.fromSecondSigner = parent.accounts[5];
 
-
 			this.toFirst = parent.accounts[1].address;
 			this.toSecond = parent.accounts[2].address;
 
-			// connect to the contract as other signer, in order to be able to change the transaction `from` part
 			this.depositAmount = amount('10');
 		})
 
@@ -816,9 +779,13 @@ describe('strETH', function () {
 			const rate = amount('1');
 			const maxAmountFirstSub = amount('3');
 			const maxAmountSecondSub = amount('6');
+			const startBlock = await getStartingBlock(parent.contract.provider);
 
 			await parent.contract.updateSubscription(this.fromFirst, this.toFirst, rate, maxAmountFirstSub, {from: this.fromFirst});
 			await parent.contract.updateSubscription(this.fromFirst, this.toSecond, rate, maxAmountSecondSub, {from: this.fromFirst});
+
+			await expectSubscription(this.fromFirst, this.toFirst, rate, maxAmountFirstSub, startBlock, startBlock + 3, amount('1'), 1, parent.contract);
+			await expectSubscription(this.fromFirst, this.toSecond, rate, maxAmountSecondSub, startBlock + 1, startBlock + 7, amount('0'), 1, parent.contract);
 
 			await mineBlocks(10, parent.provider);
 
@@ -838,12 +805,16 @@ describe('strETH', function () {
 			const rate = amount('1');
 			const maxAmountFirstSub = amount('5');
 			const maxAmountSecondSub = amount('6');
+			const startBlock = await getStartingBlock(parent.contract.provider);
 
 			await parent.contract.updateSubscription(this.fromFirst, this.toFirst, rate, maxAmountFirstSub, {from: this.fromFirst});
 			await expect(parent.contract.updateSubscription(this.fromFirst, this.toSecond, rate, maxAmountSecondSub, {from: this.fromFirst})).to.be.revertedWith('Insufficient balance.');
 
-			await mineBlocks(10, parent.provider);
+			const zeroBn = amount('0');
+			await expectSubscription(this.fromFirst, this.toFirst, rate, maxAmountFirstSub, startBlock, startBlock + 5, amount('0'), 1, parent.contract);
+			await expectSubscription(this.fromFirst, this.toSecond, zeroBn, zeroBn, zeroBn, zeroBn, zeroBn, 0, parent.contract);
 
+			await mineBlocks(10, parent.provider);
 
 			await expectBalance(amount('10'), this.fromFirst, parent.contract);
 			await expectLastUpdatedBalance(amount('5'), this.fromFirst, parent.contract);
@@ -860,10 +831,13 @@ describe('strETH', function () {
 			const rate = amount('1');
 			const maxAmountFirstSub = amount('5');
 			const maxAmountSecondSub = amount('5');
+			const startBlock = await getStartingBlock(parent.contract.provider);
 
 			await parent.contract.updateSubscription(this.fromFirst, this.toFirst, rate, maxAmountFirstSub, {from: this.fromFirst});
 			await parent.contract.updateSubscription(this.fromFirst, this.toSecond, rate, maxAmountSecondSub, {from: this.fromFirst});
 
+			await expectSubscription(this.fromFirst, this.toFirst, rate, maxAmountFirstSub, startBlock, startBlock + 5, amount('1'), 1, parent.contract);
+			await expectSubscription(this.fromFirst, this.toSecond, rate, maxAmountSecondSub, startBlock + 1, startBlock + 6, amount('0'), 1, parent.contract);
 
 			await mineBlocks(3, parent.provider);
 			await parent.contract.cancelSubscription(this.fromFirst, this.toSecond);
@@ -874,10 +848,8 @@ describe('strETH', function () {
 			await expectBalance(expectedBalance, this.fromFirst, parent.contract);
 			await expectLastUpdatedBalance(expectedBalance, this.fromFirst, parent.contract);
 
-
 			await expectBalance(maxAmountFirstSub, this.toFirst, parent.contract);
 			await expectLastUpdatedBalance(maxAmountFirstSub, this.toFirst, parent.contract);
-
 
 			const expectedBalanceSecond = amount('4');
 			await expectBalance(expectedBalanceSecond, this.toSecond, parent.contract);
@@ -889,9 +861,13 @@ describe('strETH', function () {
 			const rate = amount('1');
 			const maxAmountFirstSub = amount('2');
 			const maxAmountSecondSub = amount('5');
+			const startBlock = await getStartingBlock(parent.contract.provider);
 
 			await parent.contract.updateSubscription(this.fromFirst, this.toFirst, rate, maxAmountFirstSub, {from: this.fromFirst});
 			await parent.contract.updateSubscription(this.fromFirst, this.toSecond, rate, maxAmountSecondSub, {from: this.fromFirst});
+
+			await expectSubscription(this.fromFirst, this.toFirst, rate, maxAmountFirstSub, startBlock, startBlock + 2, amount('1'), 1, parent.contract);
+			await expectSubscription(this.fromFirst, this.toSecond, rate, maxAmountSecondSub, startBlock + 1, startBlock + 6, amount('0'), 1, parent.contract);
 
 			await mineBlocks(5, parent.provider);
 
@@ -919,11 +895,9 @@ describe('strETH', function () {
 			this.fromSecond = parent.accounts[5].address;
 			this.fromSecondSigner = parent.accounts[5];
 
-
 			this.toFirst = parent.accounts[1].address;
 			this.toSecond = parent.accounts[2].address;
 
-			// connect to the contract as other signer, in order to be able to change the transaction `from` part
 			this.depositAmount = amount('10');
 		})
 
@@ -931,6 +905,7 @@ describe('strETH', function () {
 
 			await parent.contract.deposit({value: this.depositAmount, from: this.fromFirst});
 
+			// connect to the contract as other signer, in order to be able to change the transaction `from` part
 			this.contractSecondSigner = parent.contract.connect(this.fromSecondSigner);
 			await this.contractSecondSigner.deposit({value: this.depositAmount, from: this.fromSecond});
 
@@ -939,13 +914,16 @@ describe('strETH', function () {
 
 		it('should be successful when withdrawing within the available balances after the subscriptions are finished', async function () {
 
-
 			const rate = amount('1');
 			const maxAmountFirstSub = amount('5');
 			const maxAmountSecondSub = amount('5');
+			const startBlock = await getStartingBlock(parent.contract.provider);
 
 			await parent.contract.updateSubscription(this.fromFirst, this.toSecond, rate, maxAmountFirstSub, {from: this.fromFirst});
 			await this.contractSecondSigner.updateSubscription(this.fromSecond, this.toSecond, rate, maxAmountSecondSub, {from: this.fromSecond});
+
+			await expectSubscription(this.fromFirst, this.toSecond, rate, maxAmountFirstSub, startBlock, startBlock + 5, amount('1'), 1, parent.contract);
+			await expectSubscription(this.fromSecond, this.toSecond, rate, maxAmountSecondSub, startBlock + 1, startBlock + 6, amount('0'), 1, parent.contract);
 
 			await mineBlocks(10, parent.provider);
 
@@ -958,16 +936,20 @@ describe('strETH', function () {
 			await expectBalance(amount('0'), this.toSecond, parent.contract);
 
 
-
 		});
 		it('should be successful when withdrawing within the available balances while the subscriptions are running', async function () {
 
 			const rate = amount('1');
 			const maxAmountFirstSub = amount('5');
 			const maxAmountSecondSub = amount('5');
+			const startBlock = await getStartingBlock(parent.contract.provider);
 
 			await parent.contract.updateSubscription(this.fromFirst, this.toSecond, rate, maxAmountFirstSub, {from: this.fromFirst});
 			await this.contractSecondSigner.updateSubscription(this.fromSecond, this.toSecond, rate, maxAmountSecondSub, {from: this.fromSecond});
+
+
+			await expectSubscription(this.fromFirst, this.toSecond, rate, maxAmountFirstSub, startBlock, startBlock + 5, amount('1'), 1, parent.contract);
+			await expectSubscription(this.fromSecond, this.toSecond, rate, maxAmountSecondSub, startBlock + 1, startBlock + 6, amount('0'), 1, parent.contract);
 
 			await mineBlocks(3, parent.provider);
 
@@ -985,9 +967,13 @@ describe('strETH', function () {
 			const rate = amount('1');
 			const maxAmountFirstSub = amount('5');
 			const maxAmountSecondSub = amount('5');
+			const startBlock = await getStartingBlock(parent.contract.provider);
 
 			await parent.contract.updateSubscription(this.fromFirst, this.toSecond, rate, maxAmountFirstSub, {from: this.fromFirst});
 			await this.contractSecondSigner.updateSubscription(this.fromSecond, this.toSecond, rate, maxAmountSecondSub, {from: this.fromSecond});
+
+			await expectSubscription(this.fromFirst, this.toSecond, rate, maxAmountFirstSub, startBlock, startBlock + 5, amount('1'), 1, parent.contract);
+			await expectSubscription(this.fromSecond, this.toSecond, rate, maxAmountSecondSub, startBlock + 1, startBlock + 6, amount('0'), 1, parent.contract);
 
 			await mineBlocks(10, parent.provider);
 
@@ -1003,9 +989,13 @@ describe('strETH', function () {
 			const rate = amount('1');
 			const maxAmountFirstSub = amount('5');
 			const maxAmountSecondSub = amount('4');
+			const startBlock = await getStartingBlock(parent.contract.provider);
 
 			await parent.contract.updateSubscription(this.fromFirst, this.toSecond, rate, maxAmountFirstSub, {from: this.fromFirst});
 			await this.contractSecondSigner.updateSubscription(this.fromSecond, this.toSecond, rate, maxAmountSecondSub, {from: this.fromSecond});
+
+			await expectSubscription(this.fromFirst, this.toSecond, rate, maxAmountFirstSub, startBlock, startBlock + 5, amount('1'), 1, parent.contract);
+			await expectSubscription(this.fromSecond, this.toSecond, rate, maxAmountSecondSub, startBlock + 1, startBlock + 5, amount('0'), 1, parent.contract);
 
 			await mineBlocks(3, parent.provider);
 
@@ -1021,9 +1011,13 @@ describe('strETH', function () {
 			const rate = amount('1');
 			const maxAmountFirstSub = amount('10');
 			const maxAmountSecondSub = amount('10');
+			const startBlock = await getStartingBlock(parent.contract.provider);
 
 			await parent.contract.updateSubscription(this.fromFirst, this.toSecond, rate, maxAmountFirstSub, {from: this.fromFirst});
 			await this.contractSecondSigner.updateSubscription(this.fromSecond, this.toSecond, rate, maxAmountSecondSub, {from: this.fromSecond});
+
+			await expectSubscription(this.fromFirst, this.toSecond, rate, maxAmountFirstSub, startBlock, startBlock + 10, amount('1'), 1, parent.contract);
+			await expectSubscription(this.fromSecond, this.toSecond, rate, maxAmountSecondSub, startBlock + 1, startBlock + 11, amount('0'), 1, parent.contract);
 
 			await mineBlocks(3, parent.provider);
 			await this.contractSecondSigner.cancelSubscription(this.fromSecond, this.toSecond, {from: this.fromSecond});
@@ -1045,9 +1039,14 @@ describe('strETH', function () {
 			const rate = amount('1');
 			const maxAmountFirstSub = amount('10');
 			const maxAmountSecondSub = amount('10');
+			const startBlock = await getStartingBlock(parent.contract.provider);
 
 			await parent.contract.updateSubscription(this.fromFirst, this.toSecond, rate, maxAmountFirstSub, {from: this.fromFirst});
 			await this.contractSecondSigner.updateSubscription(this.fromSecond, this.toSecond, rate, maxAmountSecondSub, {from: this.fromSecond});
+
+			await expectSubscription(this.fromFirst, this.toSecond, rate, maxAmountFirstSub, startBlock, startBlock + 10, amount('1'), 1, parent.contract);
+			await expectSubscription(this.fromSecond, this.toSecond, rate, maxAmountSecondSub, startBlock + 1, startBlock + 11, amount('0'), 1, parent.contract);
+
 
 			await mineBlocks(3, parent.provider);
 			await this.contractSecondSigner.cancelSubscription(this.fromSecond, this.toSecond, {from: this.fromSecond});
