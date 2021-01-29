@@ -27,6 +27,8 @@
 					</td>
 				{/each}
 			</tr>
+		{:else}
+			<slot></slot>
 		{/each}
 	</tbody>
 </table>
