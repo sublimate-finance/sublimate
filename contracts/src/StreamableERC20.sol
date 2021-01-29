@@ -153,7 +153,8 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
         require(rate > 0, "The subscription rate must be greater than 0.");
         require(maxAmount > 0, "The max amount must be greater than 0.");
         require(maxAmount >= rate, "The max amount must be greater than or equal to the rate.");
-        require(availableBalance(from) >= maxAmount, "Insufficient balance.");
+		require(availableBalance(from) >= maxAmount, "Insufficient balance.");
+
 
 		_updateIncomingAndOutgoingSubscriptions(from);
 		// TODO: Think if this should happen later
@@ -163,7 +164,6 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 
 
 		if(_subscriptions[from][to].status == SubscriptionStatus.INACTIVE) {
-			require(super.balanceOf(from) >= maxAmount, "Insufficient balance.");
 			// In case there is a reminder, we will pay it in the last payment
 			uint256 blockEnd = block.number + (maxAmount / rate);
 

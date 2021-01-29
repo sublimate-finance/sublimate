@@ -81,7 +81,7 @@
 		</a>
 	{/if}
 {:else if type}
-	<button aria-label={label} title={label} {type} disabled={disabled || undefined} transition:scale>
+	<button class="button" aria-label={label} title={label} {type} disabled={disabled || undefined} transition:scale>
 		<slot>Name</slot>
 	</button>
 {:else}
@@ -90,7 +90,7 @@
 		aria-label={label}
 		title={label}
 		type="button"
-		class={_class}
+		class="button {_class}"
 		disabled={disabled || undefined}
 		transition:scale>
 		<slot>Name</slot>

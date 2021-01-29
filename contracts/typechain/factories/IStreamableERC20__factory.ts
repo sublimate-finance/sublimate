@@ -58,7 +58,7 @@ const _abi = [
         type: "address",
       },
       {
-        indexed: true,
+        indexed: false,
         internalType: "uint256",
         name: "rate",
         type: "uint256",
@@ -82,7 +82,7 @@ const _abi = [
         type: "uint256",
       },
       {
-        indexed: false,
+        indexed: true,
         internalType: "uint256",
         name: "lastTransferAtBlock",
         type: "uint256",
@@ -113,7 +113,7 @@ const _abi = [
         type: "address",
       },
       {
-        indexed: true,
+        indexed: false,
         internalType: "uint256",
         name: "rate",
         type: "uint256",
@@ -137,7 +137,7 @@ const _abi = [
         type: "uint256",
       },
       {
-        indexed: false,
+        indexed: true,
         internalType: "uint256",
         name: "lastTransferAtBlock",
         type: "uint256",
@@ -168,7 +168,7 @@ const _abi = [
         type: "address",
       },
       {
-        indexed: true,
+        indexed: false,
         internalType: "uint256",
         name: "rate",
         type: "uint256",
@@ -192,7 +192,7 @@ const _abi = [
         type: "uint256",
       },
       {
-        indexed: false,
+        indexed: true,
         internalType: "uint256",
         name: "lastTransferAtBlock",
         type: "uint256",
@@ -266,7 +266,7 @@ const _abi = [
         type: "uint256",
       },
       {
-        indexed: false,
+        indexed: true,
         internalType: "uint256",
         name: "blockAtLastUpdate",
         type: "uint256",

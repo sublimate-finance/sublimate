@@ -11,7 +11,7 @@
 
 <style>
 	.address {
-		font-family: var(--monospace-fonts), var(--base-fonts);
+		font-family: var(--base-fonts), var(--monospace-fonts);
 		font-size: 0.95em;
 	}
 </style>

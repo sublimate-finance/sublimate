@@ -649,33 +649,33 @@ export class StreamableERC20 extends Contract {
     SubscriptionCanceled(
       from: string | null,
       to: string | null,
-      rate: BigNumberish | null,
+      rate: null,
       maxAmount: null,
       startBlock: null,
       endBlock: null,
-      lastTransferAtBlock: null,
+      lastTransferAtBlock: BigNumberish | null,
       amountPaid: null
     ): EventFilter;
 
     SubscriptionStarted(
       from: string | null,
       to: string | null,
-      rate: BigNumberish | null,
+      rate: null,
       maxAmount: null,
       startBlock: null,
       endBlock: null,
-      lastTransferAtBlock: null,
+      lastTransferAtBlock: BigNumberish | null,
       amountPaid: null
     ): EventFilter;
 
     SubscriptionUpdated(
       from: string | null,
       to: string | null,
-      rate: BigNumberish | null,
+      rate: null,
       maxAmount: null,
       startBlock: null,
       endBlock: null,
-      lastTransferAtBlock: null,
+      lastTransferAtBlock: BigNumberish | null,
       amountPaid: null
     ): EventFilter;
 
@@ -687,7 +687,7 @@ export class StreamableERC20 extends Contract {
       totalMaxIncomingAmount: null,
       outgoingRate: null,
       totalMaxOutgoingAmount: null,
-      blockAtLastUpdate: null
+      blockAtLastUpdate: BigNumberish | null
     ): EventFilter;
   };
 
