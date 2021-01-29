@@ -1,25 +1,30 @@
 <script lang="ts">
+	import type { TableData } from '../types/table-data'
 	import { TimeInterval } from '../types/time-intervals'
 
-	export let name: string
-	export let summary: string
-	export let image: string | URL
-
-	export let incomingSubscriptionsAggregateData = {
-		token: 'ETH',
-		incomingRate: 100,
-		subscriberCount: 10,
+	export let profile: {
+		name: string
+		summary: string
+		image: string | URL
 	}
 
-	export let incomingSubscriptionsByAssets = [{
-		token: 'ETH',
-		incomingRate: 100,
-		subscriberCount: 10,
-	}, {
-		token: 'DAI',
-		incomingRate: 10,
-		subscriberCount: 5,
-	}]
+	export let incomingSubscriptions = {
+		aggregated: {
+			currency: 'ETH',
+			rate: 100,
+			subscriberCount: 10,
+		},
+
+		aggregatedByToken: [{
+			token: 'ETH',
+			rate: 100,
+			subscriberCount: 10,
+		}, {
+			token: 'DAI',
+			rate: 10,
+			subscriberCount: 5,
+		}]
+	}
 
 	$: prices = {
 		'ETH': 2000 * 1e-18,
@@ -32,19 +37,21 @@
 		'block': 1
 	}
 	function convertTokenRate(token, tokensPerBlock, timeInterval, baseCurrency){
-		const amount = tokensPerBlock * averageBlocksPerTimeInterval[timeInterval] * prices[baseCurrency]/prices[token]
+		const amount = tokensPerBlock * averageBlocksPerTimeInterval[timeInterval] * prices[token]/prices[baseCurrency]
 		return amount.toFixed(3)
 		// return `${amount.toFixed(3)} ${baseCurrency}/${timeInterval}`
 	}
 
-	$: tableData = incomingSubscriptionsByAssets.map(row => {
-		const value = row.token
-		return {
-			'Asset': row.token,
-			'Earning': convertTokenRate(row.token, row.incomingRate, timeInterval, baseCurrency),
-			'Subscribers': row.subscriberCount
-		}
-	})
+	function tableAggregatedByToken(aggregatedByToken, timeInterval, baseCurrency): TableData {
+		return aggregatedByToken.map(row => {
+			const value = row.token
+			return {
+				'Asset': row.token,
+				'Earning': convertTokenRate(row.token, row.rate, timeInterval, baseCurrency),
+				'Subscribers': row.subscriberCount
+			}
+		})
+	}
 
 
 	// Display options
@@ -75,20 +82,20 @@
 </style>
 
 <article class="creator-card card">
-	<img src={image.toString()} alt="name" width="100" />
-	<h3>{name}</h3>
-	<h4 class="summary">{summary}</h4>
+	<img src={profile.image?.toString() ?? `https://picsum.photos/200/200?${profile.name}`} alt={profile.name} width="100" />
+	<h3>{profile.name}</h3>
+	<h4 class="summary">{profile.summary}</h4>
 	<div class="columns creators">
 		<div class="boxed neumorphic">
-			≈ <TokenValue value={convertTokenRate(incomingSubscriptionsAggregateData.token, incomingSubscriptionsAggregateData.incomingRate, timeInterval, baseCurrency)} token={baseCurrency} rateInterval={timeInterval} />
-			<!-- <span><strong>{incomingRate} {incomingToken}</strong>/month</span> -->
+			≈ <TokenValue value={convertTokenRate(incomingSubscriptions.aggregated.currency, incomingSubscriptions.aggregated.rate, timeInterval, baseCurrency)} token={baseCurrency} rateInterval={timeInterval} />
+			<!-- <span><strong>{rate} {incomingToken}</strong>/month</span> -->
 		</div>
 		<div class="boxed neumorphic">
-			<strong>{incomingSubscriptionsAggregateData.subscriberCount}</strong> subscriber{incomingSubscriptionsAggregateData.subscriberCount === 1 ? '' : 's'}
+			<strong>{incomingSubscriptions.aggregated.subscriberCount}</strong> subscriber{incomingSubscriptions.aggregated.subscriberCount === 1 ? '' : 's'}
 		</div>
 	</div>
 	<div class="boxed neumorphic column">
-		<Table data={tableData}>
+		<Table data={tableAggregatedByToken(incomingSubscriptions.aggregatedByToken, timeInterval, baseCurrency)}>
 			<span slot="cell" let:key let:value>
 				{#if key === 'Asset'}
 					<TokenName token={value} />
