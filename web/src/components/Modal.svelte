@@ -1,10 +1,10 @@
 <script lang="ts">
 	import {createEventDispatcher, onDestroy} from 'svelte'
 
-	export let globalCloseButton: boolean = false
-	export let closeButton: boolean = false
+	export let closeButton: boolean = true
 	export let title: string
 	export let cancelable: boolean = true
+	export let width
 
 	const dispatch = createEventDispatcher()
 	const close = () => cancelable && dispatch('close')
@@ -70,54 +70,68 @@
 	.modal-overlay {
 		position: fixed;
 		inset: 0;
-		background-color: var(--accent-color);
-		opacity: 0.3;
+		backdrop-filter: blur(2px);
 	}
+	.modal-overlay:before {
+		position: fixed;
+		inset: 0;
+		content: '';
+		background-color: var(--accent-color);
+		opacity: 0.4;
+	}
+
 	.modal {
-		backdrop-filter: blur(--overlay-backdrop-filter);
+		backdrop-filter: var(--overlay-backdrop-filter);
 		position: relative;
+		--space-inner: 1rem;
+
+		width: var(--modal-width);
+		max-width: 100%;
+	}
+
+	.modal-content {
+		display: grid;
+		gap: var(--space-inner);
+	}
+
+	.modal-close {
+		/* position: absolute;
+		right: 0;
+		top: 0; */
+		cursor: pointer;
+		fill: currentColor;
 	}
 </style>
 
 <svelte:window on:keydown={onKeydown} />
 
-<div class="modal-container" transition:fade={{duration: 300}}>
-	<div on:click={close} class="modal-overlay" />
+<div class="modal-container" style="--modal-width: {width}">
+	<div on:click={close} class="modal-overlay" transition:fade={{duration: 300}} />
 
 	<div class="modal card" transition:scale={{duration: 300}}>
-		{#if globalCloseButton}
-			<div on:click={close} class="modal-close absolute top-0 right-0 cursor-pointer flex flex-col items-center mt-4 mr-4 text-white text-sm z-50">
-				<svg class="fill-current text-white" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
-					<path
-						d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z" />
-				</svg>
-				<span class="text-sm">(Esc)</span>
-			</div>
-		{/if}
-
-		<!-- Add margin if you want to see some of the overlay behind the modal-->
-		<div class="modal-content py-4 text-left px-6" bind:this={modal}>
-			<div class="flex justify-between items-center pb-3">
-				<!--Title-->
+		{#if title || closeButton}
+			<div class="bar modal-title">
 				{#if title}
-					<h4>{title}</h4>
+					<h3>{title}</h3>
 				{/if}
 				{#if closeButton}
-					<div on:click={close} class="modal-close cursor-pointer z-50">
-						<svg class="fill-current text-black" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
+					<div on:click={close} class="modal-close">
+						<svg width="18" height="18" viewBox="0 0 18 18">
 							<path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z" />
 						</svg>
 					</div>
 				{/if}
 			</div>
+		{/if}
 
-			<!--Body-->
+		<div class="modal-content" bind:this={modal}>
 			<slot />
+		</div>
 
-			<!--Footer-->
-			<div class="flex justify-end pt-2">
+		<!-- {#if $$slots.footer}
+			<div class="footer">
 				<slot name="footer" />
 			</div>
-		</div>
+		{/if} -->
 	</div>
 </div>

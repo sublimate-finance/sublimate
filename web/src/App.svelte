@@ -3,7 +3,7 @@
 	import pages from './pages'
 
 	import LoadingBar from './components/LoadingBar.svelte'
-	import Nav from './components/Nav.svelte'
+	import Header from './components/Header.svelte'
 	import Navigating from './_routing/curi/Navigating.svelte'
 	import Notifications from './components/Notifications.svelte'
 </script>
@@ -12,7 +12,7 @@
 	{pages}
 	globalQueryStrings={['subgraph', 'debug', 'log', 'trace', '_d_eruda']}>
 	<Notifications />
-	<Nav links={['Home', 'Explore', '(Test)']} />
+	<Header />
 	<CurrentPage>
 		<LoadingBar />
 		Loading...
