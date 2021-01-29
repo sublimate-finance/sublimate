@@ -8,6 +8,7 @@ import "./ERC20/IERC20.sol";
  * @dev Interface of the StreamableERC20
  */
 interface IStreamableERC20 is IERC20 {
+
 	/**
 	 * @dev Returns the last updated balance of `account`
 	 */
@@ -18,6 +19,16 @@ interface IStreamableERC20 is IERC20 {
      */
     function getSubscription(address from, address to) external view returns (uint256, uint256);
 
+
+	/**
+	 * @dev Cancels subscription started from `from` to `to`.
+	 *
+	 * Returns a boolean value indicating whether the operation succeeded.
+	 *
+	 * Emits a {SubscriptionCanceled} event.
+	 */
+	function cancelSubscription(address from, address to) external;
+
 	/**
 	 * @dev Updates the subscription from `from` to `to`.
 	 *
@@ -25,12 +36,27 @@ interface IStreamableERC20 is IERC20 {
 	 *
 	 * Emits a {SubscriptionUpdated} event.
 	 */
-	function updateSubscription(address from, address to, uint256 rate, uint256 maxAmount) external returns (bool);
+	function updateSubscription(address from, address to, uint256 rate, uint256 maxAmount) external;
+
+	/**
+	 * @dev Emitted when a subscription from `from` to `to` is started.
+	 */
+	event SubscriptionStarted(address indexed from, address indexed to, uint256 rate, uint256 maxAmount, uint256 startBlock, uint256 endBlock, uint256 indexed lastTransferAtBlock, uint256 amountPaid);
+
 
 	/**
 	 * @dev Emitted when a subscription from `from` to `to` is updated.
-	 *
-	 * Note that `rate` and `maxAmount` if the subscription is stopped.
 	 */
-	event SubscriptionUpdated(address indexed from, address indexed to, uint256 rate, uint256 maxAmount);
+	event SubscriptionUpdated(address indexed from, address indexed to, uint256 rate, uint256 maxAmount, uint256 startBlock, uint256 endBlock, uint256 indexed lastTransferAtBlock, uint256 amountPaid);
+
+	/**
+     * @dev Emitted when a subscription from `from` to `to` is canceled by the user.
+    */
+	event SubscriptionCanceled(address indexed from, address indexed to, uint256 rate, uint256 maxAmount, uint256 startBlock, uint256 endBlock, uint256 indexed lastTransferAtBlock, uint256 amountPaid);
+
+	/**
+     * @dev Emitted when the user's status is changed.
+    */
+	event UserStatusChanged(address indexed account, uint256 indexed incomingRate, uint256 totalMaxIncomingAmount, uint256 outgoingRate, uint256 totalMaxOutgoingAmount, uint256 indexed blockAtLastUpdate);
+
 }

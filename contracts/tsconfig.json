@@ -1,12 +1,14 @@
 {
 	"compilerOptions": {
 		"target": "es5",
+		"lib": ["es6", "es2017", "dom"],
 		"module": "commonjs",
 		"strict": true,
 		"esModuleInterop": true,
 		"moduleResolution": "node",
 		"forceConsistentCasingInFileNames": true,
-		"outDir": "dist"
+		"outDir": "dist",
+
 	},
-	"include": ["hardhat.config.ts", "./scripts", "./deploy", "./test"]
+	"include": ["hardhat.config.ts", "./scripts", "./deploy", "./test"],
 }
