@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Link from '../_routing/curi/Link.svelte'
 	import Logo from './Logo.svelte'
 	import Nav from './Nav.svelte'
 	import Wallet from './Wallet.svelte'
@@ -42,9 +41,9 @@
 </style>
 
 <header>
-	<Link href="./">
+	<a href="./">
 		<Logo />
-	</Link>
-	<Nav links={['Home', 'Explore', 'Dashboard']} />
+	</a>
+	<Nav />
 	<Wallet />
 </header>

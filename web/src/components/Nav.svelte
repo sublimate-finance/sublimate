@@ -1,9 +1,11 @@
 <script lang="ts">
-	type LinkInfo = string | {name: string; title: string}
+	import { url, isActive } from '@roxi/routify'
 
-	export let links: LinkInfo[]
-
-	import NavLink from './NavLink.svelte'
+	export const links = [
+		['/', 'Home'],
+		['/explore', 'Explore'],
+		['/dashboard', 'Dashboard'],
+	]
 </script>
 
 <style>
@@ -44,11 +46,11 @@
 </style>
 
 <ul class="nav">
-	{#each links as link}
+    {#each links as [path, name]}
 		<li class="font-bold">
-			<NavLink name={typeof link === 'string' ? link : link.name}>
-				{typeof link === 'string' ? link : link.title}
-			</NavLink>
+			<a class="link" class:active={$isActive(path)} href={$url(path)}>
+				{name}
+			</a>
 		</li>
-	{/each}
+    {/each}
 </ul>

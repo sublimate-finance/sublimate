@@ -12,6 +12,11 @@ import autoPreprocess from 'svelte-preprocess'
 import postcssImport from 'postcss-import'
 import { injectManifest } from 'rollup-plugin-workbox'
 
+import json from '@rollup/plugin-json'
+
+// import tailwindcss from 'tailwindcss'
+// import postcssPresetEnv from 'postcss-preset-env'
+
 
 const { distDir } = getConfig() // use Routify's distDir for SSOT
 const assetsDir = 'assets'
@@ -50,13 +55,19 @@ export default {
     },
     plugins: [
         svelte({
-            dev: !production, // run-time checks      
+            dev: !production, // run-time checks
             // Extract component CSS — better performance
             css: css => css.write(`bundle.css`),
             hot: isNollup,
             preprocess: [
                 autoPreprocess({
-                    postcss: { plugins: [postcssImport()] },
+                    postcss: {
+						plugins: [
+							postcssImport(),
+							// tailwindcss(),
+							// postcssPresetEnv()({stage: 1})
+						]
+					},
                     defaults: { style: 'postcss' }
                 })
             ]
@@ -72,6 +83,7 @@ export default {
 			sourceMap: !production,
 			inlineSources: !production
 		}),
+		json(),
 
         production && terser(),
         !production && !isNollup && serve(),
