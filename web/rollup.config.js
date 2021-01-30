@@ -9,13 +9,9 @@ import { copySync, removeSync } from 'fs-extra'
 import { spassr } from 'spassr'
 import getConfig from '@roxi/routify/lib/utils/config'
 import autoPreprocess from 'svelte-preprocess'
-import postcssImport from 'postcss-import'
 import { injectManifest } from 'rollup-plugin-workbox'
 
 import json from '@rollup/plugin-json'
-
-// import tailwindcss from 'tailwindcss'
-// import postcssPresetEnv from 'postcss-preset-env'
 
 
 const { distDir } = getConfig() // use Routify's distDir for SSOT
@@ -61,15 +57,9 @@ export default {
             hot: isNollup,
             preprocess: [
                 autoPreprocess({
-                    postcss: {
-						plugins: [
-							postcssImport(),
-							// tailwindcss(),
-							// postcssPresetEnv()({stage: 1})
-						]
-					},
-                    defaults: { style: 'postcss' }
-                })
+					postcss: require('./postcss.config.js'),
+					defaults: { style: 'postcss' }
+				})
             ]
         }),
 
