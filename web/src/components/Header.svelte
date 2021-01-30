@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Logo from './Logo.svelte'
 	import Nav from './Nav.svelte'
-	import Wallet from './Wallet.svelte'
+	// import Wallet from './Wallet.svelte'
 </script>
 
 <style>
@@ -45,5 +45,5 @@
 		<Logo />
 	</a>
 	<Nav />
-	<Wallet />
+	<!-- <Wallet /> -->
 </header>
