@@ -1,8 +1,8 @@
 @font-face {
 	font-family: 'Gilroy';
-	src: url('Gilroy-Light.woff2') format('woff2'),
-		url('Gilroy-Light.woff') format('woff'),
-		url('Gilroy-Light.ttf') format('ttf');
+	src: url('fonts/Gilroy-Light.woff2') format('woff2'),
+		url('fonts/Gilroy-Light.woff') format('woff'),
+		url('fonts/Gilroy-Light.ttf') format('ttf');
 	font-weight: 300;
 	font-style: normal;
 	font-display: swap;
@@ -10,9 +10,9 @@
 
 @font-face {
 	font-family: 'Gilroy';
-	src: url('Gilroy-Regular.woff2') format('woff2'),
-		url('Gilroy-Regular.woff') format('woff'),
-		url('Gilroy-Regular.ttf') format('ttf');
+	src: url('fonts/Gilroy-Regular.woff2') format('woff2'),
+		url('fonts/Gilroy-Regular.woff') format('woff'),
+		url('fonts/Gilroy-Regular.ttf') format('ttf');
 	font-weight: normal;
 	font-style: normal;
 	font-display: swap;
@@ -20,9 +20,9 @@
 
 @font-face {
 	font-family: 'Gilroy';
-	src: url('Gilroy-Medium.woff2') format('woff2'),
-		url('Gilroy-Medium.woff') format('woff'),
-		url('Gilroy-Medium.ttf') format('ttf');
+	src: url('fonts/Gilroy-Medium.woff2') format('woff2'),
+		url('fonts/Gilroy-Medium.woff') format('woff'),
+		url('fonts/Gilroy-Medium.ttf') format('ttf');
 	font-weight: 500;
 	font-style: normal;
 	font-display: swap;
@@ -30,9 +30,9 @@
 
 @font-face {
 	font-family: 'Gilroy';
-	src: url('Gilroy-Bold.woff2') format('woff2'),
-		url('Gilroy-Bold.woff') format('woff'),
-		url('Gilroy-Bold.ttf') format('ttf');
+	src: url('fonts/Gilroy-Bold.woff2') format('woff2'),
+		url('fonts/Gilroy-Bold.woff') format('woff'),
+		url('fonts/Gilroy-Bold.ttf') format('ttf');
 	font-weight: bold;
 	font-style: normal;
 	font-display: swap;
@@ -40,9 +40,9 @@
 
 @font-face {
 	font-family: 'Gilroy';
-	src: url('Gilroy-Heavy.woff2') format('woff2'),
-		url('Gilroy-Heavy.woff') format('woff'),
-		url('Gilroy-Heavy.ttf') format('ttf');
+	src: url('fonts/Gilroy-Heavy.woff2') format('woff2'),
+		url('fonts/Gilroy-Heavy.woff') format('woff'),
+		url('fonts/Gilroy-Heavy.ttf') format('ttf');
 	font-weight: 900;
 	font-style: normal;
 	font-display: swap;
