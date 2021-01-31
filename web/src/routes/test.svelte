@@ -1,6 +1,18 @@
 <script lang="ts">
-	import Contracts from '../components/Contracts.svelte';
-	import {test} from 'sublimate-common';
+	import {BigNumber, utils} from 'ethers'
+	const {hexConcat, keccak256} = utils
+
+	export function test(address: string, name: string): BigNumber {
+		return BigNumber.from(
+			hexConcat([
+				address,
+				name
+				// keccak256(['address', 'string'], [address, name]),
+				// keccak256(['string', 'address'], [name, address]),
+			])
+		)
+	}
+
 	import {logs} from 'named-logs';
 	import {messages} from '../stores/messages';
 	import {wallet, flow, chain} from '../stores/wallet';
@@ -24,6 +36,7 @@
 
 	import Blockie from '../components/Blockie.svelte';
 	import Button from '../components/Button.svelte';
+	import Contracts from '../components/Contracts.svelte';
 	import LoadingSpinner from '../components/LoadingSpinner.svelte';
 	import WalletAccess from '../components/WalletAccess.svelte';
 </script>
