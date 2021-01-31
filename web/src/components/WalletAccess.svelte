@@ -19,7 +19,7 @@
 		'1337': 'localhost chain',
 		'31337': 'localhost chain',
 	}
-	const chainId = import.meta.env.VITE_CHAIN_ID
+	const chainId = '1337' // import.meta.env.VITE_CHAIN_ID
 	const chainName = (() => {
 		const name = chainNames[chainId]
 		if (name) {
