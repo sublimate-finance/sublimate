@@ -31,6 +31,7 @@ export default {
 				'process.browser': true,
 				'process.env.NODE_ENV': JSON.stringify(mode)
 			}),
+			json(),
 			svelte({
 				preprocess: sveltePreprocess({ sourceMap: dev }),
 				compilerOptions: {
@@ -48,7 +49,6 @@ export default {
 			}),
 			commonjs(),
 			typescript({ sourceMap: dev }),
-			json(),
 
 			legacy && babel({
 				extensions: ['.js', '.mjs', '.html', '.svelte'],
@@ -84,6 +84,7 @@ export default {
 				'process.browser': false,
 				'process.env.NODE_ENV': JSON.stringify(mode)
 			}),
+			json(),
 			svelte({
 				preprocess: sveltePreprocess({ sourceMap: dev }),
 				compilerOptions: {
@@ -119,8 +120,9 @@ export default {
 				'process.browser': true,
 				'process.env.NODE_ENV': JSON.stringify(mode)
 			}),
+			json(),
 			commonjs(),
-			typescript({ sourceMap: dev }),
+			typescript({ sourceMap: dev, resolveJsonModule: true }),
 			!dev && terser()
 		],
 
