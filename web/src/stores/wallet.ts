@@ -29,10 +29,10 @@ export function getWalletStores(){
 				finality,
 			},
 			localStoragePrefix:
-				window.basepath &&
-				(window.basepath.startsWith('/ipfs/') ||
-					window.basepath.startsWith('/ipns/'))
-					? window.basepath.slice(6)
+				globalThis.basepath &&
+				(globalThis.basepath.startsWith('/ipfs/') ||
+				globalThis.basepath.startsWith('/ipns/'))
+					? globalThis.basepath.slice(6)
 					: undefined, // ensure local storage is not conflicting across web3w-based apps on ipfs gateways
 			options: [
 				'builtin',

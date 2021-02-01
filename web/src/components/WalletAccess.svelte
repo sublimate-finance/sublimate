@@ -22,7 +22,7 @@
 		return `chain with id ${chainId}`
 	})()
 
-	const base: string = window.basepath || '/'
+	const base: string = globalThis.basepath || '/'
 
 	$: executionError = $walletStores.flow.executionError as any
 
