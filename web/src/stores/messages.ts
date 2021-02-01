@@ -1,6 +1,7 @@
 import {derived, Readable} from 'svelte/store'
 import {QueryState, queryStore} from '../_graphql'
-import {transactions} from './wallet'
+import {getWalletStores} from './wallet'
+const {transactions} = getWalletStores()
 
 type Messages = {
 	id: string
