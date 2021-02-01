@@ -30,9 +30,9 @@
 
 
 	import AllTransactions from '../../components/AllTransactions.svelte'
-	import Button from '../../components/Button.svelte'
 	import Footer from '../../components/Footer.svelte'
 	import ProfileSummary from '../../components/ProfileSummary.svelte'
+	import SubscribeWidget from '../../components/SubscribeWidget.svelte'
 </script>
 
 <section class="flex flex-col pb-24">
@@ -47,11 +47,7 @@
 	<div class="flex flex-row px-32 space-x-16 w-full mt-10">
 		<div class="flex flex-col space-y-4 items-start w-80">
 			<h3>Subscribe</h3>
-			<div class="flex flex-col space-y-3 border-primary-200 border-solid border-2 border-opacity-50 rounded-md px-8 py-4 w-full">
-				<input placeholder="1.00 ETH" class="p-3 text-center" />
-				<input placeholder="per month" class="p-3 text-center" />
-				<Button class="accented">Subscribe</Button>
-			</div>
+			<SubscribeWidget {address} {profile} />
 		</div>
 		<div class="flex-1 flex-col space-y-4 items-start">
 			<h3>Profile Summary</h3>

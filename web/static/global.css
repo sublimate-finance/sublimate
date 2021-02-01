@@ -235,7 +235,7 @@ main {
 }
 .card:hover {
 	/* background-image: none; */
-	background-color: var(--card-hover-background-color);
+	/* background-color: var(--card-hover-background-color); */
 }
 /* .card:before {
 	content: '';
