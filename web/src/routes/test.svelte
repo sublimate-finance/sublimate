@@ -3,14 +3,14 @@
 	const {hexConcat, keccak256} = utils
 
 	export function test(address: string, name: string): BigNumber {
-		return BigNumber.from(
-			hexConcat([
-				address,
-				name
-				// keccak256(['address', 'string'], [address, name]),
-				// keccak256(['string', 'address'], [name, address]),
-			])
-		)
+		// return BigNumber.from(
+		// 	hexConcat([
+		// 		// address,
+		// 		// name
+		// 		keccak256(['address', 'string'], [address, name]),
+		// 		keccak256(['string', 'address'], [name, address]),
+		// 	])
+		// )
 	}
 
 	import {logs} from 'named-logs';
