@@ -3,6 +3,7 @@
 
 	import { scale } from 'svelte/transition'
 	import Header from '../components/Header.svelte'
+	import Notifications from '../components/Notifications.svelte'
 </script>
 
 <Header {segment} />
@@ -13,3 +14,4 @@
 		</div>
 	{/key}
 </main>
+<Notifications />
