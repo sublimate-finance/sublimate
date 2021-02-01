@@ -24,38 +24,35 @@
 
 	const base: string = globalThis.basepath || '/'
 
-	$: executionError = $walletStores.flow.executionError as any
-
 	let options: {img: string; id: string; name: string}[] = []
-	$: builtinNeedInstalation =
-		$walletStores.wallet.options.filter((v) => v === 'builtin' && !$walletStores.builtin.available)
-			.length > 0
-	$: options = $walletStores.wallet.options
-		.filter((v) => v !== 'builtin' || $walletStores.builtin.available)
-		.map((v) => {
-			return {
-				img: ((v) => {
-					if (v === 'builtin') {
-						if ($walletStores.builtin.state === 'Ready') {
-							if ($walletStores.builtin.vendor === 'Metamask') {
-								return 'images/metamask.svg'
-							} else if ($walletStores.builtin.vendor === 'Opera') {
-								return 'images/opera.svg'
+
+	$: if(walletStores)
+		options = $walletStores.wallet.options
+			.filter((v) => v !== 'builtin' || $walletStores.builtin.available)
+			.map((v) => {
+				return {
+					img: ((v) => {
+						if (v === 'builtin') {
+							if ($walletStores.builtin.state === 'Ready') {
+								if ($walletStores.builtin.vendor === 'Metamask') {
+									return 'images/metamask.svg'
+								} else if ($walletStores.builtin.vendor === 'Opera') {
+									return 'images/opera.svg'
+								}
 							}
+							return 'images/web3-default.png'
+						} else {
+							if (v.startsWith('torus-')) {
+								const verifier = v.slice(6)
+								return `images/torus/${verifier}.svg`
+							}
+							return `images/${v}.svg`
 						}
-						return 'images/web3-default.png'
-					} else {
-						if (v.startsWith('torus-')) {
-							const verifier = v.slice(6)
-							return `images/torus/${verifier}.svg`
-						}
-						return `images/${v}.svg`
-					}
-				})(v),
-				id: v,
-				name: v,
-			}
-		})
+					})(v),
+					id: v,
+					name: v,
+				}
+			})
 
 	import Button from '../components/Button.svelte'
 	import Toast from '../components/Toast.svelte'
@@ -90,7 +87,8 @@
 								on:click={() => walletStores.wallet.connect(option.id)} />
 						{/each}
 					</div>
-					{#if builtinNeedInstalation}
+					<!-- Built-in needs installation -->
+					{#if $walletStores.wallet.options.filter((v) => v === 'builtin' && !$walletStores.builtin.available).length > 0}
 						<div class="text-center">OR</div>
 						<div class="flex justify-center">
 							<Button
@@ -123,12 +121,12 @@
 				{:else if $walletStores.chain.notSupported}Please switch to {chainName}{/if}
 			{:else if $walletStores.wallet.pendingUserConfirmation}
 				Please accept transaction...
-			{:else if executionError}
-				{#if executionError.code === 4001}
+			{:else if $walletStores.flow.executionError}
+				{#if $walletStores.flow.executionError.code === 4001}
 					You rejected the request
-				{:else if executionError.message}
-					{executionError.message}
-				{:else}Error: {executionError}{/if}
+				{:else if $walletStores.flow.executionError.message}
+					{$walletStores.flow.executionError.message}
+				{:else}Error: {$walletStores.flow.executionError}{/if}
 				<Button label="Retry" on:click={() => walletStores.flow.retry()}>Retry</Button>
 			{/if}
 		</Modal>
