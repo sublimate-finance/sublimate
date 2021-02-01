@@ -10,6 +10,22 @@
 	import Button from '../components/Button.svelte'
 	import Footer from '../components/Footer.svelte'
 	import ProfileSummary from '../components/ProfileSummary.svelte'
+	import { wallet, flow } from '../stores/wallet';
+
+	import type { StrETH } from "../../../contracts/typechain/StrETH"
+	import { resolveENS } from '../utils';
+
+	let rate = undefined
+	let maxAmount = undefined
+	// TODO: create form with validation
+	// TODO: create warning popup on subscribe
+
+	const subscribe = () => {
+		flow.execute(async (contracts) => {
+			const contract = contracts.strETH as unknown as StrETH
+			const subscriptionTx = (await contract.functions.updateSubscription(wallet.address, await resolveENS(profile.name), rate, maxAmount))
+		})
+	}
 </script>
 
 <section class="flex flex-col pb-24">
@@ -25,21 +41,21 @@
 		<div class="flex flex-col space-y-4 items-start w-80">
 			<h3>Subscribe</h3>
 			<div class="flex flex-col space-y-3 border-primary-200 border-solid border-2 border-opacity-50 rounded-md px-8 py-4 w-full">
-				<input placeholder="1.00 ETH" class="p-3 text-center" />
+				<input placeholder="1.00 ETH" bind:value={rate} class="p-3 text-center" />
 				<input placeholder="per month" class="p-3 text-center" />
-				<Button class="accented">Subscribe</Button>
+				<Button class="accented" on:click={subscribe}>Subscribe</Button>
 			</div>
 		</div>
 		<div class="flex-1 flex-col space-y-4 items-start">
 			<h3>Profile Summary</h3>
-			<ProfileSummary user={profile} />
+			<ProfileSummary profile={profile} />
 		</div>
 	</div>
 </section>
 
 <div class="bg-white">
 	<section class="w-full px-8 py-16 mb-32">
-		<AllTransactions user={profile} />
+		<AllTransactions />
 	</section>
 
 	<Footer />
