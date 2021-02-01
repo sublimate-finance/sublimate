@@ -19,11 +19,13 @@
 
 	const formatValue = value => {
 		try {
-			return new Intl.NumberFormat(globalThis.navigator.languages, {
-				... isFiat ? {style: 'currency', currency: token} : {},
-				minimumFractionDigits: showDecimalPlaces,
-				maximumFractionDigits: showDecimalPlaces
-			}).format(value)
+			return globalThis.navigator
+				? new Intl.NumberFormat(globalThis.navigator?.languages, {
+					... isFiat ? {style: 'currency', currency: token} : {},
+					minimumFractionDigits: showDecimalPlaces,
+					maximumFractionDigits: showDecimalPlaces
+				}).format(value)
+				: value
 		}catch(e){
 			console.error(e)
 			return value?.toString()
