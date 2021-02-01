@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { TimeInterval } from '../types/time-intervals'
+import Link from '../_routing/curi/Link.svelte'
 
 	// Data
 	export let profile: {
@@ -36,9 +37,11 @@
 	}
 </style>
 
+<Link to="/creator/{profile.name}">
 <article class="creator-card card">
 	<img src={profile.avatar?.toString() ?? `https://picsum.photos/200/200?${profile.name}`} alt={profile.name} width="100" />
 	<h3>{profile.name}</h3>
 	<h4 class="summary">{profile.summary}</h4>
 	<IncomingSubscriptionsSummary {incomingSubscriptions} {timeInterval} {baseCurrency} />
 </article>
+</Link>
