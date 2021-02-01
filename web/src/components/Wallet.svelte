@@ -3,7 +3,8 @@
 	let ethAmount = 12.795
 
 	import { onMount } from 'svelte'
-	let walletStores; onMount(async () => walletStores = (await import('../stores/wallet')).getWalletStores())
+	let walletStores, transactions, balance, chain, fallback, builtin, wallet, flow
+	onMount(async () => walletStores = {transactions, balance, chain, fallback, builtin, wallet, flow} = (await import('../stores/wallet')).getWalletStores())
 
 	import Address from './Address.svelte'
 	import Blockie from './Blockie.svelte'
@@ -36,7 +37,7 @@
 
 {#if walletStores}
 	<div class="stack">
-		{#if $walletStores.wallet.address}
+		{#if $wallet.address}
 			<!-- <button class="flex flex-row items-center space-x-3 px-2 py-1 pl-4 bg-purple-200 rounded-md border-none neumorphic" on:click={() => modalIsOpen = !modalIsOpen}>
 				<TokenValue value={ethAmount} token="ETH" />
 				<div class="flex flex-row items-center rounded-md bg-white pl-3 pr-1 py-1 space-x-1 font-semibold">
@@ -49,9 +50,9 @@
 			<Button class="wallet-badge button row neumorphic" on:click={() => modalIsOpen = !modalIsOpen}>
 				<TokenValue value={ethAmount} token="ETH" />
 				<div class="address-badge row">
-					<Address address={$walletStores.wallet.address} format="middle-truncated" linked={false} />
+					<Address address={$wallet.address} format="middle-truncated" linked={false} />
 					<div class="rounded-full overflow-hidden w-4 h-4">
-						<Blockie address={$walletStores.wallet.address} />
+						<Blockie address={$wallet.address} />
 					</div>
 				</div>
 			</Button>
@@ -66,22 +67,22 @@
 
 	{#if modalIsOpen}
 		<Modal title="Connect Wallet" width="30rem" on:close={() => modalIsOpen = false}>
-			{#if $walletStores.wallet.address}
+			{#if $wallet.address}
 				<div>
 					<p>
 						You're signed in as
-						<Blockie address={$walletStores.wallet.address} />
-						<Address address={$walletStores.wallet.address} format="middle-truncated" />!
+						<Blockie address={$wallet.address} />
+						<Address address={$wallet.address} format="middle-truncated" />!
 					</p>
 				</div>
 			{/if}
 			<div class="stack">
-				{#if $walletStores.wallet.state === 'Ready' && !$walletStores.wallet.connecting}
+				{#if $wallet.state === 'Ready' && !$wallet.connecting}
 					<div>
 						<Button
 							label="Disconnect Wallet"
-							waitOnDisabled={$walletStores.wallet.connecting}
-							on:click={() => walletStores.wallet.disconnect()}>
+							waitOnDisabled={$wallet.connecting}
+							on:click={() => wallet.disconnect()}>
 							Disconnect Wallet
 						</Button>
 					</div>
@@ -89,42 +90,42 @@
 					<div class="column">
 						<p>Sign in with an Ethereum wallet to customize your creator page, contribute to other creators, and more!</p>
 						<div class="wallet-options">
-							{#if $walletStores.wallet.state === 'Idle'}
+							{#if $wallet.state === 'Idle'}
 								<Button
 									label="Connect MetaMask Wallet"
-									disabled={!$walletStores.builtin.available || $walletStores.wallet.connecting}
-									on:click={() => walletStores.wallet.connect('builtin')}>
+									disabled={!$builtin.available || $wallet.connecting}
+									on:click={() => wallet.connect('builtin')}>
 									MetaMask
 								</Button>
 								<Button
 									label="Connect WalletConnect Wallet"
-									disabled={!$walletStores.builtin.available || $walletStores.wallet.connecting}
-									on:click={() => walletStores.wallet.connect('walletconnect')}>
+									disabled={!$builtin.available || $wallet.connecting}
+									on:click={() => wallet.connect('walletconnect')}>
 									WalletConnect
 								</Button>
 								<Button
 									label="Connect Torus Wallet"
-									disabled={$walletStores.wallet.connecting}
-									on:click={() => walletStores.wallet.connect('torus-google')}>
+									disabled={$wallet.connecting}
+									on:click={() => wallet.connect('torus-google')}>
 									Torus (Google)
 								</Button>
 								<Button
 									label="Connect Torus Wallet"
-									disabled={$walletStores.wallet.connecting}
-									on:click={() => walletStores.wallet.connect('torus-facebook')}>
+									disabled={$wallet.connecting}
+									on:click={() => wallet.connect('torus-facebook')}>
 									Torus (Facebook)
 								</Button>
 								<Button
 									label="Connect Torus Wallet"
-									disabled={$walletStores.wallet.connecting}
-									on:click={() => walletStores.wallet.connect('torus-discord')}>
+									disabled={$wallet.connecting}
+									on:click={() => wallet.connect('torus-discord')}>
 									Torus (Discord)
 								</Button>
-							{:else if $walletStores.wallet.state === 'Locked' && !$walletStores.wallet.connecting}
+							{:else if $wallet.state === 'Locked' && !$wallet.connecting}
 								<Button
 									label="Unlock Wallet"
-									waitOnDisabled={$walletStores.wallet.unlocking}
-									on:click={() => walletStores.wallet.unlock()}>
+									waitOnDisabled={$wallet.unlocking}
+									on:click={() => wallet.unlock()}>
 									Unlock Wallet
 								</Button>
 							{/if}

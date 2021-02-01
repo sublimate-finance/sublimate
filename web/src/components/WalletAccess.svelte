@@ -2,7 +2,8 @@
 	export let title: string = undefined
 
 	import { onMount } from 'svelte'
-	let walletStores; onMount(async () => walletStores = (await import('../stores/wallet')).getWalletStores())
+	let walletStores, transactions, balance, chain, fallback, builtin, wallet, flow
+	onMount(async () => walletStores = {transactions, balance, chain, fallback, builtin, wallet, flow} = (await import('../stores/wallet')).getWalletStores())
 
 	const chainNames = {
 		'1': 'mainnet',
@@ -27,16 +28,16 @@
 	let options: {img: string; id: string; name: string}[] = []
 
 	$: if(walletStores)
-		options = $walletStores.wallet.options
-			.filter((v) => v !== 'builtin' || $walletStores.builtin.available)
+		options = $wallet.options
+			.filter((v) => v !== 'builtin' || $builtin.available)
 			.map((v) => {
 				return {
 					img: ((v) => {
 						if (v === 'builtin') {
-							if ($walletStores.builtin.state === 'Ready') {
-								if ($walletStores.builtin.vendor === 'Metamask') {
+							if ($builtin.state === 'Ready') {
+								if ($builtin.vendor === 'Metamask') {
 									return 'images/metamask.svg'
-								} else if ($walletStores.builtin.vendor === 'Opera') {
+								} else if ($builtin.vendor === 'Opera') {
 									return 'images/opera.svg'
 								}
 							}
@@ -62,17 +63,17 @@
 <slot />
 
 {#if walletStores}
-	{#if $walletStores.flow.inProgress}
+	{#if $flow.inProgress}
 		<Modal
 			{title}
-			cancelable={!$walletStores.wallet.connecting}
-			on:close={() => walletStores.flow.cancel()}
+			cancelable={!$wallet.connecting}
+			on:close={() => flow.cancel()}
 			closeButton={false}>
-			{#if $walletStores.wallet.state === 'Idle'}
-				{#if $walletStores.wallet.loadingModule}
+			{#if $wallet.state === 'Idle'}
+				{#if $wallet.loadingModule}
 					Loading module:
-					{$walletStores.wallet.selected}
-				{:else if $walletStores.wallet.connecting}
+					{$wallet.selected}
+				{:else if $wallet.connecting}
 					Connecting to wallet...
 				{:else}
 					<div class="text-center">
@@ -84,11 +85,11 @@
 								class="cursor-pointer p-2 m-2 border-2 h-12 w-12 object-contain"
 								alt={`Login with ${option.name}`}
 								src={`${base}${option.img}`}
-								on:click={() => walletStores.wallet.connect(option.id)} />
+								on:click={() => wallet.connect(option.id)} />
 						{/each}
 					</div>
 					<!-- Built-in needs installation -->
-					{#if $walletStores.wallet.options.filter((v) => v === 'builtin' && !$walletStores.builtin.available).length > 0}
+					{#if $wallet.options.filter((v) => v === 'builtin' && !$builtin.available).length > 0}
 						<div class="text-center">OR</div>
 						<div class="flex justify-center">
 							<Button
@@ -105,29 +106,29 @@
 						</div>
 					{/if}
 				{/if}
-			{:else if $walletStores.wallet.state === 'Locked'}
-				{#if $walletStores.wallet.unlocking}
+			{:else if $wallet.state === 'Locked'}
+				{#if $wallet.unlocking}
 					Please accept the application to access your wallet.
 				{:else}
-					<Button label="Unlock Wallet" on:click={() => walletStores.wallet.unlock()}>
+					<Button label="Unlock Wallet" on:click={() => wallet.unlock()}>
 						Unlock
 					</Button>
 				{/if}
-			{:else if $walletStores.chain.state === 'Idle'}
-				{#if $walletStores.chain.connecting}Connecting...{/if}
-			{:else if $walletStores.chain.state === 'Connected'}
-				{#if $walletStores.chain.loadingData}
+			{:else if $chain.state === 'Idle'}
+				{#if $chain.connecting}Connecting...{/if}
+			{:else if $chain.state === 'Connected'}
+				{#if $chain.loadingData}
 					Loading contracts...
-				{:else if $walletStores.chain.notSupported}Please switch to {chainName}{/if}
-			{:else if $walletStores.wallet.pendingUserConfirmation}
+				{:else if $chain.notSupported}Please switch to {chainName}{/if}
+			{:else if $wallet.pendingUserConfirmation}
 				Please accept transaction...
-			{:else if $walletStores.flow.executionError}
-				{#if $walletStores.flow.executionError.code === 4001}
+			{:else if $flow.executionError}
+				{#if $flow.executionError.code === 4001}
 					You rejected the request
-				{:else if $walletStores.flow.executionError.message}
-					{$walletStores.flow.executionError.message}
-				{:else}Error: {$walletStores.flow.executionError}{/if}
-				<Button label="Retry" on:click={() => walletStores.flow.retry()}>Retry</Button>
+				{:else if $flow.executionError.message}
+					{$flow.executionError.message}
+				{:else}Error: {$flow.executionError}{/if}
+				<Button label="Retry" on:click={() => flow.retry()}>Retry</Button>
 			{/if}
 		</Modal>
 	{/if}

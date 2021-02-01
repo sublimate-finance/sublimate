@@ -16,17 +16,17 @@
 	import {logs} from 'named-logs';
 
 	import { onMount } from 'svelte'
-	let walletStores
+	let walletStores, transactions, balance, chain, fallback, builtin, wallet, flow
+	onMount(async () => walletStores = {transactions, balance, chain, fallback, builtin, wallet, flow} = (await import('../stores/wallet')).getWalletStores())
+
 	let messages
 	onMount(async () => {
-		walletStores = (await import('../stores/wallet')).getWalletStores()
-
 		messages = (await import('../stores/messages')).messages
 		messages.fetch()
 	})
 
 	async function setMessage() {
-		await walletStores.flow.execute((contracts) =>
+		await flow.execute((contracts) =>
 			contracts.GreetingsRegistry.setMessage(message)
 		);
 	}
@@ -65,7 +65,7 @@
 				{#each $messages.data as message, index}
 					<!-- <Blockie address={name.id} /> -->
 					<div
-						class={`flex flex-wrap items-center -mx-2 ${$walletStores.wallet.address && message.id.toLowerCase() === $walletStores.wallet.address.toLowerCase() ? 'font-bold' : 'font-normal'}`}>
+						class={`flex flex-wrap items-center -mx-2 ${$wallet.address && message.id.toLowerCase() === $wallet.address.toLowerCase() ? 'font-bold' : 'font-normal'}`}>
 						<!-- <div class="px-2 mb-6">
 							<h2 class="text-xl">{`${name.id.slice(0, 4)}...${name.id.slice(name.id.length - 4)}`} :</h2>
 						</div> -->
@@ -103,12 +103,12 @@
 			</div>
 		</form>
 
-		{#if $walletStores.wallet.state === 'Ready'}
+		{#if $wallet.state === 'Ready'}
 			<form class="mt-5 w-full max-w-sm">
 				<div class="flex items-center">
 					<Button
-						disabled={$walletStores.wallet.unlocking || $walletStores.chain.connecting}
-						on:click={() => walletStores.wallet.disconnect()}>
+						disabled={$wallet.unlocking || $chain.connecting}
+						on:click={() => wallet.disconnect()}>
 						Disconnect
 					</Button>
 				</div>

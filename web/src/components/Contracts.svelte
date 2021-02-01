@@ -2,7 +2,8 @@
 	import type {Contract} from '@ethersproject/contracts'
 
 	import { onMount } from 'svelte'
-	let walletStores; onMount(async () => walletStores = (await import('../stores/wallet')).getWalletStores())
+	let walletStores, transactions, balance, chain, fallback, builtin, wallet, flow
+	onMount(async () => walletStores = {transactions, balance, chain, fallback, builtin, wallet, flow} = (await import('../stores/wallet')).getWalletStores())
 
 	function getContractInterfaces(chainContracts, walletContracts):
 		| {
@@ -66,10 +67,10 @@
 {#if walletStores}
 	<WalletAccess>
 		<div>
-			{#if $walletStores.chain.contracts}
+			{#if $chain.contracts}
 				<h2>Contracts</h2>
 
-				{#each getContractInterfaces($walletStores.chain.contracts, $walletStores.wallet.contracts) as contractInterface}
+				{#each getContractInterfaces($chain.contracts, $wallet.contracts) as contractInterface}
 					<h3>{contractInterface.name}</h3>
 					{#each contractInterface.functions as func}
 						<form>
@@ -94,9 +95,9 @@
 			{/if}
 		</div>
 		<div>
-			{#if $walletStores.wallet.address && $walletStores.chain.chainId}
+			{#if $wallet.address && $chain.chainId}
 				<h2>Transactions</h2>
-				{#each $walletStores.transactions as tx}
+				{#each $transactions as tx}
 					<h3>{tx.contractName}.{tx.method}({tx.args})</h3>
 				{/each}
 			{/if}
