@@ -2,6 +2,7 @@
 	import { TimeInterval } from '../types/time-intervals'
 
 	// Data
+	export let address
 	export let profile: {
 		name: string
 		summary: string
@@ -16,6 +17,7 @@
 	export let baseCurrency = 'ETH'
 
 
+	import Button from './Button.svelte'
 	import IncomingSubscriptionsSummary from './IncomingSubscriptionsSummary.svelte'
 </script>
 
@@ -41,4 +43,5 @@
 	<h3>{profile.name}</h3>
 	<h4 class="summary">{profile.summary}</h4>
 	<IncomingSubscriptionsSummary {incomingSubscriptions} {timeInterval} {baseCurrency} />
+	<Button href="creator/{address}">Visit Creator</Button>
 </article>

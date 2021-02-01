@@ -1,15 +1,38 @@
+<script context="module">
+	export async function preload({ params: {addressOrENS} }) {
+		return { addressOrENS }
+	}
+</script>
+
 <script lang="ts">
-	const profile = {
-		name: 'money.eth',
-		summary: 'Defi Builder at Curve.fi.',
+	import { utils } from 'ethers'
+	import { creators } from '../../stores/creators'
+
+	import { onMount } from 'svelte'
+	let walletStores, transactions, balance, chain, fallback, builtin, wallet, flow
+	onMount(async () => walletStores = {transactions, balance, chain, fallback, builtin, wallet, flow} = (await import('../../stores/wallet')).getWalletStores())
+
+
+
+	export let addressOrENS
+
+	$: address = addressOrENS && utils.isAddress(addressOrENS) ? addressOrENS : wallet?.provider?.lookupAddress(addressOrENS)
+
+	// TODO: Get profile from The Graph using address
+	$: profile = address ? creators.find(c => c.address.toLowerCase() == address.toLowerCase()).profile : placeholderProfile
+
+	const placeholderProfile = {
+		name: 'Loading profile...',
+		summary: '',
 		avatar: 'https://picsum.photos/200/200',
 		cover: 'https://picsum.photos/1920/1080'
 	}
 
-	import AllTransactions from '../components/AllTransactions.svelte'
-	import Button from '../components/Button.svelte'
-	import Footer from '../components/Footer.svelte'
-	import ProfileSummary from '../components/ProfileSummary.svelte'
+
+	import AllTransactions from '../../components/AllTransactions.svelte'
+	import Button from '../../components/Button.svelte'
+	import Footer from '../../components/Footer.svelte'
+	import ProfileSummary from '../../components/ProfileSummary.svelte'
 </script>
 
 <section class="flex flex-col pb-24">

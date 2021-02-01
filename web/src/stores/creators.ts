@@ -1,5 +1,7 @@
+// TODO: Replace with The Graph
 export const creators = [
 	{
+		address: '0x2E0d07d7ea0aa65007D2Ead6af8848842Acc376a',
 		profile: {
 			name: 'money.eth',
 			summary: 'DeFi Builder, Curve.fi',
@@ -31,6 +33,7 @@ export const creators = [
 		transactions: []
 	},
 	{
+		address: '0x15A3FD40ea0aa65007D2Ead6af8848842Acc376a',
 		profile: {
 			name: '0x15A3FD40...',
 			summary: 'NFT Creator at Aavegotchi',
@@ -56,10 +59,12 @@ export const creators = [
 		}
 	},
 	{
+		address: '0x2E0d07d7ea0aa65007D2Ead6af8848842Acc376a',
 		profile: {
 			name: 'money.eth',
 			summary: 'DeFi Builder, Curve.fi',
 			avatar: 'https://picsum.photos/200/200',
+			cover: 'https://picsum.photos/1920/1080'
 		},
 		incomingSubscriptions: {
 			aggregated: {
@@ -77,13 +82,21 @@ export const creators = [
 				rate: 500,
 				subscriberCount: 400,
 			}]
-		}
+		},
+		outgoingSubscriptions: {
+			aggregated: {
+
+			}
+		},
+		transactions: []
 	},
 	{
+		address: '0x15A3FD40ea0aa65007D2Ead6af8848842Acc376a',
 		profile: {
 			name: '0x15A3FD40...',
 			summary: 'NFT Creator at Aavegotchi',
 			avatar: undefined,
+			cover: 'https://picsum.photos/1920/1080?1'
 		},
 		incomingSubscriptions: {
 			aggregated: {
@@ -104,10 +117,12 @@ export const creators = [
 		}
 	},
 	{
+		address: '0x2E0d07d7ea0aa65007D2Ead6af8848842Acc376a',
 		profile: {
 			name: 'money.eth',
 			summary: 'DeFi Builder, Curve.fi',
 			avatar: 'https://picsum.photos/200/200',
+			cover: 'https://picsum.photos/1920/1080'
 		},
 		incomingSubscriptions: {
 			aggregated: {
@@ -125,13 +140,21 @@ export const creators = [
 				rate: 500,
 				subscriberCount: 400,
 			}]
-		}
+		},
+		outgoingSubscriptions: {
+			aggregated: {
+
+			}
+		},
+		transactions: []
 	},
 	{
+		address: '0x15A3FD40ea0aa65007D2Ead6af8848842Acc376a',
 		profile: {
 			name: '0x15A3FD40...',
 			summary: 'NFT Creator at Aavegotchi',
 			avatar: undefined,
+			cover: 'https://picsum.photos/1920/1080?1'
 		},
 		incomingSubscriptions: {
 			aggregated: {
@@ -152,10 +175,12 @@ export const creators = [
 		}
 	},
 	{
+		address: '0x2E0d07d7ea0aa65007D2Ead6af8848842Acc376a',
 		profile: {
 			name: 'money.eth',
 			summary: 'DeFi Builder, Curve.fi',
 			avatar: 'https://picsum.photos/200/200',
+			cover: 'https://picsum.photos/1920/1080'
 		},
 		incomingSubscriptions: {
 			aggregated: {
@@ -173,13 +198,21 @@ export const creators = [
 				rate: 500,
 				subscriberCount: 400,
 			}]
-		}
+		},
+		outgoingSubscriptions: {
+			aggregated: {
+
+			}
+		},
+		transactions: []
 	},
 	{
+		address: '0x15A3FD40ea0aa65007D2Ead6af8848842Acc376a',
 		profile: {
 			name: '0x15A3FD40...',
 			summary: 'NFT Creator at Aavegotchi',
 			avatar: undefined,
+			cover: 'https://picsum.photos/1920/1080?1'
 		},
 		incomingSubscriptions: {
 			aggregated: {
@@ -200,10 +233,12 @@ export const creators = [
 		}
 	},
 	{
+		address: '0x2E0d07d7ea0aa65007D2Ead6af8848842Acc376a',
 		profile: {
 			name: 'money.eth',
 			summary: 'DeFi Builder, Curve.fi',
 			avatar: 'https://picsum.photos/200/200',
+			cover: 'https://picsum.photos/1920/1080'
 		},
 		incomingSubscriptions: {
 			aggregated: {
@@ -221,7 +256,13 @@ export const creators = [
 				rate: 500,
 				subscriberCount: 400,
 			}]
-		}
+		},
+		outgoingSubscriptions: {
+			aggregated: {
+
+			}
+		},
+		transactions: []
 	}
 ]
 
