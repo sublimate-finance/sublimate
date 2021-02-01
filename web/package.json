@@ -1,6 +1,6 @@
 {
-  "name": "TODO",
-  "description": "TODO",
+  "name": "sublimate-web",
+  "description": "sublimate-web",
   "version": "0.0.1",
   "scripts": {
     "dev": "sapper dev",
