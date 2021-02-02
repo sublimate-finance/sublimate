@@ -1,5 +1,5 @@
 import {expect} from './chai-setup'
-import {ethers, deployments, getUnnamedAccounts, artifacts} from 'hardhat'
+import {ethers} from 'hardhat'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
 import {JsonRpcProvider} from "@ethersproject/providers";
@@ -13,7 +13,7 @@ describe('StreamableERC20', function () {
 	})
 
 	beforeEach(async function () {
-		const strETH = await ethers.getContractFactory('strETH')
+		const strETH = await ethers.getContractFactory('StreamableWrappedETH')
 		this.contract = await strETH.deploy()
 		this.provider = this.contract.provider;
 		await this.contract.deployed();

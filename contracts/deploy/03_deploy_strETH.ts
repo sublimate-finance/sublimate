@@ -8,7 +8,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
 // proxy only in non-live network (localhost and hardhat network) enabling HCR (Hot Contract Replacement)
 // in live network, proxy is disabled and constructor is invoked
-	await deploy('strETH', {
+	await deploy('StreamableWrappedETH', {
 		from: deployer,
 		args: [],
 		log: true,
