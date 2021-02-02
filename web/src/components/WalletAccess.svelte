@@ -51,7 +51,9 @@
 			cancelable={!$wallet.connecting}
 			isOpen={true}
 			on:close={() => flow.cancel()}
-			closeButton={false}>
+			closeButton={false}
+			width="clamp(0%, 35rem, 90%)"
+			>
 			{#if $wallet.state === 'Idle'}
 				{#if $wallet.loadingModule}
 					Loading module:

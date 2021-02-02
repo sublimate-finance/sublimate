@@ -43,6 +43,16 @@
 		inputMode === InputMode.TotalAndDuration ? _totalAmount :
 		BigNumber.from(0)
 
+	let topUpAmount
+	$: wrappedCurrency = `str${currency}`
+
+
+	enum FlowAction {
+		TopUpDeposit,
+		StartSubscription
+	}
+	let flowAction
+
 
 	// Contract calls
 	import { onMount } from 'svelte'
@@ -62,12 +72,16 @@
 
 			// Top up balance of strToken by wrapping ERC20 token
 			console.log(maxAmount.toString(), currentBalance.toString())
-			if(maxAmount > currentBalance)
+			topUpAmount = maxAmount.sub(currentBalance)
+			if(topUpAmount.gt(0)){
+				flowAction = FlowAction.TopUpDeposit
 				await WrappedStreamableToken.deposit({
-					value: maxAmount.sub(currentBalance)
+					value: topUpAmount
 				})
+			}
 
 			// Update subscription
+			flowAction = FlowAction.StartSubscription
 			return await WrappedStreamableToken.updateSubscription(from, to, rate, maxAmount)
 		})
 	}
@@ -76,7 +90,10 @@
 	// 	'ETH': '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
 	// }
 
+	import Address from '../components/Address.svelte'
 	import Button from '../components/Button.svelte'
+	import TokenName from '../components/TokenName.svelte'
+	import TokenValue from '../components/TokenValue.svelte'
 	import WalletAccess from '../components/WalletAccess.svelte'
 </script>
 
@@ -133,4 +150,29 @@
 	<Button class="accented" type="submit" disabled={walletStores === undefined}>Confirm Subscription</Button>
 </form>
 
-<WalletAccess />
+<WalletAccess>
+	{#if flowAction === FlowAction.TopUpDeposit}
+		<h2>Top-up Deposit</h2>
+		<p>
+			You're wrapping
+			<TokenValue value={utils.formatUnits(topUpAmount, decimals)} token={currency} />
+			into <TokenName token={wrappedCurrency} />
+			in order to have the needed <TokenValue value={utils.formatUnits(totalTokens, decimals)} token={wrappedCurrency} />
+			for this subscription.
+		</p>
+	{:else if flowAction === FlowAction.StartSubscription}
+		<h2>Start Subscription</h2>
+		<p>
+			You're authorizing
+			<TokenValue value={utils.formatUnits(totalTokens, decimals)} token={wrappedCurrency} />
+			to be streamed to {profile.name ? `${profile.name}'s address ` : ''}<Address {address} />
+			at a rate of <TokenValue value={utils.formatUnits(tokensPerBlock, decimals)} token={wrappedCurrency} rateInterval={TimeInterval.Block} />
+			over a period of {blocks} blocks.
+		</p>
+		<p>
+			At the blockchain's current speed of <strong>13 seconds/block</strong>,
+			this subscription will end in approximately {durationAmount} {durationTimeInterval}.
+		</p>
+		<p>You can stop streaming funds at any time by canceling your subscription.</p>
+	{/if}
+</WalletAccess>
