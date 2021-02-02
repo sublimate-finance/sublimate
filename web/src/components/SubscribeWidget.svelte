@@ -1,17 +1,18 @@
 <script lang="ts">
+	import { utils } from 'ethers'
+	import type { StrETH } from '../../../contracts/typechain/StrETH'
 	import { Currency } from '../types/currency'
 	import { averageBlocksPerTimeInterval, TimeInterval } from '../types/time-intervals'
-	import type { StrETH } from '../../../contracts/typechain/StrETH'
 
 	export let address
 	export let profile
 
 	export let suggested = {
-		currency: Currency.DAI,
-		totalAmount: 10,
-		rateAmount: 10,
+		currency: Currency.ETH,
+		totalAmount: '10',
+		rateAmount: '10',
 		rateTimeInterval: TimeInterval.Month,
-		durationAmount: 1,
+		durationAmount: '1',
 		durationTimeInterval: TimeInterval.Month
 	}
 
@@ -27,18 +28,18 @@
 
 
 	// Calculate tokensPerBlock (rate) and totalTokens (maxTokens) based on user input
-	const decimals = 1e-18
-	$: _totalAmount = totalAmount * decimals
-	$: _rateAmount = rateAmount * decimals
-	$: _durationAmount = durationAmount * decimals
+	const decimals = 18
+	$: _totalAmount = utils.parseUnits(totalAmount, decimals)
+	$: _rateAmount = utils.parseUnits(rateAmount, decimals)
+	$: _durationAmount = utils.parseUnits(durationAmount, decimals)
 
-	$: durationInBlocks = _durationAmount * averageBlocksPerTimeInterval[durationTimeInterval]
+	$: blocks = _durationAmount.mul(averageBlocksPerTimeInterval[durationTimeInterval])
 	$: tokensPerBlock =
-		inputMode === InputMode.RateAndDuration ? _rateAmount / averageBlocksPerTimeInterval[rateTimeInterval] :
-		inputMode === InputMode.TotalAndDuration ? _totalAmount / durationInBlocks :
+		inputMode === InputMode.RateAndDuration ? _rateAmount.div(averageBlocksPerTimeInterval[rateTimeInterval]) :
+		inputMode === InputMode.TotalAndDuration ? _totalAmount.div(blocks) :
 		0
 	$: totalTokens =
-		inputMode === InputMode.RateAndDuration ? tokensPerBlock * durationInBlocks :
+		inputMode === InputMode.RateAndDuration ? blocks.mul(_rateAmount).div(averageBlocksPerTimeInterval[rateTimeInterval]) :
 		inputMode === InputMode.TotalAndDuration ? _totalAmount :
 		0
 
@@ -49,14 +50,15 @@
 	onMount(async () => walletStores = {transactions, balance, chain, fallback, builtin, wallet, flow} = (await import('../stores/wallet')).getWalletStores())
 
 	async function onSubscribe(){
-		await flow.execute(contracts => {
+		await flow.execute(async contracts => {
 			const contract = {
 				[Currency.ETH]: contracts.strETH as StrETH,
 				// [Currency.DAI]: contracts.strDAI as StrDAI
 			}[currency]
 
 			// from, to, rate, maxAmount
-			contract.updateSubscription(wallet.address, address, tokensPerBlock, totalTokens)
+			console.log(wallet.address, address, tokensPerBlock, totalTokens)
+			await contract.updateSubscription(wallet.address, address, tokensPerBlock, totalTokens)
 		})
 	}
 	// const contract = {
@@ -65,6 +67,7 @@
 	// }
 
 	import Button from '../components/Button.svelte'
+	import WalletAccess from '../components/WalletAccess.svelte'
 </script>
 
 <style>
@@ -111,11 +114,13 @@
 			<input type="number" bind:value={durationAmount} min={1} />
 			<select bind:value={durationTimeInterval}>
 				{#each Object.values(TimeInterval) as timeInterval}
-					<option value={timeInterval}>{timeInterval}{durationAmount === 1 ? '' : 's'}</option>
+					<option value={timeInterval}>{timeInterval}{durationAmount == 1 ? '' : 's'}</option>
 				{/each}
 			</select>
 		</div>
 	</label>
 
-	<Button class="accented">Confirm Subscription</Button>
+	<Button class="accented" type="submit">Confirm Subscription</Button>
 </form>
+
+<WalletAccess />

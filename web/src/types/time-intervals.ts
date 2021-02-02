@@ -7,9 +7,11 @@ export enum TimeInterval {
 
 export const timeIntervals = Object.values(TimeInterval)
 
+// Estimation: 13 secs/block
+// TODO: Derive this from average block time via Chainlink or external API
 export const averageBlocksPerTimeInterval: Record<TimeInterval, number> = {
-	'year': 1000,
-	'month': 1000 / 12,
-	'day': 1000 / 365.25,
+	'year': 2427508,
+	'month': 202154,
+	'day': 6646,
 	'block': 1
 }
