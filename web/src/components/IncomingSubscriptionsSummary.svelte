@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { TableData } from '../types/table-data'
-	import { TimeInterval } from '../types/time-intervals'
+	import { averageBlocksPerTimeInterval, TimeInterval } from '../types/time-intervals'
 
 	// Data
 	// TODO: use generated types from GraphQL schema
@@ -25,12 +25,6 @@
 	$: prices = {
 		'ETH': 2000 * 1e-18,
 		'DAI': 1 * 1e-18
-	}
-	const averageBlocksPerTimeInterval: Record<TimeInterval, number> = {
-		'year': 1000,
-		'month': 1000 / 12,
-		'day': 1000 / 365.25,
-		'block': 1
 	}
 	function convertTokenRate(token, tokensPerBlock, timeInterval, baseCurrency){
 		const amount = tokensPerBlock * averageBlocksPerTimeInterval[timeInterval] * prices[token]/prices[baseCurrency]
