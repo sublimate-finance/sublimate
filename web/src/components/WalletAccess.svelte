@@ -67,6 +67,7 @@
 		<Modal
 			{title}
 			cancelable={!$wallet.connecting}
+			isOpen={true}
 			on:close={() => flow.cancel()}
 			closeButton={false}>
 			{#if $wallet.state === 'Idle'}

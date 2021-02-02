@@ -65,74 +65,72 @@
 		{/if}
 	</div>
 
-	{#if modalIsOpen}
-		<Modal title="Connect Wallet" width="30rem" on:close={() => modalIsOpen = false}>
-			{#if $wallet.address}
+	<Modal bind:isOpen={modalIsOpen} title="Connect Wallet" width="30rem">
+		{#if $wallet.address}
+			<div>
+				<p>
+					You're signed in as
+					<Blockie address={$wallet.address} />
+					<Address address={$wallet.address} format="middle-truncated" />!
+				</p>
+			</div>
+		{/if}
+		<div class="stack">
+			{#if $wallet.state === 'Ready' && !$wallet.connecting}
 				<div>
-					<p>
-						You're signed in as
-						<Blockie address={$wallet.address} />
-						<Address address={$wallet.address} format="middle-truncated" />!
-					</p>
+					<Button
+						label="Disconnect Wallet"
+						waitOnDisabled={$wallet.connecting}
+						on:click={() => wallet.disconnect()}>
+						Disconnect Wallet
+					</Button>
+				</div>
+			{:else}
+				<div class="column">
+					<p>Sign in with an Ethereum wallet to customize your creator page, contribute to other creators, and more!</p>
+					<div class="wallet-options">
+						{#if $wallet.state === 'Idle'}
+							<Button
+								label="Connect MetaMask Wallet"
+								disabled={!$builtin.available || $wallet.connecting}
+								on:click={() => wallet.connect('builtin')}>
+								MetaMask
+							</Button>
+							<Button
+								label="Connect WalletConnect Wallet"
+								disabled={!$builtin.available || $wallet.connecting}
+								on:click={() => wallet.connect('walletconnect')}>
+								WalletConnect
+							</Button>
+							<Button
+								label="Connect Torus Wallet"
+								disabled={$wallet.connecting}
+								on:click={() => wallet.connect('torus-google')}>
+								Torus (Google)
+							</Button>
+							<Button
+								label="Connect Torus Wallet"
+								disabled={$wallet.connecting}
+								on:click={() => wallet.connect('torus-facebook')}>
+								Torus (Facebook)
+							</Button>
+							<Button
+								label="Connect Torus Wallet"
+								disabled={$wallet.connecting}
+								on:click={() => wallet.connect('torus-discord')}>
+								Torus (Discord)
+							</Button>
+						{:else if $wallet.state === 'Locked' && !$wallet.connecting}
+							<Button
+								label="Unlock Wallet"
+								waitOnDisabled={$wallet.unlocking}
+								on:click={() => wallet.unlock()}>
+								Unlock Wallet
+							</Button>
+						{/if}
+					</div>
 				</div>
 			{/if}
-			<div class="stack">
-				{#if $wallet.state === 'Ready' && !$wallet.connecting}
-					<div>
-						<Button
-							label="Disconnect Wallet"
-							waitOnDisabled={$wallet.connecting}
-							on:click={() => wallet.disconnect()}>
-							Disconnect Wallet
-						</Button>
-					</div>
-				{:else}
-					<div class="column">
-						<p>Sign in with an Ethereum wallet to customize your creator page, contribute to other creators, and more!</p>
-						<div class="wallet-options">
-							{#if $wallet.state === 'Idle'}
-								<Button
-									label="Connect MetaMask Wallet"
-									disabled={!$builtin.available || $wallet.connecting}
-									on:click={() => wallet.connect('builtin')}>
-									MetaMask
-								</Button>
-								<Button
-									label="Connect WalletConnect Wallet"
-									disabled={!$builtin.available || $wallet.connecting}
-									on:click={() => wallet.connect('walletconnect')}>
-									WalletConnect
-								</Button>
-								<Button
-									label="Connect Torus Wallet"
-									disabled={$wallet.connecting}
-									on:click={() => wallet.connect('torus-google')}>
-									Torus (Google)
-								</Button>
-								<Button
-									label="Connect Torus Wallet"
-									disabled={$wallet.connecting}
-									on:click={() => wallet.connect('torus-facebook')}>
-									Torus (Facebook)
-								</Button>
-								<Button
-									label="Connect Torus Wallet"
-									disabled={$wallet.connecting}
-									on:click={() => wallet.connect('torus-discord')}>
-									Torus (Discord)
-								</Button>
-							{:else if $wallet.state === 'Locked' && !$wallet.connecting}
-								<Button
-									label="Unlock Wallet"
-									waitOnDisabled={$wallet.unlocking}
-									on:click={() => wallet.unlock()}>
-									Unlock Wallet
-								</Button>
-							{/if}
-						</div>
-					</div>
-				{/if}
-			</div>
-		</Modal>
-	{/if}
+		</div>
+	</Modal>
 {/if}
