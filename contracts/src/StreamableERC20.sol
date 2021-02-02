@@ -4,7 +4,6 @@ pragma solidity ^0.8.0;
 import "./ERC20/ERC20.sol";
 import "./IStreamableERC20.sol";
 import "hardhat/console.sol";
-// ERC20: balanceOf(), transfer()
 
 contract StreamableERC20 is ERC20, IStreamableERC20 {
 
@@ -45,7 +44,7 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 	constructor (string memory name_, string memory symbol_) ERC20(name_, symbol_) {}
 
 	/**
-	 * @dev Returns the last updated balance of `account`
+	 * @dev Returns the last updated balance of `account`.
 	 */
 	function lastUpdatedBalanceOf(address account) external view override returns (uint256) {
 
@@ -116,6 +115,7 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 	 * @dev Cancels subscription started from `from` to `to`.
 	 *
 	 * Emits a {SubscriptionCanceled} event.
+	 * Emits {UserStatusChanged} events for the user with address `from` and user with address `to`.
 	 */
 	function cancelSubscription(address from, address to) external override {
 		require(msg.sender == from, "Only the subscriber can cancel the subscription.");
@@ -136,13 +136,16 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 		_users[to].totalMaxIncomingAmount -= _subscriptions[from][to].maxAmount;
 
 		emit SubscriptionCanceled(from, to, _subscriptions[from][to].rate, _subscriptions[from][to].maxAmount, _subscriptions[from][to].startBlock, _subscriptions[from][to].endBlock, _subscriptions[from][to].lastTransferAtBlock, _subscriptions[from][to].amountPaid);
+		emit UserStatusChanged(from, _users[from].incomingRate, _users[from].totalMaxIncomingAmount, _users[from].outgoingRate, _users[from].totalMaxOutgoingAmount, _users[from].blockAtLastUpdate);
+		emit UserStatusChanged(to, _users[to].incomingRate, _users[to].totalMaxIncomingAmount, _users[to].outgoingRate, _users[to].totalMaxOutgoingAmount, _users[to].blockAtLastUpdate);
 	}
 
 	/**
 	 * @dev Updates the subscription from `from` to `to`.
 	 *
 	 *
-	 * Emits a {SubscriptionStarted} and {SubscriptionUpdated} events.
+	 * Emits {SubscriptionStarted} and {SubscriptionUpdated} events.
+	 * Emits {UserStatusChanged} events for the user with address `from` and user with address `to`.
 	 */
 	function updateSubscription(address from, address to, uint256 rate, uint256 maxAmount) external override {
 
@@ -176,6 +179,7 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 	 * Private helper function
 	 *
 	 * Emits a {SubscriptionStarted} event.
+	 * Emits {UserStatusChanged} events for the user with address `from` and user with address `to`.
 	 */
 	function _handleCreateSubscription(address from, address to, uint256 rate, uint256 maxAmount) private {
 		// In case there is a reminder, we will pay it in the last payment
@@ -196,6 +200,8 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 		user_to_status.incomingRate += rate;
 		user_to_status.totalMaxIncomingAmount += maxAmount;
 		emit SubscriptionStarted(from, to, rate, maxAmount, block.number, blockEnd, block.number, 0);
+		emit UserStatusChanged(from, _users[from].incomingRate, _users[from].totalMaxIncomingAmount, _users[from].outgoingRate, _users[from].totalMaxOutgoingAmount, _users[from].blockAtLastUpdate);
+		emit UserStatusChanged(to, _users[to].incomingRate, _users[to].totalMaxIncomingAmount, _users[to].outgoingRate, _users[to].totalMaxOutgoingAmount, _users[to].blockAtLastUpdate);
 	}
 
 	 /**
@@ -204,6 +210,7 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 	 * Private helper function
 	 *
 	 * Emits a {SubscriptionUpdated} event.
+	 * Emits {UserStatusChanged} events for the user with address `from` and user with address `to`.
 	 */
 	function _handleSubscriptionUpdate(address from, address to, uint256 rate, uint256 maxAmount) private {
 		Subscription storage subscription = _subscriptions[from][to];
@@ -237,6 +244,8 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 		subscription.rate = rate;
 		subscription.maxAmount = maxAmount;
 		emit SubscriptionUpdated(from, to, rate, maxAmount, subscription.startBlock, blockEnd, block.number, subscription.amountPaid);
+		emit UserStatusChanged(from, user_from_status.incomingRate, user_from_status.totalMaxIncomingAmount, user_from_status.outgoingRate, user_from_status.totalMaxOutgoingAmount, user_from_status.blockAtLastUpdate);
+		emit UserStatusChanged(to, user_to_status.incomingRate, user_to_status.totalMaxIncomingAmount, user_to_status.outgoingRate, user_to_status.totalMaxOutgoingAmount, user_to_status.blockAtLastUpdate);
 	}
 
 
@@ -279,6 +288,7 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 				newActiveOutgoingSubscriptions[newActiveSubscriptionsIndex++] = subscriptionToAddress;
 			}
 			_updateBlockAtLastUpdate(subscriptionToAddress);
+			emit UserStatusChanged(subscriptionToAddress, _users[subscriptionToAddress].incomingRate, _users[subscriptionToAddress].totalMaxIncomingAmount, _users[subscriptionToAddress].outgoingRate, _users[subscriptionToAddress].totalMaxOutgoingAmount, _users[subscriptionToAddress].blockAtLastUpdate);
 		}
 //		_activeOutgoingSubscriptions[user] = newActiveOutgoingSubscriptions[:newActiveSubscriptionsIndex];
 		_activeOutgoingSubscriptions[user] = newActiveOutgoingSubscriptions;
@@ -313,7 +323,7 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 				newActiveIncomingSubscriptions[newActiveSubscriptionsIndex++] = subscriptionFromAddress;
 			}
 			_updateBlockAtLastUpdate(subscriptionFromAddress);
-
+			emit UserStatusChanged(subscriptionFromAddress, _users[subscriptionFromAddress].incomingRate, _users[subscriptionFromAddress].totalMaxIncomingAmount, _users[subscriptionFromAddress].outgoingRate, _users[subscriptionFromAddress].totalMaxOutgoingAmount, _users[subscriptionFromAddress].blockAtLastUpdate);
 		}
 
 		_activeIncomingSubscriptions[user] = newActiveIncomingSubscriptions;
