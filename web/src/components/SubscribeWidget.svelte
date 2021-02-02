@@ -50,7 +50,11 @@
 
 	async function onSubscribe(){
 		await flow.execute(contracts => {
-			const contract = contracts.strETH as StrETH
+			const contract = {
+				[Currency.ETH]: contracts.strETH as StrETH,
+				// [Currency.DAI]: contracts.strDAI as StrDAI
+			}[currency]
+
 			// from, to, rate, maxAmount
 			contract.updateSubscription(wallet.address, address, tokensPerBlock, totalTokens)
 		})
