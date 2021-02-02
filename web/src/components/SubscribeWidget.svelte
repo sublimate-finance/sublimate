@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { utils } from 'ethers'
+	import { BigNumber, utils } from 'ethers'
 	import type { StrETH } from '../../../contracts/typechain/StrETH'
 	import { Currency } from '../types/currency'
 	import { averageBlocksPerTimeInterval, TimeInterval } from '../types/time-intervals'
@@ -9,8 +9,8 @@
 
 	export let suggested = {
 		currency: Currency.ETH,
-		totalAmount: '10',
-		rateAmount: '10',
+		totalAmount: '0.001',
+		rateAmount: '0.001',
 		rateTimeInterval: TimeInterval.Month,
 		durationAmount: '1',
 		durationTimeInterval: TimeInterval.Month
@@ -29,19 +29,19 @@
 
 	// Calculate tokensPerBlock (rate) and totalTokens (maxTokens) based on user input
 	const decimals = 18
-	$: _totalAmount = utils.parseUnits(totalAmount, decimals)
-	$: _rateAmount = utils.parseUnits(rateAmount, decimals)
-	$: _durationAmount = utils.parseUnits(durationAmount, decimals)
+	$: _totalAmount = utils.parseUnits(totalAmount.toString(), decimals)
+	$: _rateAmount = utils.parseUnits(rateAmount.toString(), decimals)
+	$: _durationAmount = BigNumber.from(durationAmount.toString())
 
 	$: blocks = _durationAmount.mul(averageBlocksPerTimeInterval[durationTimeInterval])
 	$: tokensPerBlock =
 		inputMode === InputMode.RateAndDuration ? _rateAmount.div(averageBlocksPerTimeInterval[rateTimeInterval]) :
 		inputMode === InputMode.TotalAndDuration ? _totalAmount.div(blocks) :
-		0
+		BigNumber.from(0)
 	$: totalTokens =
 		inputMode === InputMode.RateAndDuration ? blocks.mul(_rateAmount).div(averageBlocksPerTimeInterval[rateTimeInterval]) :
 		inputMode === InputMode.TotalAndDuration ? _totalAmount :
-		0
+		BigNumber.from(0)
 
 
 	// Contract calls
@@ -49,16 +49,26 @@
 	let walletStores, transactions, balance, chain, fallback, builtin, wallet, flow
 	onMount(async () => walletStores = {transactions, balance, chain, fallback, builtin, wallet, flow} = (await import('../stores/wallet')).getWalletStores())
 
-	async function onSubscribe(){
-		await flow.execute(async contracts => {
-			const contract = {
-				[Currency.ETH]: contracts.strETH as StrETH,
-				// [Currency.DAI]: contracts.strDAI as StrDAI
-			}[currency]
+	async function depositAndUpdateSubscription(from: string, to: string, rate: BigNumber, maxAmount: BigNumber){
+		console.log({from, to, rate: rate.toString(), maxAmount: maxAmount.toString()})
 
-			// from, to, rate, maxAmount
-			console.log(wallet.address, address, tokensPerBlock, totalTokens)
-			return await contract.updateSubscription(wallet.address, address, tokensPerBlock, totalTokens)
+		await flow.execute(async contracts => {
+			const WrappedStreamableToken =
+				currency === Currency.ETH ? contracts.strETH as StrETH :
+				// currency === Currency.DAI ? contracts.strDAI as StrDAI :
+				undefined
+
+			const currentBalance = await WrappedStreamableToken.balanceOf(from)
+
+			// Top up balance of strToken by wrapping ERC20 token
+			console.log(maxAmount.toString(), currentBalance.toString())
+			if(maxAmount > currentBalance)
+				await WrappedStreamableToken.deposit({
+					value: maxAmount.sub(currentBalance)
+				})
+
+			// Update subscription
+			return await WrappedStreamableToken.updateSubscription(from, to, rate, maxAmount)
 		})
 	}
 	// const contract = {
@@ -76,15 +86,15 @@
 	}
 </style>
 
-<form class="column card neumorphic" on:submit|preventDefault={onSubscribe}>
+<form class="column card neumorphic" on:submit|preventDefault={() => depositAndUpdateSubscription(wallet.address, address, tokensPerBlock, totalTokens)}>
 	<!-- svelte-ignore a11y-label-has-associated-control -->
 	<label class="column">
 		<span>Stream</span>
 		<div class="rate-or-total-amount bar">
 			{#if inputMode === InputMode.TotalAndDuration}
-				<input type="number" bind:value={totalAmount} min={1e-18} />
+				<input type="number" bind:value={totalAmount} min={1e-5} step={1e-5} />
 			{:else if inputMode === InputMode.RateAndDuration}
-				<input type="number" bind:value={rateAmount} min={1e-18} />
+				<input type="number" bind:value={rateAmount} min={1e-5} step={1e-5} />
 			{/if}
 			<select bind:value={currency}>
 				{#each Object.values(Currency) as currency}
@@ -120,7 +130,7 @@
 		</div>
 	</label>
 
-	<Button class="accented" type="submit">Confirm Subscription</Button>
+	<Button class="accented" type="submit" disabled={walletStores === undefined}>Confirm Subscription</Button>
 </form>
 
 <WalletAccess />
