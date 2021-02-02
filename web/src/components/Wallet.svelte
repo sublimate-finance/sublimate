@@ -1,13 +1,22 @@
 <script lang="ts">
+	import { utils } from 'ethers'
+
 	import { onMount } from 'svelte'
 	let walletStores, transactions, balance, chain, fallback, builtin, wallet, flow
 	onMount(async () => walletStores = {transactions, balance, chain, fallback, builtin, wallet, flow} = (await import('../stores/wallet')).getWalletStores())
 
 	let balanceETH
 	let balanceStrETH
+
+	const decimals = 18
 	$: if(walletStores) (async () => {
-		balanceETH = await wallet.balance
-		balanceStrETH = await wallet.contracts?.strETH.balanceOf(wallet.address)
+		// balanceETH = await wallet.balance
+		// balanceStrETH = await wallet.contracts?.strETH.balanceOf(wallet.address)
+		while(true){
+			balanceStrETH = await wallet.contracts?.strETH.lastUpdatedBalanceOf(wallet.address)
+
+			await new Promise(r => setTimeout(r, 5000))
+		}
 	})()
 
 	let modalIsOpen = false
@@ -54,8 +63,12 @@
 				</div>
 			</button> -->
 			<Button class="wallet-badge button row neumorphic" on:click={() => modalIsOpen = !modalIsOpen}>
-				<TokenValue value={balanceETH} token="ETH" />
-				<TokenValue value={balanceStrETH} token="strETH" />
+				{#if balanceETH !== undefined}
+					<TokenValue value={utils.formatUnits(balanceETH, decimals)} token="ETH" showDecimalPlaces={12} />
+				{/if}
+				{#if balanceStrETH !== undefined}
+					<TokenValue value={utils.formatUnits(balanceStrETH, decimals)} token="strETH" showDecimalPlaces={18} />
+				{/if}
 				<div class="address-badge row">
 					<Address address={$wallet.address} format="middle-truncated" linked={false} />
 					<div class="rounded-full overflow-hidden w-4 h-4">
