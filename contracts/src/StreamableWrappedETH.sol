@@ -3,15 +3,12 @@ pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 import "./StreamableERC20.sol";
 
-contract WrappedStreamableERC20 is StreamableERC20 {
+contract StreamableWrappedETH is StreamableERC20 {
 
-//	Implement deposit and withdrawal through _mint and _burn
+	event Deposit(address indexed destination, uint amount);
+	event Withdrawal(address indexed source, uint amount);
 
-	constructor (string memory name_, string memory symbol_) StreamableERC20(name_, symbol_) {}
-
-
-	event  Deposit(address indexed destination, uint amount);
-	event  Withdrawal(address indexed source, uint amount);
+	constructor () StreamableERC20("Streamable Ether", "strETH") {}
 
 	function deposit() public virtual payable {
 		_mint(msg.sender, msg.value);
