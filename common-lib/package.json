@@ -21,7 +21,7 @@
     "@ethersproject/solidity": "^5.0.2"
   },
   "scripts": {
-    "prepare": "npm run build",
+    "// prepare": "npm run build",
     "watch:esm": "tsc -w --preserveWatchOutput -p tsconfig.json",
     "watch:cjs": "tsc -w --preserveWatchOutput -p tsconfig-cjs.json",
     "dev": "run-p watch:esm watch:cjs",
