@@ -1,10 +1,16 @@
 <script lang="ts">
-	let modalIsOpen = false
-	let ethAmount = 12.795
-
 	import { onMount } from 'svelte'
 	let walletStores, transactions, balance, chain, fallback, builtin, wallet, flow
 	onMount(async () => walletStores = {transactions, balance, chain, fallback, builtin, wallet, flow} = (await import('../stores/wallet')).getWalletStores())
+
+	let balanceETH
+	let balanceStrETH
+	$: if(walletStores) (async () => {
+		balanceETH = await wallet.balance
+		balanceStrETH = await wallet.contracts?.strETH.balanceOf(wallet.address)
+	})()
+
+	let modalIsOpen = false
 
 	import Address from './Address.svelte'
 	import Blockie from './Blockie.svelte'
@@ -48,7 +54,8 @@
 				</div>
 			</button> -->
 			<Button class="wallet-badge button row neumorphic" on:click={() => modalIsOpen = !modalIsOpen}>
-				<TokenValue value={ethAmount} token="ETH" />
+				<TokenValue value={balanceETH} token="ETH" />
+				<TokenValue value={balanceStrETH} token="strETH" />
 				<div class="address-badge row">
 					<Address address={$wallet.address} format="middle-truncated" linked={false} />
 					<div class="rounded-full overflow-hidden w-4 h-4">
