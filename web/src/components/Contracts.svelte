@@ -65,42 +65,41 @@
 </script>
 
 {#if walletStores}
-	<WalletAccess>
-		<div>
-			{#if $chain.contracts}
-				<h2>Contracts</h2>
+	<div>
+		{#if $chain.contracts}
+			<h2>Contracts</h2>
 
-				{#each getContractInterfaces($chain.contracts, $wallet.contracts) as contractInterface}
-					<h3>{contractInterface.name}</h3>
-					{#each contractInterface.functions as func}
-						<form>
-							<label for={func.name}>{func.name}(</label>
-							{#each func.inputs as input}
-								<span>
-									<label for={input.elemId}>{input.name}:</label>
-									<input id={input.elemId} />
-								</span>
-							{/each}
-							<span>)</span>
-							<Button
-								secondary={true}
-								id={func.name}
-								label={func.name}
-								on:click={() => func.call()}>
-								Submit
-							</Button>
-						</form>
-					{/each}
+			{#each getContractInterfaces($chain.contracts, $wallet.contracts) as contractInterface}
+				<h3>{contractInterface.name}</h3>
+				{#each contractInterface.functions as func}
+					<form>
+						<label for={func.name}>{func.name}(</label>
+						{#each func.inputs as input}
+							<span>
+								<label for={input.elemId}>{input.name}:</label>
+								<input id={input.elemId} />
+							</span>
+						{/each}
+						<span>)</span>
+						<Button
+							secondary={true}
+							id={func.name}
+							label={func.name}
+							on:click={() => func.call()}>
+							Submit
+						</Button>
+					</form>
 				{/each}
-			{/if}
-		</div>
-		<div>
-			{#if $wallet.address && $chain.chainId}
-				<h2>Transactions</h2>
-				{#each $transactions as tx}
-					<h3>{tx.contractName}.{tx.method}({tx.args})</h3>
-				{/each}
-			{/if}
-		</div>
-	</WalletAccess>
+			{/each}
+		{/if}
+	</div>
+	<div>
+		{#if $wallet.address && $chain.chainId}
+			<h2>Transactions</h2>
+			{#each $transactions as tx}
+				<h3>{tx.contractName}.{tx.method}({tx.args})</h3>
+			{/each}
+		{/if}
+	</div>
+	<WalletAccess />
 {/if}

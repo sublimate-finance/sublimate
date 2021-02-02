@@ -44,8 +44,6 @@
 	import Modal from '../components/Modal.svelte'
 </script>
 
-<slot />
-
 {#if walletStores}
 	{#if $flow.inProgress}
 		<Modal
@@ -98,6 +96,8 @@
 			{:else if $chain.state === 'Idle'}
 				{#if $chain.connecting}
 					Connecting to the blockchain...
+				{:else}
+					(Nothing to see here...)
 				{/if}
 			{:else if $chain.state === 'Connected'}
 				{#if $chain.loadingData}
@@ -106,6 +106,7 @@
 					Please switch to the {chainNames[chainId]} chain (id: {chainId})
 				{/if}
 			{:else if $wallet.pendingUserConfirmation}
+				<slot />
 				Please approve the transaction in your wallet...
 			{:else if $flow.executionError}
 				{#if $flow.executionError.code === 4001}
