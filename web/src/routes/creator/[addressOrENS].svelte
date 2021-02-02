@@ -19,10 +19,10 @@
 	$: address = addressOrENS && utils.isAddress(addressOrENS) ? addressOrENS : wallet?.provider?.lookupAddress(addressOrENS)
 
 	// TODO: Get profile from The Graph using address
-	$: profile = address ? creators.find(c => c.address.toLowerCase() == address.toLowerCase()).profile : placeholderProfile
+	$: profile = address && creators.find(c => c.address.toLowerCase() == address.toLowerCase())?.profile || placeholderProfile
 
-	const placeholderProfile = {
-		name: 'Loading profile...',
+	$: placeholderProfile = {
+		name: address ?? 'Loading profile...',
 		summary: '',
 		avatar: 'https://picsum.photos/200/200',
 		cover: 'https://picsum.photos/1920/1080'
