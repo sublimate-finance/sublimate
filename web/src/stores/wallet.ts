@@ -8,7 +8,7 @@ let walletStores: ReturnType<typeof WalletStores>
 
 export function getWalletStores(){
 	if(!walletStores){
-		const chainId = '1337' // import.meta.env.VITE_CHAIN_ID
+		const chainId = '42' // import.meta.env.VITE_CHAIN_ID
 		let nodeUrl: string | undefined
 		let finality = 12
 		if (chainId === '1337' || chainId === '31337') {

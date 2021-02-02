@@ -14,7 +14,7 @@
 		'1337': 'Localhost',
 		'31337': 'Localhost',
 	}
-	const chainId = '1337' // import.meta.env.VITE_CHAIN_ID
+	const chainId = '42' // import.meta.env.VITE_CHAIN_ID
 
 	const base: string = globalThis.basepath || '/'
 
