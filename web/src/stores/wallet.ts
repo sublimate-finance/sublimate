@@ -36,14 +36,14 @@ export function getWalletStores(){
 					: undefined, // ensure local storage is not conflicting across web3w-based apps on ipfs gateways
 			options: [
 				'builtin',
-				new TorusModuleLoader({verifier: 'google', nodeUrl, chainId}),
-				new TorusModuleLoader({verifier: 'facebook', nodeUrl, chainId}),
-				new TorusModuleLoader({verifier: 'discord', nodeUrl, chainId}),
 				new WalletConnectModuleLoader({
 					nodeUrl,
 					chainId,
 					infuraId: 'bc0bdd4eaac640278cdebc3aa91fabe4',
 				}),
+				new TorusModuleLoader({verifier: 'google', nodeUrl, chainId}),
+				new TorusModuleLoader({verifier: 'facebook', nodeUrl, chainId}),
+				new TorusModuleLoader({verifier: 'discord', nodeUrl, chainId}),
 			],
 		})
 

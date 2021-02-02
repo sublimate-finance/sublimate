@@ -58,7 +58,7 @@
 
 			// from, to, rate, maxAmount
 			console.log(wallet.address, address, tokensPerBlock, totalTokens)
-			await contract.updateSubscription(wallet.address, address, tokensPerBlock, totalTokens)
+			return await contract.updateSubscription(wallet.address, address, tokensPerBlock, totalTokens)
 		})
 	}
 	// const contract = {
