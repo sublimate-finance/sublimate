@@ -2,7 +2,7 @@
   "name": "kovan",
   "chainId": "42",
   "contracts": {
-    "strETH": {
+    "StreamableWrappedETH": {
       "address": "0x1bac52e249864f38869149834037aac1cf62e9e4",
       "abi": [
         {
