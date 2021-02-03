@@ -42,6 +42,13 @@
 			</div>
 		</div>
 		<div class="column">
+			<div class="bar">
+				<h3>Cover image</h3>
+				<img src="/images/edit.svg" alt="edit" class="w-4 h-4" />
+			</div>
+			<div class="w-full h-20 shadow-inner rounded-md" style={`background-image: url(${creator.profile.cover}); background-position: center; background-size: cover;`} />
+		</div>
+		<div class="column">
 			<h3>Share your Sublimate link</h3>
 			<button class="bar boxed neumorphic">
 				<span>Embed button code</span>
@@ -51,13 +58,6 @@
 				<span>sublimate.finance/0x16A3...DfTA</span>
 				<img src="/images/copy.svg" alt="copy" class="w-4 h-4 mb-1" />
 			</button>
-		</div>
-		<div class="column">
-			<div class="bar">
-				<h3>Cover image</h3>
-				<img src="/images/edit.svg" alt="edit" class="w-4 h-4" />
-			</div>
-			<div class="w-full h-20 shadow-inner rounded-md" style={`background-image: url(${creator.profile.cover}); background-position: center; background-size: cover;`} />
 		</div>
 	</div>
 	<div class="column flex-1 p-8">
