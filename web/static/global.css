@@ -174,6 +174,7 @@ section {
 
 img, svg, video, canvas, audio, iframe, embed, object {
 	display: inline;
+	object-fit: cover;
 }
 
 

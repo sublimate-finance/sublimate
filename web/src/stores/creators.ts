@@ -5,8 +5,11 @@ export const creators = [
 		profile: {
 			name: 'money.eth',
 			summary: 'DeFi Builder, Curve.fi',
+			about: 'I test in prod',
 			avatar: 'https://picsum.photos/200/200',
-			cover: 'https://picsum.photos/1920/1080'
+			cover: 'https://picsum.photos/1920/1080',
+			website: undefined,
+			twitter: undefined
 		},
 		incomingSubscriptions: {
 			aggregated: {
