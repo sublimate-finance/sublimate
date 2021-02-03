@@ -279,7 +279,7 @@ main {
 .bar {
 	display: flex;
 	align-items: center;
-	flex-wrap: wrap;
+	/* flex-wrap: wrap; */
 	gap: var(--space-inner);
 	/* width: 100%; */
 }
