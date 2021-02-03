@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { BigNumber, utils } from 'ethers'
-	import type { StrETH } from '../../../contracts/typechain/StrETH'
+	import type { StreamableWrappedETH } from '../../../contracts/typechain/StreamableWrappedETH'
 	import { Currency } from '../types/currency'
 	import { averageBlocksPerTimeInterval, TimeInterval } from '../types/time-intervals'
 
@@ -63,26 +63,26 @@
 		console.log({from, to, rate: rate.toString(), maxAmount: maxAmount.toString()})
 
 		await flow.execute(async contracts => {
-			const WrappedStreamableToken =
-				currency === Currency.ETH ? contracts.strETH as StrETH :
-				// currency === Currency.DAI ? contracts.strDAI as StrDAI :
+			const StreamableToken =
+				currency === Currency.ETH ? contracts.StreamableWrappedETH as StreamableWrappedETH :
+				// currency === Currency.DAI ? contracts.StreamableDAI as StreamableDAI :
 				undefined
 
-			const currentBalance = await WrappedStreamableToken.balanceOf(from)
+			const currentBalance = await StreamableToken.balanceOf(from)
 
 			// Top up balance of strToken by wrapping ERC20 token
 			console.log(maxAmount.toString(), currentBalance.toString())
 			topUpAmount = maxAmount.sub(currentBalance)
 			if(topUpAmount.gt(0)){
 				flowAction = FlowAction.TopUpDeposit
-				await WrappedStreamableToken.deposit({
+				await StreamableToken.deposit({
 					value: topUpAmount
 				})
 			}
 
 			// Update subscription
 			flowAction = FlowAction.StartSubscription
-			return await WrappedStreamableToken.updateSubscription(from, to, rate, maxAmount)
+			return await StreamableToken.updateSubscription(from, to, rate, maxAmount)
 		})
 	}
 	// const contract = {

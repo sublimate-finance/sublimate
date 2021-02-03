@@ -6,14 +6,14 @@
 	onMount(async () => walletStores = {transactions, balance, chain, fallback, builtin, wallet, flow} = (await import('../stores/wallet')).getWalletStores())
 
 	let balanceETH
-	let balanceStrETH
+	let balanceStreamableWrappedETH
 
 	const decimals = 18
 	$: if(walletStores) (async () => {
 		// balanceETH = await wallet.balance
-		// balanceStrETH = await wallet.contracts?.strETH.balanceOf(wallet.address)
+		// balanceStreamableWrappedETH = await wallet.contracts?.StreamableWrappedETH.balanceOf(wallet.address)
 		while(true){
-			balanceStrETH = await wallet.contracts?.strETH.lastUpdatedBalanceOf(wallet.address)
+			balanceStreamableWrappedETH = await wallet.contracts?.StreamableWrappedETH.lastUpdatedBalanceOf(wallet.address)
 
 			await new Promise(r => setTimeout(r, 5000))
 		}
@@ -66,8 +66,8 @@
 				{#if balanceETH !== undefined}
 					<TokenValue value={utils.formatUnits(balanceETH, decimals)} token="ETH" showDecimalPlaces={12} />
 				{/if}
-				{#if balanceStrETH !== undefined}
-					<TokenValue value={utils.formatUnits(balanceStrETH, decimals)} token="strETH" showDecimalPlaces={18} />
+				{#if balanceStreamableWrappedETH !== undefined}
+					<TokenValue value={utils.formatUnits(balanceStreamableWrappedETH, decimals)} token="StreamableWrappedETH" showDecimalPlaces={18} />
 				{/if}
 				<div class="address-badge row">
 					<Address address={$wallet.address} format="middle-truncated" linked={false} />
