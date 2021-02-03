@@ -3,8 +3,10 @@
 
 	const creator = creators[0]
 
+    let creatorLink
+
 	import AllTransactions from '../components/AllTransactions.svelte'
-	import Button from '../components/Button.svelte'
+	import CopyButton from '../components/CopyButton.svelte'
 	import CreatorChart from '../components/CreatorChart.svelte'
 	import Footer from '../components/Footer.svelte'
 	import ProfileEditor from '../components/ProfileEditor.svelte'
@@ -43,15 +45,15 @@
 			<div class="column">
 				<h3>Share your Sublimate profile</h3>
 				<div class="bar boxed neumorphic">
-					<a href="/creator/{creator.address}" class="creator-link">sublimate.finance/creator/{creator.address}</a>
-					<Button>Copy</Button>
+					<a href="/creator/{creator.address}" class="creator-link" bind:this={creatorLink}>sublimate.finance/creator/{creator.address}</a>
+					<CopyButton content={creatorLink?.href} />
 					<!-- <img src="/images/copy.svg" alt="copy" /> -->
 				</div>
 			</div>
 			<div class="column">
 				<h3>Embed Sublimate on your website</h3>
 				<div class="columns">
-					<Button>Copy Embed Code</Button>
+					<CopyButton>Copy Embed Code</CopyButton>
 				</div>
 			</div>
 		</div>
