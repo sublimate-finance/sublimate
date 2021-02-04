@@ -119,7 +119,7 @@ h4 {
 pre,
 code {
 	font-family: var(--monospace-fonts);
-	padding: var(--space-inner);
+	/* padding: var(--space-inner); */
 	white-space: pre-wrap;
 }
 
@@ -256,7 +256,18 @@ main {
 	text-align: center;
 	padding: 0.75em 1em;
 	border-radius: 0.5em;
+	display: inline-block;
 	width: 100%;
+}
+
+mark {
+	display: inline-block;
+	/* padding: 0.5em 1em;
+	margin: 0 0.25em; */
+	padding: 0.4em 0.9em;
+	margin: 0 0.2em;
+	text-align: center;
+	border-radius: 0.5em;
 }
 
 
@@ -306,6 +317,22 @@ main {
 	grid-area: area;
 	/* place-items: start; */
 }
+
+.vertical-inline {
+	display: grid;
+	--space-inner: 0.5em;
+	gap: var(--space-inner);
+
+	text-align: center;
+	justify-items: center;
+	line-height: 2.25;
+}
+.vertical-inline mark {
+	line-height: 1.5;
+}
+/* .vertical-inline > * > :first-child:last-child {
+	font-size: 1.2em;
+} */
 
 .slot {
 	display: inline-flex;
@@ -371,9 +398,14 @@ main {
 }
 
 
-.neumorphic {
+.neumorphic, mark {
 	background: var(--accent-gradient-light);
 	box-shadow: inset #E791F544 0 2px 4px;
+}
+
+
+.nowrap {
+	white-space: nowrap;
 }
 
 

@@ -89,7 +89,7 @@
 	.modal {
 		backdrop-filter: var(--overlay-backdrop-filter);
 		position: relative;
-		--space-inner: 1rem;
+		--space-inner: 1.5rem;
 
 		width: var(--modal-width);
 		max-width: 100%;

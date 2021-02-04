@@ -1,5 +1,6 @@
 <script lang="ts">
 	export let title: string = undefined
+	export let estimatedGas
 
 	import { onMount } from 'svelte'
 	let walletStores, transactions, balance, chain, fallback, builtin, wallet, flow
@@ -40,9 +41,16 @@
 			}))
 
 	import Button from '../components/Button.svelte'
-	import Toast from '../components/Toast.svelte'
+	import LoadingSpinner from '../components/LoadingSpinner.svelte'
 	import Modal from '../components/Modal.svelte'
+	import {scale} from 'svelte/transition'
 </script>
+
+<style>
+	hr:first-child {
+		display: none;
+	}
+</style>
 
 {#if walletStores}
 	{#if $flow.inProgress}
@@ -91,36 +99,56 @@
 				{/if}
 			{:else if $wallet.state === 'Locked'}
 				{#if $wallet.unlocking}
-					Please accept the application to access your wallet.
+					Please allow access to this application in your wallet.
 				{:else}
 					<Button label="Unlock Wallet" on:click={() => wallet.unlock()}>Unlock</Button>
 				{/if}
 			{:else if $chain.state === 'Idle'}
 				{#if $chain.connecting}
-					Connecting to the blockchain...
+					<span><LoadingSpinner /> Connecting to the blockchain...</span>
 				{:else}
 					(Nothing to see here...)
 				{/if}
 			{:else if $chain.state === 'Connected'}
 				{#if $chain.loadingData}
-					Loading contracts...
+					<span><LoadingSpinner /> Loading contracts...</span>
 				{:else if $chain.notSupported}
 					Please switch to the {chainNames[chainId]} chain (id: {chainId})
 				{/if}
-			{:else if $wallet.pendingUserConfirmation}
-				<slot />
-				Please approve the transaction in your wallet...
-			{:else if $flow.executionError}
-				{#if $flow.executionError.code === 4001}
-					You canceled the transaction.
-				{:else if $flow.executionError.data && $flow.executionError.data.message}
-					{$flow.executionError.data.message}
-				{:else if $flow.executionError.message}
-					{$flow.executionError.message}
-				{:else}
-					Error: {$flow.executionError}
+			{:else}
+				{#if $$slots.default}
+					<slot />
+					<hr transition:scale>
 				{/if}
-				<Button label="Retry" on:click={() => flow.retry()}>Retry</Button>
+				<div class="stack">
+					{#if $wallet.pendingUserConfirmation}
+						<div class="bar" transition:scale>
+							<span><LoadingSpinner /> Approving transaction...</span>
+							<!-- <span><LoadingSpinner /> Please approve the transaction in your wallet...</span> -->
+							{#if estimatedGas}
+								<small>Estimated Gas: <mark>{estimatedGas} gas units</mark></small>
+							{/if}
+						</div>
+					{:else if $flow.executionError}
+						<div class="bar" transition:scale>
+							<p>
+								{#if $flow.executionError.code === 4001}
+									You canceled the transaction.
+								{:else if $flow.executionError.data && $flow.executionError.data.message}
+									{$flow.executionError.data.message}
+								{:else if $flow.executionError.message}
+									{$flow.executionError.message}
+									{#if $flow.executionError.data}
+										<pre>{$flow.executionError.data}</pre>
+									{/if}
+								{:else}
+									Error: {$flow.executionError}
+								{/if}
+							</p>
+							<Button label="Retry" on:click={() => flow.retry()}>Retry</Button>
+						</div>
+					{/if}
+				</div>
 			{/if}
 		</Modal>
 	{/if}

@@ -53,6 +53,8 @@
 	}
 	let flowAction
 
+	let estimatedGas
+
 
 	// Contract calls
 	import { onMount } from 'svelte'
@@ -62,6 +64,7 @@
 	async function depositAndUpdateSubscription(from: string, to: string, rate: BigNumber, maxAmount: BigNumber){
 		console.log({from, to, rate: rate.toString(), maxAmount: maxAmount.toString()})
 
+		flowAction = undefined
 		await flow.execute(async contracts => {
 			const StreamableToken =
 				currency === Currency.ETH ? contracts.StreamableWrappedETH as StreamableWrappedETH :
@@ -74,13 +77,13 @@
 			console.log(maxAmount.toString(), currentBalance.toString())
 			topUpAmount = maxAmount.sub(currentBalance)
 			if(topUpAmount.gt(0)){
+				estimatedGas = await StreamableToken.estimateGas.deposit({value: topUpAmount})
 				flowAction = FlowAction.TopUpDeposit
-				await StreamableToken.deposit({
-					value: topUpAmount
-				})
+				await StreamableToken.deposit({value: topUpAmount})
 			}
 
 			// Update subscription
+			estimatedGas = await StreamableToken.estimateGas.updateSubscription(from, to, rate, maxAmount)
 			flowAction = FlowAction.StartSubscription
 			return await StreamableToken.updateSubscription(from, to, rate, maxAmount)
 		})
@@ -150,29 +153,49 @@
 	<Button class="accented" type="submit" disabled={walletStores === undefined}>Confirm Subscription</Button>
 </form>
 
-<WalletAccess>
+<WalletAccess bind:estimatedGas={estimatedGas}>
 	{#if flowAction === FlowAction.TopUpDeposit}
-		<h2>Top-up Deposit</h2>
-		<p>
-			You're wrapping
-			<TokenValue value={utils.formatUnits(topUpAmount, decimals)} token={currency} />
-			into <TokenName token={wrappedCurrency} />
-			in order to have the needed <TokenValue value={utils.formatUnits(totalTokens, decimals)} token={wrappedCurrency} />
-			for this subscription.
+		<h2>Top up your <TokenName token={wrappedCurrency} /> balance</h2>
+		<p class="vertical-inline">
+			<span>
+				You'll convert
+				<mark><TokenValue value={utils.formatUnits(topUpAmount, decimals)} token={currency} /></mark>
+				into <TokenName token={wrappedCurrency} />
+			</span>
+			<span>
+				in order to have the <mark><TokenValue value={utils.formatUnits(totalTokens, decimals)} token={wrappedCurrency} /></mark> needed for this subscription.
+			</span>
 		</p>
 	{:else if flowAction === FlowAction.StartSubscription}
 		<h2>Start Subscription</h2>
-		<p>
-			You're authorizing
-			<TokenValue value={utils.formatUnits(totalTokens, decimals)} token={wrappedCurrency} />
-			to be streamed to {profile.name ? `${profile.name}'s address ` : ''}<Address {address} />
-			at a rate of <TokenValue value={utils.formatUnits(tokensPerBlock, decimals)} token={wrappedCurrency} rateInterval={TimeInterval.Block} />
-			over a period of {blocks} blocks.
+		<p class="vertical-inline">
+			<span>
+				You'll stream
+				<mark><TokenValue value={utils.formatUnits(totalTokens, decimals)} token={wrappedCurrency} /></mark>
+			</span>
+			<span>
+				to {profile.name && profile.name !== address ? `${profile.name}'s address, ` : 'address'}
+				<mark><Address {address} /></mark>
+			</span>
+			<span>
+				at a rate of
+				<mark>≈<TokenValue value={rateAmount} token={wrappedCurrency} rateInterval={rateTimeInterval} /></mark>
+				{#if inputMode === InputMode.RateAndDuration}
+					<small class="nowrap">(<mark><TokenValue value={utils.formatUnits(tokensPerBlock, decimals)} token={wrappedCurrency} rateInterval={TimeInterval.Block} /></mark>)</small>
+				{/if}
+			</span>
+			<span>
+				until
+				<mark>≈ {durationAmount} {durationTimeInterval}</mark>
+				<small class="nowrap">(<mark>{blocks} blocks</mark>)</small>
+				from now.
+			</span>
 		</p>
-		<p>
-			At the blockchain's current speed of <strong>13 seconds/block</strong>,
-			this subscription will end in approximately {durationAmount} {durationTimeInterval}.
-		</p>
+		<!-- <p>
+			<span>At the blockchain's current speed of <strong>13 seconds/block</strong>,</span>
+			<span>this subscription will end in approximately {durationAmount} {durationTimeInterval}.</span>
+		</p> -->
+		<hr>
 		<p>You can stop streaming funds at any time by canceling your subscription.</p>
 	{/if}
 </WalletAccess>
