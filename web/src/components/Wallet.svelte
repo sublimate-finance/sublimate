@@ -67,7 +67,7 @@
 					<TokenValue value={utils.formatUnits(balanceETH, decimals)} token="ETH" showDecimalPlaces={12} />
 				{/if}
 				{#if balanceStreamableWrappedETH !== undefined}
-					<TokenValue value={utils.formatUnits(balanceStreamableWrappedETH, decimals)} token="StreamableWrappedETH" showDecimalPlaces={18} />
+					<TokenValue value={utils.formatUnits(balanceStreamableWrappedETH, decimals)} token="strETH" showDecimalPlaces={12} />
 				{/if}
 				<div class="address-badge row">
 					<Address address={$wallet.address} format="middle-truncated" linked={false} />
