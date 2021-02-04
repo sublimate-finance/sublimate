@@ -28,7 +28,7 @@ export function handleSubscriptionStarted(event: SubscriptionStarted): void {
 	subscriptionEntity.startBlock = event.block.number
 	subscriptionEntity.startTime = event.block.timestamp
 	// subscriptionEntity.endBlock =
-	// subscriptionEntity.endTime = 
+	// subscriptionEntity.endTime =
 
 	subscriptionEntity.save()
 
@@ -51,7 +51,7 @@ export function handleSubscriptionStarted(event: SubscriptionStarted): void {
 
 	// toUserID.balance =
 	// ...
-	
+
 	toUserEntity.save()
 }
 
@@ -88,7 +88,7 @@ export function handleSubscriptionStopped(event: SubscriptionStopped): void {
 	const toUserEntity = User.load(toUserID) || new User(toUserID)
 
 	// ...
-	
+
 	toUserEntity.save()
 }
 
@@ -125,6 +125,6 @@ export function handleSubscriptionCanceled(event: SubscriptionCanceled): void {
 	const toUserEntity = User.load(toUserID) || new User(toUserID)
 
 	// ...
-	
+
 	toUserEntity.save()
 }
