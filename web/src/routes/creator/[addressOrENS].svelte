@@ -16,7 +16,7 @@
 
 	export let addressOrENS
 
-	$: address = addressOrENS && utils.isAddress(addressOrENS) ? addressOrENS : wallet?.provider?.lookupAddress(addressOrENS)
+	$: address = addressOrENS && utils.isAddress(addressOrENS) ? addressOrENS : wallet?.provider?.resolveName(addressOrENS)
 
 	// TODO: Get profile from The Graph using address
 	$: profile = address && creators.find(c => c.address.toLowerCase() == address.toLowerCase())?.profile || placeholderProfile
