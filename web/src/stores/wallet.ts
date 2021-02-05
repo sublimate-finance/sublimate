@@ -65,7 +65,7 @@ export function getWalletStores(){
 							id: tx.hash,
 							delay: 0,
 							title: 'Transaction Error',
-							text: 'The Transaction failed',
+							text: `The transaction failed. Transaction ID: ${tx.hash}`,
 							type: 'error',
 							onAcknowledge: () => walletStores.transactions.acknowledge(tx.hash, 'failure'),
 						})
@@ -74,14 +74,24 @@ export function getWalletStores(){
 						notifications.queue({
 							id: tx.hash,
 							delay: 3,
-							title: 'Transaction Cancelled',
-							text: 'The Transaction Has Been Replaced',
+							title: 'Transaction Canceled',
+							text: `The transaction was canceled. Transaction ID: ${tx.hash}`,
 							type: 'info',
 							onAcknowledge: () => walletStores.transactions.acknowledge(tx.hash, 'cancelled'),
 						})
 					} else {
+						// Notify successful
+						notifications.queue({
+							id: tx.hash,
+							delay: 3,
+							title: `Transaction Successful (${tx.status})`,
+							text: `The transaction has completed successfully. Transaction ID: ${tx.hash}`,
+							type: 'info',
+							onAcknowledge: () => walletStores.transactions.acknowledge(tx.hash, tx.status),
+						})
+
 						// auto acknowledge
-						walletStores.transactions.acknowledge(tx.hash, tx.status)
+						// walletStores.transactions.acknowledge(tx.hash, tx.status)
 					}
 				}
 			}
