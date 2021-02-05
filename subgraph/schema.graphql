@@ -2,6 +2,7 @@ type User @entity {
 	id: ID! # address
 
 	balance: BigInt! # tokens
+	lastUpdatedBalance: BigInt!
 
 	incomingRate: BigInt! # tokens per block
 	totalMaxIncomingAmount: BigInt! # tokens

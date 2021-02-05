@@ -65,7 +65,7 @@ interface IStreamableERC20 is IERC20 {
 	/**
      * @dev Emitted when the user's status is changed.
     */
-	event UserStatusChanged(address indexed account, uint256 indexed incomingRate, uint256 totalMaxIncomingAmount, uint256 outgoingRate, uint256 totalMaxOutgoingAmount, uint256 indexed blockAtLastUpdate);
+	event UserStatusChanged(address indexed account, uint256 indexed incomingRate, uint256 totalMaxIncomingAmount, uint256 outgoingRate, uint256 totalMaxOutgoingAmount, uint256 indexed blockAtLastUpdate, uint256 balance, uint256 availableBalance);
 
 
 }
