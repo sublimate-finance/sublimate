@@ -3,10 +3,19 @@
 import { ByteArray, crypto, log } from '@graphprotocol/graph-ts'
 
 // Entities
-import { User, Subscription, SubscriptionStatus } from '../generated/schema'
+import { User, Subscription } from '../generated/schema'
 
 // Events
 import { SubscriptionStarted, SubscriptionUpdated, SubscriptionCanceled, UserStatusChanged } from '../generated/StreamableWrappedETH/StreamableWrappedETHContract'
+
+
+enum SubscriptionStatus {
+	UNDEFINED = 'UNDEFINED', // Subscription not created yet
+	ACTIVE = 'ACTIVE', // Subscription is active
+	STOPPED = 'STOPPED', // Subscription is stopped
+	CANCELED = 'CANCELED', // Subscription got canceled by the user
+	FINISHED = 'FINISHED' // Subscription finished normally
+}
 
 
 export function handleUserStatusChanged(event: UserStatusChanged): void {
