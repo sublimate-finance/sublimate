@@ -1,3 +1,5 @@
+/* eslint-disable prefer-const */
+
 import { ByteArray, crypto, log } from '@graphprotocol/graph-ts'
 
 // Entities
@@ -13,10 +15,13 @@ export function handleSubscriptionStarted(event: SubscriptionStarted): void {
 	let to = event.params.to.toHex()
 	let rate = event.params.rate
 	let maxAmount = event.params.maxAmount
+	let startBlock = event.params.startBlock
+	let endBlock = event.params.endBlock
+	let lastTransferAtBlock = event.params.lastTransferAtBlock
+	let amountPaid = event.params.amountPaid
 
 
 	// Block info
-	let startBlock = event.block.number
 	let startTime = event.block.timestamp
 
 
@@ -66,10 +71,15 @@ export function handleSubscriptionUpdated(event: SubscriptionUpdated): void {
 	// Event params
 	let from = event.params.from.toHex()
 	let to = event.params.to.toHex()
+	let rate = event.params.rate
+	let maxAmount = event.params.maxAmount
+	let startBlock = event.params.startBlock
+	let endBlock = event.params.endBlock
+	let lastTransferAtBlock = event.params.lastTransferAtBlock
+	let amountPaid = event.params.amountPaid
 
 
 	// Block info
-	let startBlock = event.block.number
 	let startTime = event.block.timestamp
 
 
@@ -109,10 +119,15 @@ export function handleSubscriptionCanceled(event: SubscriptionCanceled): void {
 	// Event params
 	let from = event.params.from.toHex()
 	let to = event.params.to.toHex()
+	let rate = event.params.rate
+	let maxAmount = event.params.maxAmount
+	let startBlock = event.params.startBlock
+	let endBlock = event.params.endBlock
+	let lastTransferAtBlock = event.params.lastTransferAtBlock
+	let amountPaid = event.params.amountPaid
 
 
 	// Block info
-	let startBlock = event.block.number
 	let startTime = event.block.timestamp
 
 
