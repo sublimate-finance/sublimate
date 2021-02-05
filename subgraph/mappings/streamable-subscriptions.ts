@@ -1,6 +1,6 @@
 /* eslint-disable prefer-const */
 
-import { ByteArray, crypto, log } from '@graphprotocol/graph-ts'
+import { ByteArray, crypto, ethereum, log } from '@graphprotocol/graph-ts'
 
 // Entities
 import { User, Subscription } from '../generated/schema'
@@ -15,6 +15,13 @@ enum SubscriptionStatus {
 	STOPPED = 'STOPPED', // Subscription is stopped
 	CANCELED = 'CANCELED', // Subscription got canceled by the user
 	FINISHED = 'FINISHED' // Subscription finished normally
+}
+
+
+export function handleBlock(block: ethereum.Block): void {
+	let blockHash = block.hash.toHex()
+
+
 }
 
 
