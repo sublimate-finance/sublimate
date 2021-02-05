@@ -38,3 +38,30 @@ dataSources:
               - event: Withdrawal(indexed address,uint256)
                 handler: handleWithdrawal
           file: ./mappings/streamable-subscriptions.ts
+    -   kind: ethereum/contract
+        name: StreamableWrappedETH
+        network: {{chainName}}
+        source:
+            address: '{{contracts.StreamableWrappedETH.address}}'
+            abi: StreamableWrappedETHContract
+            startBlock: {{contracts.StreamableWrappedETH.receipt.blockNumber}}
+        mapping:
+            kind: ethereum/events
+            apiVersion: 0.0.3
+            language: wasm/assemblyscript
+            entities:
+                - User
+                - Subscription
+            abis:
+                -   name: StreamableWrappedETHContract
+                    file: ./abis/StreamableWrappedETH.json
+            eventHandlers:
+                -   event: SubscriptionStarted(indexed address,indexed address,  uint256, uint256, uint256, uint256, indexed uint256, uint256)
+                    handler: handleSubscriptionStarted
+                -   event: SubscriptionCanceled(indexed address,indexed address, uint256, uint256, uint256, uint256, indexed uint256, uint256)
+                    handler: handleSubscriptionCanceled
+                -   event: handleSubscriptionUpdated(indexed address,indexed address, uint256, uint256, uint256, uint256, indexed uint256, uint256)
+                    handler: handleSubscriptionUpdated
+                -   event: UserStatusChanged(indexed address, indexed uint256, uint256, uint256, uint256, uint256)
+                    handler: handleUserStatusChanged
+            file: ./mappings/streamable-subscriptions.ts
