@@ -24,12 +24,12 @@ dataSources:
                 handler: handleMessageChanged
           file: ./mappings/greetings.ts
     - kind: ethereum/contract
-      name: StreamableERC20
+      name: StreamableWrappedETH
       network: {{chainName}}
       source:
-          address: '{{contracts.StreamableERC20.address}}'
-          abi: StreamableERC20Contract
-          startBlock: {{contracts.StreamableERC20.receipt.blockNumber}}
+          address: '{{contracts.StreamableWrappedETH.address}}'
+          abi: StreamableWrappedETHContract
+          startBlock: {{contracts.StreamableWrappedETH.receipt.blockNumber}}
       mapping:
           kind: ethereum/events
           apiVersion: 0.0.3
@@ -38,13 +38,23 @@ dataSources:
               - User
               - Subscription
           abis:
-              - name: StreamableERC20Contract
-                file: ./abis/StreamableERC20.json
+              - name: StreamableWrappedETHContract
+                file: ./abis/StreamableWrappedETH.json
           eventHandlers:
-              - event: SubscriptionStarted(indexed address,indexed address,uint256,uint256)
-                handler: handleSubscriptionStarted
-              - event: SubscriptionStopped(indexed address,indexed address)
-                handler: handleSubscriptionStopped
-              - event: SubscriptionCanceled(indexed address,indexed address)
+              - event: Approval(indexed address,indexed address,uint256)
+                handler: handleApproval
+              - event: Deposit(indexed address,uint256)
+                handler: handleDeposit
+              - event: SubscriptionCanceled(indexed address,indexed address,uint256,uint256,uint256,uint256,indexed uint256,uint256)
                 handler: handleSubscriptionCanceled
+              - event: SubscriptionStarted(indexed address,indexed address,uint256,uint256,uint256,uint256,indexed uint256,uint256)
+                handler: handleSubscriptionStarted
+              - event: SubscriptionUpdated(indexed address,indexed address,uint256,uint256,uint256,uint256,indexed uint256,uint256)
+                handler: handleSubscriptionUpdated
+              - event: Transfer(indexed address,indexed address,uint256)
+                handler: handleTransfer
+              - event: UserStatusChanged(indexed address,indexed uint256,uint256,uint256,uint256,indexed uint256)
+                handler: handleUserStatusChanged
+              - event: Withdrawal(indexed address,uint256)
+                handler: handleWithdrawal
           file: ./mappings/streamable-subscriptions.ts
