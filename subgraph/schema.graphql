@@ -34,6 +34,7 @@ type Subscription @entity {
 	to: User!
 	rate: BigInt! # tokens per block
 	maxAmount: BigInt! # tokens
+	amountPaid: BigInt!
 
 	startBlock: BigInt! # block number
 	startTime: BigInt! # timestamp

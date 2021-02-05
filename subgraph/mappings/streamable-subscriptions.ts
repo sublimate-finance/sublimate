@@ -3,10 +3,22 @@
 import { ByteArray, crypto, log } from '@graphprotocol/graph-ts'
 
 // Entities
-import { User, Subscription } from '../generated/schema'
+import { User, Subscription, SubscriptionStatus } from '../generated/schema'
 
 // Events
-import { SubscriptionStarted, SubscriptionUpdated, SubscriptionCanceled } from '../generated/StreamableWrappedETH/StreamableWrappedETHContract'
+import { SubscriptionStarted, SubscriptionUpdated, SubscriptionCanceled, UserStatusChanged } from '../generated/StreamableWrappedETH/StreamableWrappedETHContract'
+
+
+export function handleUserStatusChanged(event: UserStatusChanged): void {
+	let account = event.params.account
+	let incomingRate = event.params.incomingRate
+	let totalMaxIncomingAmount = event.params.totalMaxIncomingAmount
+	let outgoingRate = event.params.outgoingRate
+	let totalMaxOutgoingAmount = event.params.totalMaxOutgoingAmount
+	let blockAtLastUpdate = event.params.blockAtLastUpdate
+
+
+}
 
 
 export function handleSubscriptionStarted(event: SubscriptionStarted): void {
@@ -38,8 +50,9 @@ export function handleSubscriptionStarted(event: SubscriptionStarted): void {
 
 	subscriptionEntity.startBlock = startBlock
 	subscriptionEntity.startTime = startTime
-	// subscriptionEntity.endBlock =
-	// subscriptionEntity.endTime =
+	subscriptionEntity.endBlock = endBlock
+	subscriptionEntity.amountPaid = amountPaid
+	subscriptionEntity.status = SubscriptionStatus.ACTIVE
 
 	subscriptionEntity.save()
 
@@ -49,7 +62,6 @@ export function handleSubscriptionStarted(event: SubscriptionStarted): void {
 	let fromUserID = from
 	let fromUserEntity = User.load(fromUserID) || new User(fromUserID)
 
-	// fromUserID.balance =
 	// ...
 
 	fromUserEntity.save()
@@ -60,7 +72,6 @@ export function handleSubscriptionStarted(event: SubscriptionStarted): void {
 	let toUserID = to
 	let toUserEntity = User.load(toUserID) || new User(toUserID)
 
-	// toUserID.balance =
 	// ...
 
 	toUserEntity.save()
@@ -137,7 +148,8 @@ export function handleSubscriptionCanceled(event: SubscriptionCanceled): void {
 	let subscriptionID = `${from}-${to}-${startBlock}`
 	let subscriptionEntity = Subscription.load(subscriptionID) || new Subscription(subscriptionID)
 
-	// ...
+	subscriptionEntity.amountPaid = amountPaid
+	subscriptionEntity.status = SubscriptionStatus.ACTIVE
 
 	subscriptionEntity.save()
 
