@@ -1,9 +1,13 @@
 <script lang="ts">
-	type LinkInfo = string | {name: string; title: string}
+import About from "../routes/about.svelte"
 
-	export let links: LinkInfo[]
+	export let segment: string
 
-	import NavLink from './NavLink.svelte'
+	const links = [
+		['Home', '.'],
+		['Explore', '/explore'],
+		['Dashboard', '/dashboard']
+	]
 </script>
 
 <style>
@@ -21,10 +25,10 @@
 		margin-right: auto;
 	}
 
-	li > :global(*) {
+	li > * {
 		--space-inner: 1em;
 	}
-	li > :global(a) {
+	li > a {
 		--border-width: 2px;
 		display: flex;
 		align-self: stretch;
@@ -35,20 +39,18 @@
 		border-bottom-color: transparent;
 		text-decoration: none;
 	}
-	li > :global(a:hover) {
+	li > a:hover {
 		border-bottom-color: currentColor;
 	}
-	li > :global(a.active) {
+	li > a[aria-current=page] {
 		border-bottom-color: var(--accent-color);
 	}
 </style>
 
 <ul class="nav">
-	{#each links as link}
+	{#each links as [name, href]}
 		<li class="font-bold">
-			<NavLink name={typeof link === 'string' ? link : link.name}>
-				{typeof link === 'string' ? link : link.title}
-			</NavLink>
+			<a {href} aria-current="{segment === href.replace(/^[./]+/, '') ? 'page' : undefined}">{name}</a>
 		</li>
 	{/each}
 </ul>

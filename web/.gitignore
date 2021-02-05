@@ -1,14 +1,5 @@
-node_modules/
-dist
-dist-ssr
-
-_build/pages.ts
-
-# src/contracts.json
-
-.vscode/*
-!.vscode/settings.json.default
-
-index.html
-public/pwa/
-public/robots.txt
+.DS_Store
+/node_modules/
+/src/node_modules/@sapper/
+yarn-error.log
+/__sapper__/

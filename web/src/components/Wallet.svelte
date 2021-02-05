@@ -1,8 +1,25 @@
 <script lang="ts">
-	import {wallet, builtin} from '../stores/wallet'
+	import { utils } from 'ethers'
+
+	import { onMount } from 'svelte'
+	let walletStores, transactions, balance, chain, fallback, builtin, wallet, flow
+	onMount(async () => walletStores = {transactions, balance, chain, fallback, builtin, wallet, flow} = (await import('../stores/wallet')).getWalletStores())
+
+	let balanceETH
+	let balanceStreamableWrappedETH
+
+	const decimals = 18
+	$: if(walletStores) (async () => {
+		// balanceETH = await wallet.balance
+		// balanceStreamableWrappedETH = await wallet.contracts?.StreamableWrappedETH.balanceOf(wallet.address)
+		while(true){
+			balanceStreamableWrappedETH = await wallet.contracts?.StreamableWrappedETH.lastUpdatedBalanceOf(wallet.address)
+
+			await new Promise(r => setTimeout(r, 5000))
+		}
+	})()
 
 	let modalIsOpen = false
-	let ethAmount = 12.795
 
 	import Address from './Address.svelte'
 	import Blockie from './Blockie.svelte'
@@ -33,37 +50,42 @@
 	}
 </style>
 
-<div class="stack">
-	{#if $wallet.address}
-		<!-- <button class="flex flex-row items-center space-x-3 px-2 py-1 pl-4 bg-purple-200 rounded-md border-none neumorphic" on:click={() => modalIsOpen = !modalIsOpen}>
-			<TokenValue value={ethAmount} token="ETH" />
-			<div class="flex flex-row items-center rounded-md bg-white pl-3 pr-1 py-1 space-x-1 font-semibold">
-				<Address address={$wallet.address} format="middle-truncated" linked={false} />
-				<div class="rounded-full overflow-hidden w-4 h-4">
-					<Blockie address={$wallet.address} />
+{#if walletStores}
+	<div class="stack">
+		{#if $wallet.address}
+			<!-- <button class="flex flex-row items-center space-x-3 px-2 py-1 pl-4 bg-purple-200 rounded-md border-none neumorphic" on:click={() => modalIsOpen = !modalIsOpen}>
+				<TokenValue value={ethAmount} token="ETH" />
+				<div class="flex flex-row items-center rounded-md bg-white pl-3 pr-1 py-1 space-x-1 font-semibold">
+					<Address address={$wallet.address} format="middle-truncated" linked={false} />
+					<div class="rounded-full overflow-hidden w-4 h-4">
+						<Blockie address={$wallet.address} />
+					</div>
 				</div>
-			</div>
-		</button> -->
-		<Button class="wallet-badge button row neumorphic" on:click={() => modalIsOpen = !modalIsOpen}>
-			<TokenValue value={ethAmount} token="ETH" />
-			<div class="address-badge row">
-				<Address address={$wallet.address} format="middle-truncated" linked={false} />
-				<div class="rounded-full overflow-hidden w-4 h-4">
-					<Blockie address={$wallet.address} />
+			</button> -->
+			<Button class="wallet-badge button row neumorphic" on:click={() => modalIsOpen = !modalIsOpen}>
+				{#if balanceETH !== undefined}
+					<TokenValue value={utils.formatUnits(balanceETH, decimals)} token="ETH" showDecimalPlaces={12} />
+				{/if}
+				{#if balanceStreamableWrappedETH !== undefined}
+					<TokenValue value={utils.formatUnits(balanceStreamableWrappedETH, decimals)} token="strETH" showDecimalPlaces={12} />
+				{/if}
+				<div class="address-badge row">
+					<Address address={$wallet.address} format="middle-truncated" linked={false} />
+					<div class="rounded-full overflow-hidden w-4 h-4">
+						<Blockie address={$wallet.address} />
+					</div>
 				</div>
-			</div>
-		</Button>
-	{:else}
-		<div>
-			<Button class="accented" on:click={() => modalIsOpen = !modalIsOpen}>
-				Connect Wallet
 			</Button>
-		</div>
-	{/if}
-</div>
+		{:else}
+			<div>
+				<Button class="accented" on:click={() => modalIsOpen = !modalIsOpen}>
+					Connect Wallet
+				</Button>
+			</div>
+		{/if}
+	</div>
 
-{#if modalIsOpen}
-	<Modal title="Connect Wallet" width="30rem" on:close={() => modalIsOpen = false}>
+	<Modal bind:isOpen={modalIsOpen} title="Connect Wallet" width="30rem">
 		{#if $wallet.address}
 			<div>
 				<p>

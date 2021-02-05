@@ -1,5 +1,7 @@
 <script lang="ts">
-	export let data = [{}]
+	import type { TableData } from '../types/table-data'
+
+	export let data: TableData = []
 	export let primaryKey: string
 
 	$: primaryKey = primaryKey || data[0]?.[primaryKey]
@@ -25,6 +27,8 @@
 					</td>
 				{/each}
 			</tr>
+		{:else}
+			<slot></slot>
 		{/each}
 	</tbody>
 </table>

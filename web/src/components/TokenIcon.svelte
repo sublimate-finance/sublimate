@@ -13,8 +13,8 @@
 </script>
 
 <picture title={token + (tokenAddress ? ` (${tokenAddress})` : '')}>
-	{#if Icon}
-		<svelte:component this={Icon} size="1.25em" /> 
+	{#if globalThis.window && Icon}
+		<svelte:component this={Icon} size="1.25em" />
 	{:else if !loadingError && (tokenAddress || tokenIcon)}
 		{#if tokenAddress}
 			<source srcset="https://token-icons.s3.amazonaws.com/{tokenAddress.toLowerCase()}.png">

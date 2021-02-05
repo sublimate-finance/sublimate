@@ -1,5 +1,6 @@
 <script lang="ts">
-	import Link from '../_routing/curi/Link.svelte'
+	export let segment
+
 	import Logo from './Logo.svelte'
 	import Nav from './Nav.svelte'
 	import Wallet from './Wallet.svelte'
@@ -18,7 +19,8 @@
 		position: sticky;
 		top: 0;
 
-		--space-inner: 2.5rem;
+		gap: var(--space-inner);
+		--space-inner: 2.25rem;
 
 		/* backdrop-filter: var(--overlay-backdrop-filter); */
 		background-color: rgba(255, 255, 255, 0.8);
@@ -35,14 +37,15 @@
 	}
 
 	header :global(.nav) {
+		margin-left: auto;
 		align-self: stretch;
 	}
 </style>
 
 <header>
-	<Link href="./">
+	<a href="./">
 		<Logo />
-	</Link>
-	<Nav links={['Home', 'Explore', 'Dashboard']} />
+	</a>
+	<Nav {segment} />
 	<Wallet />
 </header>

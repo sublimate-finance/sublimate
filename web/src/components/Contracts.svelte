@@ -1,57 +1,61 @@
 <script lang="ts">
-	import {wallet, builtin, chain, flow, transactions} from '../stores/wallet'
 	import type {Contract} from '@ethersproject/contracts'
 
-	let contractInterfaces:
+	import { onMount } from 'svelte'
+	let walletStores, transactions, balance, chain, fallback, builtin, wallet, flow
+	onMount(async () => walletStores = {transactions, balance, chain, fallback, builtin, wallet, flow} = (await import('../stores/wallet')).getWalletStores())
+
+	function getContractInterfaces(chainContracts, walletContracts):
 		| {
-				contract: Contract
+			contract: Contract
+			name: string
+			functions: {
 				name: string
-				functions: {
-					name: string
-					inputs: {name: string; elemId: string}[]
-					call: () => Promise<any>
-				}[]
-		  }[]
+				inputs: {name: string; elemId: string}[]
+				call: () => Promise<any>
+			}[]
+		}[]
 		| undefined
-	$: (contractInterfaces as any) = // TODO investigate
-		$chain.contracts &&
-		Object.keys($chain.contracts)
-			.filter(
-				(n: string) =>
-					!n.endsWith('_Implementation') && !n.endsWith('_Proxy')
-			)
-			.map((n) => ({contract: $chain.contracts[n], name: n}))
-			.map(({contract, name}) => ({
-				contract: contract,
-				name: name,
-				functions: contract.interface.fragments
-					.filter(
-						(f) => f.type === 'function' && !(f as any).constant
-					)
-					.map((f) => {
-						const inputs = f.inputs.map((i) => ({
-							name: i.name,
-							elemId: `${name}:${f.name}:${i.name}`,
-						}))
-						return {
-							name: f.name,
-							inputs,
-							call: () => {
-								const args = []
-								for (const input of inputs) {
-									args.push(
-										(document.getElementById(
-											input.elemId
-										) as HTMLInputElement).value
-									)
-								}
-								return wallet.contracts[name].functions[
-									f.format()
-								](...args)
-							},
-						}
-					}),
-      }))
+	{
+		return chainContracts &&
+			Object.keys(chainContracts)
+				.filter(
+					(n: string) =>
+						!n.endsWith('_Implementation') && !n.endsWith('_Proxy')
+				)
+				.map((n) => ({contract: chainContracts[n], name: n}))
+				.map(({contract, name}) => ({
+					contract: contract,
+					name: name,
+					functions: contract.interface.fragments
+						.filter(
+							(f) => f.type === 'function' && !(f as any).constant
+						)
+						.map((f) => {
+							const inputs = f.inputs.map((i) => ({
+								name: i.name,
+								elemId: `${name}:${f.name}:${i.name}`,
+							}))
+							return {
+								name: f.name,
+								inputs,
+								call: () => {
+									const args = []
+									for (const input of inputs) {
+										args.push(
+											(document.getElementById(
+												input.elemId
+											) as HTMLInputElement).value
+										)
+									}
+									return walletContracts[name].functions[
+										f.format()
+									](...args)
+								},
+							}
+						}),
+				}))
+	}
 
 	import Address from './Address.svelte'
 	import Blockie from './Blockie.svelte'
@@ -60,12 +64,12 @@
 	import WalletAccess from './WalletAccess.svelte'
 </script>
 
-<WalletAccess>
+{#if walletStores}
 	<div>
 		{#if $chain.contracts}
 			<h2>Contracts</h2>
 
-			{#each contractInterfaces as contractInterface}
+			{#each getContractInterfaces($chain.contracts, $wallet.contracts) as contractInterface}
 				<h3>{contractInterface.name}</h3>
 				{#each contractInterface.functions as func}
 					<form>
@@ -97,4 +101,5 @@
 			{/each}
 		{/if}
 	</div>
-</WalletAccess>
+	<WalletAccess />
+{/if}
