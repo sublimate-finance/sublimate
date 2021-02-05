@@ -7,7 +7,7 @@ type User @entity {
 	totalMaxIncomingAmount: BigInt! # tokens
 	outgoingRate: BigInt! # tokens per block
 	totalMaxOutgoingAmount: BigInt! # tokens
-	
+
 	blockAtLastUpdate: BigInt! # block
 	availableAmount: BigInt!
 
@@ -30,8 +30,8 @@ type Subscription @entity {
 
 	token: Bytes! # ERC-20 contract address
 
-	from: Bytes! # address
-	to: Bytes! # address
+	from: User!
+	to: User!
 	rate: BigInt! # tokens per block
 	maxAmount: BigInt! # tokens
 
