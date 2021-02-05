@@ -9,13 +9,11 @@ import { User, Subscription } from '../generated/schema'
 import { SubscriptionStarted, SubscriptionUpdated, SubscriptionCanceled, UserStatusChanged } from '../generated/StreamableWrappedETH/StreamableWrappedETHContract'
 
 
-enum SubscriptionStatus {
-	UNDEFINED = 'UNDEFINED', // Subscription not created yet
-	ACTIVE = 'ACTIVE', // Subscription is active
-	STOPPED = 'STOPPED', // Subscription is stopped
-	CANCELED = 'CANCELED', // Subscription got canceled by the user
-	FINISHED = 'FINISHED' // Subscription finished normally
-}
+const SubscriptionStatus_UNDEFINED = 'UNDEFINED' // Subscription not created yet
+const SubscriptionStatus_ACTIVE = 'ACTIVE' // Subscription is active
+const SubscriptionStatus_STOPPED = 'STOPPED' // Subscription is stopped
+const SubscriptionStatus_CANCELED = 'CANCELED' // Subscription got canceled by the user
+const SubscriptionStatus_FINISHED = 'FINISHED'// Subscription finished normally
 
 
 export function handleBlock(block: ethereum.Block): void {
@@ -68,7 +66,7 @@ export function handleSubscriptionStarted(event: SubscriptionStarted): void {
 	subscriptionEntity.startTime = startTime
 	subscriptionEntity.endBlock = endBlock
 	subscriptionEntity.amountPaid = amountPaid
-	subscriptionEntity.status = SubscriptionStatus.ACTIVE
+	subscriptionEntity.status = SubscriptionStatus_ACTIVE
 
 	subscriptionEntity.save()
 
@@ -165,7 +163,7 @@ export function handleSubscriptionCanceled(event: SubscriptionCanceled): void {
 	let subscriptionEntity = Subscription.load(subscriptionID) || new Subscription(subscriptionID)
 
 	subscriptionEntity.amountPaid = amountPaid
-	subscriptionEntity.status = SubscriptionStatus.ACTIVE
+	subscriptionEntity.status = SubscriptionStatus_ACTIVE
 
 	subscriptionEntity.save()
 
