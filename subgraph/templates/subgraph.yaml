@@ -20,6 +20,8 @@ dataSources:
           abis:
               - name: StreamableWrappedETHContract
                 file: ./abis/StreamableWrappedETH.json
+          blockHandlers:
+              - handler: handleBlock
           eventHandlers:
               - event: Approval(indexed address,indexed address,uint256)
                 handler: handleApproval
@@ -33,7 +35,7 @@ dataSources:
                 handler: handleSubscriptionUpdated
               - event: Transfer(indexed address,indexed address,uint256)
                 handler: handleTransfer
-              - event: UserStatusChanged(indexed address,indexed uint256,uint256,uint256,uint256,indexed uint256)
+              - event: UserStatusChanged(indexed address,indexed uint256,uint256,uint256,uint256,indexed uint256,uint256,uint256)
                 handler: handleUserStatusChanged
               - event: Withdrawal(indexed address,uint256)
                 handler: handleWithdrawal

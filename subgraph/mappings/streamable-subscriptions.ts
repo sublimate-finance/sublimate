@@ -1,6 +1,6 @@
 /* eslint-disable prefer-const */
 
-import { ByteArray, crypto, log } from '@graphprotocol/graph-ts'
+import { ByteArray, crypto, ethereum, log } from '@graphprotocol/graph-ts'
 
 // Entities
 import { User, Subscription } from '../generated/schema'
@@ -9,12 +9,17 @@ import { User, Subscription } from '../generated/schema'
 import { SubscriptionStarted, SubscriptionUpdated, SubscriptionCanceled, UserStatusChanged } from '../generated/StreamableWrappedETH/StreamableWrappedETHContract'
 
 
-enum SubscriptionStatus {
-	UNDEFINED = 'UNDEFINED', // Subscription not created yet
-	ACTIVE = 'ACTIVE', // Subscription is active
-	STOPPED = 'STOPPED', // Subscription is stopped
-	CANCELED = 'CANCELED', // Subscription got canceled by the user
-	FINISHED = 'FINISHED' // Subscription finished normally
+const SubscriptionStatus_UNDEFINED = 'UNDEFINED' // Subscription not created yet
+const SubscriptionStatus_ACTIVE = 'ACTIVE' // Subscription is active
+const SubscriptionStatus_STOPPED = 'STOPPED' // Subscription is stopped
+const SubscriptionStatus_CANCELED = 'CANCELED' // Subscription got canceled by the user
+const SubscriptionStatus_FINISHED = 'FINISHED'// Subscription finished normally
+
+
+export function handleBlock(block: ethereum.Block): void {
+	let blockHash = block.hash.toHex()
+
+
 }
 
 
@@ -26,16 +31,16 @@ export function handleUserStatusChanged(event: UserStatusChanged): void {
 	let totalMaxOutgoingAmount = event.params.totalMaxOutgoingAmount
 	let blockAtLastUpdate = event.params.blockAtLastUpdate
 	let balance = event.params.balance
-	let availableBalance = event.params.availableBalance
+	let availableAmount = event.params.availableBalance
 
-	let user = User.load(account)
+	let user = User.load(account.toHex())
 	user.incomingRate = incomingRate;
 	user.totalMaxIncomingAmount = totalMaxIncomingAmount;
 	user.outgoingRate = outgoingRate;
 	user.totalMaxOutgoingAmount = totalMaxOutgoingAmount;
 	user.blockAtLastUpdate = blockAtLastUpdate;
 	user.balance = balance;
-	user.availableBalance = availableBalance;
+	user.availableAmount = availableAmount;
 	user.save()
 
 
@@ -70,7 +75,7 @@ export function handleSubscriptionStarted(event: SubscriptionStarted): void {
 	subscriptionEntity.startTime = startTime
 	subscriptionEntity.endBlock = endBlock
 	subscriptionEntity.amountPaid = amountPaid
-	subscriptionEntity.status = SubscriptionStatus.ACTIVE
+	subscriptionEntity.status = SubscriptionStatus_ACTIVE
 
 	subscriptionEntity.save()
 
@@ -104,7 +109,7 @@ export function handleSubscriptionUpdated(event: SubscriptionUpdated): void {
 
 	// ...
 	subscriptionEntity.amountPaid = amountPaid
-	subscriptionEntity.status = SubscriptionStatus.ACTIVE
+	subscriptionEntity.status = SubscriptionStatus_ACTIVE
 	subscriptionEntity.save()
 
 }
@@ -122,7 +127,8 @@ export function handleSubscriptionCanceled(event: SubscriptionCanceled): void {
 	let subscriptionEntity = Subscription.load(subscriptionID)
 
 	subscriptionEntity.amountPaid = amountPaid
-	subscriptionEntity.status = SubscriptionStatus.CANCELED
+	subscriptionEntity.status = SubscriptionStatus_CANCELED
+
 
 	subscriptionEntity.save()
 
