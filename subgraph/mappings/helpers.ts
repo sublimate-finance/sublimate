@@ -2,6 +2,7 @@ import { log, BigInt, BigDecimal, Address } from '@graphprotocol/graph-ts'
 import {StreamableToken, User, UserStreamableTokenData} from "../generated/schema";
 import {StreamableERC20Contract} from "../generated/StreamableWrappedETH/StreamableERC20Contract";
 export const ZERO_BI = BigInt.fromI32(0)
+export const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000'
 
 export function loadOrCreateUser(address: string): User {
 	let user = User.load(address)
@@ -25,7 +26,6 @@ export function createUserStreamableTokenData(id: string, userId: string, tokenI
 	userStreamableTokenData.totalMaxOutgoingAmount = ZERO_BI
 	userStreamableTokenData.totalOutgoingSubscriptions = 0
 	userStreamableTokenData.totalSubscribedTo = 0
-	userStreamableTokenData.save()
 	return userStreamableTokenData
 }
 

@@ -3,6 +3,7 @@
 import {BigInt, ByteArray, crypto, ethereum, log} from '@graphprotocol/graph-ts'
 import {
 	ZERO_BI,
+	ADDRESS_ZERO,
 	loadOrCreateUser,
 	createUserStreamableTokenData,
 	getUserStreamableTokenDataId,
@@ -118,8 +119,8 @@ export function handleSubscriptionStarted(event: SubscriptionStartedEvent): void
 		fromUserTokenDataEntity.totalMaxOutgoingAmount = fromUserTokenDataEntity.totalMaxOutgoingAmount.plus(maxAmount)
 		fromUserTokenDataEntity.totalSubscribedTo = fromUserTokenDataEntity.totalSubscribedTo + 1
 		fromUserTokenDataEntity.totalOutgoingSubscriptions = fromUserTokenDataEntity.totalOutgoingSubscriptions + 1
-		fromUserTokenDataEntity.save()
 	}
+	fromUserTokenDataEntity.save()
 
 	let toUserTokenDataId = getUserStreamableTokenDataId(to, tokenAddressHex)
 	let toUserTokenDataEntity = UserStreamableTokenData.load(toUserTokenDataId)
@@ -130,8 +131,9 @@ export function handleSubscriptionStarted(event: SubscriptionStartedEvent): void
 		toUserTokenDataEntity.totalMaxIncomingAmount = toUserTokenDataEntity.totalMaxIncomingAmount.plus(maxAmount)
 		toUserTokenDataEntity.totalSubscribers = toUserTokenDataEntity.totalSubscribers + 1
 		toUserTokenDataEntity.totalIncomingSubscriptions = toUserTokenDataEntity.totalIncomingSubscriptions + 1
-		toUserTokenDataEntity.save()
 	}
+	toUserTokenDataEntity.save()
+
 
 	subscriptionEntity.token = streamableTokenEntity.id
 
@@ -222,3 +224,36 @@ export function handleSubscriptionCanceled(event: SubscriptionCanceledEvent): vo
 
 }
 
+
+
+export function handleTransfer(event: TransferEvent): void {
+	let from = event.params.from
+	let toHex = event.params.to.toHex()
+	let value = event.params.value
+
+	let tokenAddress = event.address
+	let tokenAddressHex = event.address.toHex()
+	// handle mint event
+	if (from.toHex() == ADDRESS_ZERO) {
+		// load or create token entity
+		let streamableTokenEntity = StreamableToken.load(tokenAddressHex)
+		// The entity might not exist if this is the first subscription
+		if(streamableTokenEntity == null) {
+			streamableTokenEntity = createStreamableToken(tokenAddress)
+		}
+
+		loadOrCreateUser(toHex)
+
+		let userTokenDataEntityId = getUserStreamableTokenDataId(toHex, tokenAddressHex)
+		let userTokenDataEntity = UserStreamableTokenData.load(userTokenDataEntityId)
+		if (userTokenDataEntity == null) {
+			userTokenDataEntity = createUserStreamableTokenData(userTokenDataEntityId, toHex, tokenAddressHex)
+		}
+
+		userTokenDataEntity.blockAtLastUpdate = event.block.number
+		userTokenDataEntity.balance = userTokenDataEntity.balance.plus(value)
+		userTokenDataEntity.availableAmount = userTokenDataEntity.availableAmount.plus(value)
+		userTokenDataEntity.save()
+	}
+
+}
