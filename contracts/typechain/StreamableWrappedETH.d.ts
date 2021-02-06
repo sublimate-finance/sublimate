@@ -154,7 +154,7 @@ interface StreamableWrappedETHInterface extends ethers.utils.Interface {
     "SubscriptionStarted(address,address,uint256,uint256,uint256,uint256,uint256,uint256)": EventFragment;
     "SubscriptionUpdated(address,address,uint256,uint256,uint256,uint256,uint256,uint256)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
-    "UserStatusChanged(address,uint256,uint256,uint256,uint256,uint256)": EventFragment;
+    "UserStatusChanged(address,uint256,uint256,uint256,uint256,uint256,uint256,uint256)": EventFragment;
     "Withdrawal(address,uint256)": EventFragment;
   };
 
@@ -796,7 +796,9 @@ export class StreamableWrappedETH extends Contract {
       totalMaxIncomingAmount: null,
       outgoingRate: null,
       totalMaxOutgoingAmount: null,
-      blockAtLastUpdate: BigNumberish | null
+      blockAtLastUpdate: BigNumberish | null,
+      balance: null,
+      availableBalance: null
     ): EventFilter;
 
     Withdrawal(source: string | null, amount: null): EventFilter;

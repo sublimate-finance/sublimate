@@ -271,6 +271,18 @@ const _abi = [
         name: "blockAtLastUpdate",
         type: "uint256",
       },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "balance",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "availableBalance",
+        type: "uint256",
+      },
     ],
     name: "UserStatusChanged",
     type: "event",

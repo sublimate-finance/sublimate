@@ -107,7 +107,7 @@ interface IStreamableERC20Interface extends ethers.utils.Interface {
     "SubscriptionStarted(address,address,uint256,uint256,uint256,uint256,uint256,uint256)": EventFragment;
     "SubscriptionUpdated(address,address,uint256,uint256,uint256,uint256,uint256,uint256)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
-    "UserStatusChanged(address,uint256,uint256,uint256,uint256,uint256)": EventFragment;
+    "UserStatusChanged(address,uint256,uint256,uint256,uint256,uint256,uint256,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
@@ -570,7 +570,9 @@ export class IStreamableERC20 extends Contract {
       totalMaxIncomingAmount: null,
       outgoingRate: null,
       totalMaxOutgoingAmount: null,
-      blockAtLastUpdate: BigNumberish | null
+      blockAtLastUpdate: BigNumberish | null,
+      balance: null,
+      availableBalance: null
     ): EventFilter;
   };
 

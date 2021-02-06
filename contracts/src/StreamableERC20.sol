@@ -136,8 +136,8 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 		_users[to].totalMaxIncomingAmount -= _subscriptions[from][to].maxAmount;
 
 		emit SubscriptionCanceled(from, to, _subscriptions[from][to].rate, _subscriptions[from][to].maxAmount, _subscriptions[from][to].startBlock, _subscriptions[from][to].endBlock, _subscriptions[from][to].lastTransferAtBlock, _subscriptions[from][to].amountPaid);
-		emit UserStatusChanged(from, _users[from].incomingRate, _users[from].totalMaxIncomingAmount, _users[from].outgoingRate, _users[from].totalMaxOutgoingAmount, _users[from].blockAtLastUpdate);
-		emit UserStatusChanged(to, _users[to].incomingRate, _users[to].totalMaxIncomingAmount, _users[to].outgoingRate, _users[to].totalMaxOutgoingAmount, _users[to].blockAtLastUpdate);
+		emit UserStatusChanged(from, _users[from].incomingRate, _users[from].totalMaxIncomingAmount, _users[from].outgoingRate, _users[from].totalMaxOutgoingAmount, _users[from].blockAtLastUpdate, balanceOf(from), _availableBalances[from]);
+		emit UserStatusChanged(to, _users[to].incomingRate, _users[to].totalMaxIncomingAmount, _users[to].outgoingRate, _users[to].totalMaxOutgoingAmount, _users[to].blockAtLastUpdate, balanceOf(to), _availableBalances[to]);
 	}
 
 	/**
@@ -200,8 +200,13 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 		user_to_status.incomingRate += rate;
 		user_to_status.totalMaxIncomingAmount += maxAmount;
 		emit SubscriptionStarted(from, to, rate, maxAmount, block.number, blockEnd, block.number, 0);
-		emit UserStatusChanged(from, _users[from].incomingRate, _users[from].totalMaxIncomingAmount, _users[from].outgoingRate, _users[from].totalMaxOutgoingAmount, _users[from].blockAtLastUpdate);
-		emit UserStatusChanged(to, _users[to].incomingRate, _users[to].totalMaxIncomingAmount, _users[to].outgoingRate, _users[to].totalMaxOutgoingAmount, _users[to].blockAtLastUpdate);
+
+		uint balanceFrom = balanceOf(from);
+		uint balanceTo = balanceOf(to);
+		uint availableBalanceFrom = _availableBalances[from];
+		uint availableBalanceTo = _availableBalances[to];
+		emit UserStatusChanged(from, user_from_status.incomingRate, user_from_status.totalMaxIncomingAmount, user_from_status.outgoingRate, user_from_status.totalMaxOutgoingAmount, user_from_status.blockAtLastUpdate, balanceFrom, availableBalanceFrom);
+		emit UserStatusChanged(to, user_to_status.incomingRate, user_to_status.totalMaxIncomingAmount, user_to_status.outgoingRate, user_to_status.totalMaxOutgoingAmount, user_to_status.blockAtLastUpdate, balanceTo, availableBalanceTo);
 	}
 
 	 /**
@@ -243,9 +248,15 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 		subscription.endBlock = blockEnd;
 		subscription.rate = rate;
 		subscription.maxAmount = maxAmount;
+
+		uint balanceFrom = balanceOf(from);
+		uint balanceTo = balanceOf(to);
+
 		emit SubscriptionUpdated(from, to, rate, maxAmount, subscription.startBlock, blockEnd, block.number, subscription.amountPaid);
-		emit UserStatusChanged(from, user_from_status.incomingRate, user_from_status.totalMaxIncomingAmount, user_from_status.outgoingRate, user_from_status.totalMaxOutgoingAmount, user_from_status.blockAtLastUpdate);
-		emit UserStatusChanged(to, user_to_status.incomingRate, user_to_status.totalMaxIncomingAmount, user_to_status.outgoingRate, user_to_status.totalMaxOutgoingAmount, user_to_status.blockAtLastUpdate);
+		emit UserStatusChanged(from, user_from_status.incomingRate, user_from_status.totalMaxIncomingAmount, user_from_status.outgoingRate, user_from_status.totalMaxOutgoingAmount, user_from_status.blockAtLastUpdate, balanceFrom, newAvailableBalance);
+		uint availableBalanceTo = _availableBalances[to];
+
+    	emit UserStatusChanged(to, user_to_status.incomingRate, user_to_status.totalMaxIncomingAmount, user_to_status.outgoingRate, user_to_status.totalMaxOutgoingAmount, user_to_status.blockAtLastUpdate, balanceTo, availableBalanceTo);
 	}
 
 
@@ -288,7 +299,7 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 				newActiveOutgoingSubscriptions[newActiveSubscriptionsIndex++] = subscriptionToAddress;
 			}
 			_updateBlockAtLastUpdate(subscriptionToAddress);
-			emit UserStatusChanged(subscriptionToAddress, _users[subscriptionToAddress].incomingRate, _users[subscriptionToAddress].totalMaxIncomingAmount, _users[subscriptionToAddress].outgoingRate, _users[subscriptionToAddress].totalMaxOutgoingAmount, _users[subscriptionToAddress].blockAtLastUpdate);
+			emit UserStatusChanged(subscriptionToAddress, _users[subscriptionToAddress].incomingRate, _users[subscriptionToAddress].totalMaxIncomingAmount, _users[subscriptionToAddress].outgoingRate, _users[subscriptionToAddress].totalMaxOutgoingAmount, _users[subscriptionToAddress].blockAtLastUpdate, balanceOf(subscriptionToAddress), _availableBalances[subscriptionToAddress]);
 		}
 //		_activeOutgoingSubscriptions[user] = newActiveOutgoingSubscriptions[:newActiveSubscriptionsIndex];
 		_activeOutgoingSubscriptions[user] = newActiveOutgoingSubscriptions;
@@ -323,7 +334,7 @@ contract StreamableERC20 is ERC20, IStreamableERC20 {
 				newActiveIncomingSubscriptions[newActiveSubscriptionsIndex++] = subscriptionFromAddress;
 			}
 			_updateBlockAtLastUpdate(subscriptionFromAddress);
-			emit UserStatusChanged(subscriptionFromAddress, _users[subscriptionFromAddress].incomingRate, _users[subscriptionFromAddress].totalMaxIncomingAmount, _users[subscriptionFromAddress].outgoingRate, _users[subscriptionFromAddress].totalMaxOutgoingAmount, _users[subscriptionFromAddress].blockAtLastUpdate);
+			emit UserStatusChanged(subscriptionFromAddress, _users[subscriptionFromAddress].incomingRate, _users[subscriptionFromAddress].totalMaxIncomingAmount, _users[subscriptionFromAddress].outgoingRate, _users[subscriptionFromAddress].totalMaxOutgoingAmount, _users[subscriptionFromAddress].blockAtLastUpdate, balanceOf(subscriptionFromAddress), _availableBalances[subscriptionFromAddress]);
 		}
 
 		_activeIncomingSubscriptions[user] = newActiveIncomingSubscriptions;
