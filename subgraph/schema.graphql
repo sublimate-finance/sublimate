@@ -13,6 +13,8 @@ type Subscription @entity {
 	token: StreamableToken!
 	from: User!
 	to: User!
+
+#	# should this really be here?
 	fromUserTokenData: UserStreamableTokenData!
 	toUserTokenData: UserStreamableTokenData!
 

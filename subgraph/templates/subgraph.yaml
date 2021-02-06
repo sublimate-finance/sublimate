@@ -17,9 +17,16 @@ dataSources:
           entities:
               - User
               - Subscription
+              - StreamableToken
+              - UserStreamableTokenData
+              - SubscriptionSnapshot
+              - UserSnapshot
+              - UserStreamableTokenDataSnapshot
           abis:
               - name: StreamableWrappedETHContract
                 file: ./abis/StreamableWrappedETH.json
+              - name: StreamableERC20Contract
+                file: ./abis/StreamableERC20.json
           blockHandlers:
               - handler: handleBlock
           eventHandlers:
