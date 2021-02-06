@@ -126,10 +126,10 @@ type SubscriptionSnapshot @entity {
 	timestamp: BigInt! # date
 
 	# Snapshot back-references
-	currentFrom: Subscription!
-	currentTo: Subscription!
-	currentFromUserTokenData: Subscription!
-	currentToUserTokenData: Subscription!
+	currentFrom: User!
+	currentTo: User!
+	currentFromUserTokenData: UserStreamableTokenData!
+	currentToUserTokenData: UserStreamableTokenData!
 	currentSubscription: Subscription!
 }
 
