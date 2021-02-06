@@ -22,6 +22,7 @@ dataSources:
               - SubscriptionSnapshot
               - UserSnapshot
               - UserStreamableTokenDataSnapshot
+              - DataContainer
           abis:
               - name: StreamableWrappedETHContract
                 file: ./abis/StreamableWrappedETH.json

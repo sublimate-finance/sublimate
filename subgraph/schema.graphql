@@ -198,3 +198,8 @@ type UserStreamableTokenDataSnapshot @entity {
 	currentUser: User!
 	currentUserStreamableTokenData: UserStreamableTokenData!
 }
+
+type DataContainer @entity {
+	id: ID! # 1
+	subscriptions: [Subscription!]!
+}

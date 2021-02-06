@@ -4,16 +4,17 @@ import {BigInt, ByteArray, crypto, ethereum, log} from '@graphprotocol/graph-ts'
 import {
 	ZERO_BI,
 	ADDRESS_ZERO,
+	DATA_CONTAINER_ID,
 	loadOrCreateUser,
 	createUserStreamableTokenData,
 	getUserStreamableTokenDataId,
 	getSubscriptionId,
 	createStreamableToken,
-	getStreamableERC20Contract,
-	getLastUpdatedBalanceOf
+	getLastUpdatedBalanceOf,
+	createSubscriptionSnapshot, loadOrCreateDataContainer, loadDataContainer
 } from './helpers'
 // Entities
-import { User, Subscription, StreamableToken, UserStreamableTokenData } from '../generated/schema'
+import { User, Subscription, StreamableToken, UserStreamableTokenData, DataContainer, SubscriptionSnapshot, UserSnapshot, UserStreamableTokenDataSnapshot } from '../generated/schema'
 
 // Events
 import { SubscriptionStarted as SubscriptionStartedEvent,
@@ -36,8 +37,13 @@ const SubscriptionStatus_FINISHED = 'FINISHED'// Subscription finished normally
 
 
 export function handleBlock(block: ethereum.Block): void {
-	let blockHash = block.hash.toHex()
+	const dataContainer = DataContainer.load(DATA_CONTAINER_ID)
+	const subscriptions = dataContainer.subscriptions
 
+    // this will go over all the subscriptions and create SubscriptionSnapshot, UserSnapshot and UserStreamableTokenDataSnapshot entities
+	for (let i =0; i < subscriptions.length; i++) {
+		createSubscriptionSnapshot(subscriptions[i], block.number, block.timestamp)
+	}
 
 }
 
@@ -156,6 +162,13 @@ export function handleSubscriptionStarted(event: SubscriptionStartedEvent): void
 
 	streamableTokenEntity.save()
 	subscriptionEntity.save()
+
+	let dataContainer = loadOrCreateDataContainer()
+	let subscriptions = dataContainer.subscriptions
+	subscriptions.push(subscriptionEntity.id)
+	dataContainer.subscriptions = subscriptions
+	dataContainer.save()
+
 }
 
 
@@ -212,9 +225,6 @@ export function handleSubscriptionCanceled(event: SubscriptionCanceledEvent): vo
 	let subscriptionID = getSubscriptionId(tokenAddress, from, to, startBlock)
 	let subscriptionEntity = Subscription.load(subscriptionID)
 
-
-
-
 	subscriptionEntity.amountPaid = amountPaid
 	subscriptionEntity.endTime = event.block.timestamp
 	subscriptionEntity.status = SubscriptionStatus_CANCELED
@@ -222,6 +232,11 @@ export function handleSubscriptionCanceled(event: SubscriptionCanceledEvent): vo
 
 	subscriptionEntity.save()
 
+	let dataContainer = loadDataContainer()
+	let subscriptions = dataContainer.subscriptions
+	subscriptions = subscriptions.filter(subscriptionId => subscriptionId != subscriptionEntity.id)
+	dataContainer.subscriptions = subscriptions
+	dataContainer.save()
 }
 
 
