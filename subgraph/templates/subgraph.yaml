@@ -16,7 +16,7 @@ dataSources:
           language: wasm/assemblyscript
           entities:
               - User
-              - Subscription
+              - StreamableSubscription
               - StreamableToken
               - UserStreamableTokenData
               - SubscriptionSnapshot

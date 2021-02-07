@@ -23,22 +23,22 @@ async function main() {
 	const to2 = others[3]
 
 	const strEthContractFrom1 = await ethers.getContract(
-		'strETH',
+		'StreamableWrappedETH',
 		from1
 	)
 
 	const strEthContractFrom2 = await ethers.getContract(
-		'strETH',
+		'StreamableWrappedETH',
 		from2
 	)
 
 	const strEthContractTo1 = await ethers.getContract(
-		'strETH',
+		'StreamableWrappedETH',
 		to1
 	)
 
 	const strEthContractTo2 = await ethers.getContract(
-		'strETH',
+		'StreamableWrappedETH',
 		to2
 	)
 

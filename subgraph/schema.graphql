@@ -6,7 +6,7 @@ enum SubscriptionStatus {
 	FINISHED # Subscription finished normally
 }
 
-type Subscription @entity {
+type StreamableSubscription @entity {
 	id: ID! # token + from + to + startBlock
 
 	# References
@@ -37,13 +37,13 @@ type User @entity {
 	tokens: [UserStreamableTokenData!]! @derivedFrom(field: "user")
 
 	# Incoming subscriptions
-	incomingSubscriptions: [Subscription!]! @derivedFrom(field: "to")
+	incomingSubscriptions: [StreamableSubscription!]! @derivedFrom(field: "to")
 		# Aggregated statistics (counting active subscriptions only)
 		totalIncomingSubscriptions: Int! # length of incomingSubscriptions
 		totalSubscribers: Int! # unique subscribers
 
 	# Outgoing subscriptions
-	outgoingSubscriptions: [Subscription!]! @derivedFrom(field: "from")
+	outgoingSubscriptions: [StreamableSubscription!]! @derivedFrom(field: "from")
 		# Aggregated statistics (counting active subscriptions only)
 		totalOutgoingSubscriptions: Int! # length of outgoingSubscriptions
 		totalSubscribedTo: Int! # unique users subscribed to
@@ -75,7 +75,7 @@ type UserStreamableTokenData @entity {
 	availableAmount: BigInt!
 
 	# Incoming subscriptions
-	incomingSubscriptions: [Subscription!]! @derivedFrom(field: "toUserTokenData")
+	incomingSubscriptions: [StreamableSubscription!]! @derivedFrom(field: "toUserTokenData")
 		# Aggregated statistics (all subscriptions ever)
 		lifetimeReceivedAmount: BigInt!
 		# Aggregated statistics (counting active subscriptions only)
@@ -86,7 +86,7 @@ type UserStreamableTokenData @entity {
 		totalSubscribers: Int! # unique subscribers
 
 	# Outgoing subscriptions
-	outgoingSubscriptions: [Subscription!]! @derivedFrom(field: "fromUserTokenData")
+	outgoingSubscriptions: [StreamableSubscription!]! @derivedFrom(field: "fromUserTokenData")
 		# Aggregated statistics (all subscriptions ever)
 		lifetimePaidAmount: BigInt!
 		# Aggregated statistics (counting active subscriptions only)
@@ -134,7 +134,7 @@ type SubscriptionSnapshot @entity {
 	currentTo: User!
 	currentFromUserTokenData: UserStreamableTokenData!
 	currentToUserTokenData: UserStreamableTokenData!
-	currentSubscription: Subscription!
+	currentSubscription: StreamableSubscription!
 }
 
 
@@ -211,5 +211,6 @@ type UserStreamableTokenDataSnapshot @entity {
 
 type DataContainer @entity {
 	id: ID! # 1
-	subscriptions: [Subscription!]!
+	subscriptions: [StreamableSubscription!]!
+	userStreamableTokenData: [UserStreamableTokenData!]!
 }

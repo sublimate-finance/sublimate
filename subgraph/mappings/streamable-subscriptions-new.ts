@@ -11,10 +11,11 @@ import {
 	getSubscriptionId,
 	createStreamableToken,
 	getLastUpdatedBalanceOf,
-	createSubscriptionSnapshot, loadOrCreateDataContainer, loadDataContainer
+	createSubscriptionSnapshot, loadOrCreateDataContainer, loadDataContainer,
+	calculateTotalPaidAndTotalReceivedAmountForUserStreamableTokenData
 } from './helpers'
 // Entities
-import { User, Subscription, StreamableToken, UserStreamableTokenData, DataContainer, SubscriptionSnapshot, UserSnapshot, UserStreamableTokenDataSnapshot } from '../generated/schema'
+import { User, StreamableSubscription, StreamableToken, UserStreamableTokenData, DataContainer, SubscriptionSnapshot, UserSnapshot, UserStreamableTokenDataSnapshot } from '../generated/schema'
 
 // Events
 import { SubscriptionStarted as SubscriptionStartedEvent,
@@ -39,10 +40,15 @@ const SubscriptionStatus_FINISHED = 'FINISHED'// Subscription finished normally
 export function handleBlock(block: ethereum.Block): void {
 	const dataContainer = DataContainer.load(DATA_CONTAINER_ID)
 	const subscriptions = dataContainer.subscriptions
+	const userStreamableTokenData = dataContainer.userStreamableTokenData
 
     // this will go over all the subscriptions and create SubscriptionSnapshot, UserSnapshot and UserStreamableTokenDataSnapshot entities
 	for (let i =0; i < subscriptions.length; i++) {
 		createSubscriptionSnapshot(subscriptions[i], block.number, block.timestamp)
+	}
+
+	for (let i =0; i < userStreamableTokenData.length; i++) {
+		calculateTotalPaidAndTotalReceivedAmountForUserStreamableTokenData(userStreamableTokenData[i])
 	}
 
 }
@@ -107,7 +113,7 @@ export function handleSubscriptionStarted(event: SubscriptionStartedEvent): void
 	}
 
 	// create subscription entity
-	let subscriptionEntity = new Subscription(subscriptionID)
+	let subscriptionEntity = new StreamableSubscription(subscriptionID)
 
 	// load or create users
 	let userFrom = loadOrCreateUser(from)
@@ -173,8 +179,18 @@ export function handleSubscriptionStarted(event: SubscriptionStartedEvent): void
 
 	let dataContainer = loadOrCreateDataContainer()
 	let subscriptions = dataContainer.subscriptions
+	let userStreamableTokenData = dataContainer.userStreamableTokenData
+
+	if(!userStreamableTokenData.includes(toUserTokenDataId)) {
+		userStreamableTokenData.push(toUserTokenDataId)
+	}
+	if(!userStreamableTokenData.includes(fromUserTokenDataId)) {
+		userStreamableTokenData.push(fromUserTokenDataId)
+	}
+
 	subscriptions.push(subscriptionEntity.id)
 	dataContainer.subscriptions = subscriptions
+	dataContainer.userStreamableTokenData = userStreamableTokenData
 	dataContainer.save()
 
 }
@@ -192,7 +208,7 @@ export function handleSubscriptionUpdated(event: SubscriptionUpdatedEvent): void
 	let subscriptionID = getSubscriptionId(tokenAddress, from, to, startBlock)
 
 	// Subscription ID = from + to + startBlock
-	let subscriptionEntity = Subscription.load(subscriptionID)
+	let subscriptionEntity = StreamableSubscription.load(subscriptionID)
 
 
 	subscriptionEntity.amountPaid = amountPaid
@@ -247,7 +263,7 @@ export function handleSubscriptionCanceled(event: SubscriptionCanceledEvent): vo
 
 	// Subscription ID = tokenAddress + from + to + startBlock
 	let subscriptionID = getSubscriptionId(tokenAddress, from, to, startBlock)
-	let subscriptionEntity = Subscription.load(subscriptionID)
+	let subscriptionEntity = StreamableSubscription.load(subscriptionID)
 
 	subscriptionEntity.amountPaid = amountPaid
 	subscriptionEntity.endTime = event.block.timestamp
@@ -258,13 +274,22 @@ export function handleSubscriptionCanceled(event: SubscriptionCanceledEvent): vo
 
 	let dataContainer = loadDataContainer()
 	let subscriptions = dataContainer.subscriptions
+	let userStreamableTokenData = dataContainer.userStreamableTokenData
 	let filteredSubscriptions = new Array<string>()
+	let filteredUserStreamableTokenData = new Array<string>()
 	for(let i = 0; i < subscriptions.length; i++) {
 		if(subscriptions[i] != subscriptionEntity.id) {
 			filteredSubscriptions.push(subscriptions[i])
 		}
 	}
+
+	for(let i = 0; i < userStreamableTokenData.length; i++) {
+		if(userStreamableTokenData[i] != toUserTokenDataEntity.id && userStreamableTokenData[i] != fromUserTokenDataEntity.id) {
+			filteredUserStreamableTokenData.push(subscriptions[i])
+		}
+	}
 	dataContainer.subscriptions = filteredSubscriptions
+	dataContainer.userStreamableTokenData = filteredUserStreamableTokenData
 	dataContainer.save()
 }
 

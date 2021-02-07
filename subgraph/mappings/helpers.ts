@@ -1,7 +1,7 @@
 import { log, BigInt, BigDecimal, Address } from '@graphprotocol/graph-ts'
 import {
 	DataContainer,
-	StreamableToken, Subscription, SubscriptionSnapshot,
+	StreamableToken, StreamableSubscription, SubscriptionSnapshot,
 	User,
 	UserSnapshot,
 	UserStreamableTokenData,
@@ -25,6 +25,7 @@ export function loadOrCreateDataContainer(): DataContainer | null {
 	if(dataContainer == null) {
 		dataContainer = new DataContainer(DATA_CONTAINER_ID)
 		dataContainer.subscriptions = []
+		dataContainer.userStreamableTokenData = []
 	}
 	return dataContainer
 }
@@ -72,7 +73,7 @@ export function createStreamableToken(id: Address): StreamableToken {
 }
 
 export function createSubscriptionSnapshot(subscriptionId: string, blockNumber: BigInt, blockTime: BigInt): SubscriptionSnapshot {
-	const subscription = Subscription.load(subscriptionId)
+	const subscription = StreamableSubscription.load(subscriptionId)
 	const subscriptionSnapshotId = getSubscriptionSnapshotId(subscription.token, subscription.from, subscription.to, subscription.startBlock, blockNumber)
 	const subscriptionSnapshot = new SubscriptionSnapshot(subscriptionSnapshotId)
 	subscriptionSnapshot.token = subscription.token
@@ -142,6 +143,26 @@ export function createUserStreamableTokenDataSnapshot(userAddress: string, token
 	userStreamableTokenDataSnapshot.currentUserStreamableTokenData = userStreamableTokenDataId
 	userStreamableTokenDataSnapshot.save()
 	return userStreamableTokenDataSnapshot
+}
+
+export function calculateTotalPaidAndTotalReceivedAmountForUserStreamableTokenData(userStreamableTokenDataId: string): UserStreamableTokenData | null {
+	const userStreamableTokenDataEntity = UserStreamableTokenData.load(userStreamableTokenDataId)
+	let totalPaidAmount = BigInt.fromI32(0)
+	let totalReceivedAmount = BigInt.fromI32(0)
+	const incomingSubscriptions = userStreamableTokenDataEntity.incomingSubscriptions
+	for (let i = 0; i < incomingSubscriptions.length; i++) {
+		totalReceivedAmount = totalReceivedAmount.plus(StreamableSubscription.load(incomingSubscriptions[i]).amountPaid)
+	}
+
+	const outgoingSubscriptions = userStreamableTokenDataEntity.outgoingSubscriptions
+	for (let i = 0; i < outgoingSubscriptions.length; i++) {
+		totalPaidAmount = totalPaidAmount.plus(StreamableSubscription.load(outgoingSubscriptions[i]).amountPaid)
+	}
+
+	userStreamableTokenDataEntity.totalReceivedAmount = totalReceivedAmount
+	userStreamableTokenDataEntity.totalPaidAmount = totalPaidAmount
+	userStreamableTokenDataEntity.save()
+	return userStreamableTokenDataEntity
 }
 
 

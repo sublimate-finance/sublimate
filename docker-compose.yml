@@ -58,3 +58,11 @@ services:
             - --blockTime
             - '5'
             # - --debug
+
+    adminer:
+        image: adminer
+        restart: always
+        depends_on:
+            - postgres
+        ports:
+            - 8085:8080
