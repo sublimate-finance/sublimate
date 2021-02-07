@@ -1,16 +1,30 @@
 <script lang="ts">
-	import { creators } from '../stores/creators'
+	import { onMount } from 'svelte'
 
+	let walletStores, transactions, balance, chain, fallback, builtin, wallet, flow
+	onMount(async () => walletStores = {transactions, balance, chain, fallback, builtin, wallet, flow} = (await import('../stores/wallet')).getWalletStores())
+
+	let getUser, getSubscription
+	onMount(async () => ({getUser, getSubscription} = await import('../stores/subgraph')))
+
+	let user
+	$: if(getUser && wallet && $wallet.address){
+		user = getUser($wallet.address)
+		console.log('user', user, $user)
+	}
+
+	// TODO: Get from subgraph and AWS backend
+	import { creators } from '../stores/creators'
 	const creator = creators[0]
 
-    let creatorLink
+
+	let creatorLink
 
 	import AllTransactions from '../components/AllTransactions.svelte'
 	import CopyButton from '../components/CopyButton.svelte'
 	import CreatorChart from '../components/CreatorChart.svelte'
 	import Footer from '../components/Footer.svelte'
 	import ProfileEditor from '../components/ProfileEditor.svelte'
-	import ProfileSummary from '../components/ProfileSummary.svelte'
 	import SubscriptionsSummary from '../components/SubscriptionsSummary.svelte'
 </script>
 
@@ -60,8 +74,6 @@
 	</div>
 	<div class="column flex-1 p-8">
 		<CreatorChart />
-
-		<!-- <ProfileSummary {profile} /> -->
 		<SubscriptionsSummary incomingSubscriptions={creator.incomingSubscriptions} outgoingSubscriptions={creator.outgoingSubscriptions} />
 	</div>
 </section>

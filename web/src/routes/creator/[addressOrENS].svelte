@@ -50,7 +50,6 @@
 
 	import AllTransactions from '../../components/AllTransactions.svelte'
 	import Footer from '../../components/Footer.svelte'
-	import ProfileSummary from '../../components/ProfileSummary.svelte'
 	import SubscribeWidget from '../../components/SubscribeWidget.svelte'
 	import SubscriptionsSummary from '../../components/SubscriptionsSummary.svelte'
 </script>
@@ -77,7 +76,6 @@
 		</div>
 		<div class="flex-1 flex-col space-y-4 items-start">
 			<h3>Profile Summary</h3>
-			<!-- <ProfileSummary user={profile} /> -->
 			<SubscriptionsSummary user={$user} />
 		</div>
 	</div>
