@@ -4,7 +4,7 @@
 	export let user
 
 	// Display options
-	let selected = 'Summary'
+	let selected = 'Incoming'
 	let conversionCurrency: 'Original' | 'USD' | 'ETH' | 'DAI'
 	let timeInterval: TimeInterval
 
@@ -18,44 +18,32 @@
 </script>
 
 <style>
-	.stats {
-		text-align: center;
-	}
-
 	.display-options {
 		font-size: 0.85em;
+	}
+
+	.card {
+		--space-outer: 1rem;
+		--card-border-radius: 0.75rem;
+		--card-background-color: rgba(255, 255, 255, 0.6);
+		--card-box-shadow: rgba(231, 145, 245, 0.267) 0px 2px 4px;
+	}
+
+	.tabs {
+		--border-radius: 0.75em;
+		border-radius: var(--border-radius);
 	}
 </style>
 
 <div class="column">
-	<div class="neumorphic columns">
-		<Select options={['Summary', 'Incoming', 'Supporting']} bind:value={selected} style="full" />
+	<div class="tabs neumorphic columns">
+		<Select options={['Incoming', 'Supporting', 'Statistics']} bind:value={selected} style="full" />
 	</div>
 	<div class="stack card">
 		{#if !user}
-			<div class="row boxed neumorphic" transition:scale={{start: 0.8}}>
+			<div class="row" transition:scale={{start: 0.8}}>
 				<LoadingSpinner />
 				Loading data from The Graph...
-			</div>
-		{:else if selected === 'Summary'}
-			<div class="column" transition:scale={{start: 0.8}}>
-				<div class="columns stats">
-					<div class="column">
-						<span class="boxed neumorphic">≈ <TokenValue value={13324.04} token="ETH" /></span>
-						<span>collected since</span>
-						<strong>January 2017</strong>.
-					</div>
-					<div class="column">
-						<span class="boxed neumorphic">≈ <TokenValue value={24.04} token="ETH" /></span>
-						<span>collected in the last</span>
-						<strong>24 hours</strong>
-					</div>
-					<div class="column">
-						<span class="boxed neumorphic">145 donators</span>
-						<span>since</span>
-						<strong>January 2017</strong>.
-					</div>
-				</div>
 			</div>
 		{:else if selected === 'Incoming'}
 			<div class="column" transition:scale={{start: 0.8}}>
@@ -65,11 +53,26 @@
 			<div class="column" transition:scale={{start: 0.8}}>
 				<OutgoingSubscriptionsSummary outgoingSubscriptions={user.outgoingSubscriptions} />
 			</div>
+		{:else if selected === 'Statistics'}
+			<div class="stats columns" transition:scale={{start: 0.8}}>
+				<div class="vertical-inline">
+					<span class="boxed neumorphic">≈ <TokenValue value={0.1} token="ETH" /></span>
+					<span>collected since <strong>January 2017</strong>.</span>
+				</div>
+				<div class="vertical-inline">
+					<span class="boxed neumorphic">≈ <TokenValue value={24.04} token="ETH" /></span>
+					<span>collected in the last <strong>24 hours</strong>.</span>
+				</div>
+				<div class="vertical-inline">
+					<span class="boxed neumorphic">145 donators</span>
+					<span>since <strong>January 2017</strong>.</span>
+				</div>
+			</div>
 		{/if}
 	</div>
-	<div class="row display-options">
-		<span>Show </span>
-		<div class="columns">
+	<div class="row">
+		<strong>Convert </strong>
+		<div class="display-options columns">
 			<div class="boxed neumorphic">
 				<Select options={['Original', 'USD', 'ETH', 'DAI']} bind:value={conversionCurrency} />
 			</div>

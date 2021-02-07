@@ -27,21 +27,6 @@
 	export let totalIncomingSubscriptions = 7
 	export let totalSubscribers = 5
 
-	function nonStreamableToken(token){
-		return token.replace(/^str/, '')
-	}
-
-	$: prices = {
-		'ETH': 2000,
-		'DAI': 1
-	}
-	function convertTokenRate(token: string, decimals: number, tokensPerBlock: BigNumber, timeInterval: TimeInterval, baseCurrency: string){
-		const amount = tokensPerBlock.mul(averageBlocksPerTimeInterval[timeInterval]).mul(prices[token]).div(prices[baseCurrency])
-		return utils.formatUnits(amount.toString(), decimals) // amount.toFixed(3)
-		// return `${amount.toFixed(3)} ${baseCurrency}/${timeInterval}`
-	}
-
-
 	// Display options
 	export let conversionCurrency: 'Original' | 'ETH' | 'DAI' | 'USD' = 'Original'
 	export let timeInterval = TimeInterval.Day
@@ -52,12 +37,18 @@
 	import TokenRate from './TokenRate.svelte'
 </script>
 
-<div class="columns">
+<style>
+	.aggregated-statistics {
+		font-size: 1.1em;
+	}
+</style>
+
+<div class="aggregated-statistics columns">
 	<div class="boxed neumorphic">
 		<span><strong>{totalSubscribers}</strong> unique subscriber{totalSubscribers === 1 ? '' : 's'}</span>
 	</div>
 	<div class="boxed neumorphic">
-		<span><strong>{totalIncomingSubscriptions}</strong> unique subscription{totalIncomingSubscriptions === 1 ? '' : 's'}</span>
+		<span><strong>{totalIncomingSubscriptions}</strong> incoming subscription{totalIncomingSubscriptions === 1 ? '' : 's'}</span>
 	</div>
 </div>
 <div class="boxed neumorphic column">

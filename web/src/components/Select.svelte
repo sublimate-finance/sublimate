@@ -49,6 +49,14 @@
 
 		box-shadow: rgba(231, 145, 245, 0.267) 0px 2px 4px;
 	}
+	.style-full:first-child span {
+		border-top-left-radius: var(--border-radius);
+		border-bottom-left-radius: var(--border-radius);
+	}
+	.style-full:last-child span {
+		border-top-right-radius: var(--border-radius);
+		border-bottom-right-radius: var(--border-radius);
+	}
 </style>
 
 {#each options as option}
