@@ -4,6 +4,7 @@
 	import type { Ethereum } from '../types/ethereum'
 	import type { TickerSymbol } from '../types/currency'
 	import type { TimeInterval } from '../types/time-intervals'
+	import { prices } from '../stores/prices'
 
 	export let token: TickerSymbol
 	export let tokenAddress: Ethereum.ContractAddress
@@ -12,11 +13,11 @@
 	export let rateInterval: TimeInterval | undefined
 
 	export let value: number | string | BigNumberish = '...'
-	export let showDecimalPlaces = 3
+	export let showDecimalPlaces = 3 + Math.round(Math.log10(prices[token]))
 
 	export let isDebt = false
 
-	export let showPlainFiat = false
+	export let showPlainFiat = true
 	$: isFiat = showPlainFiat && ['USD', 'EUR', 'GBP', 'CAD', 'INR'].includes(token)
 
 
@@ -37,8 +38,9 @@
 
 	import { tweened } from 'svelte/motion'
 	const tweenedValue = tweened(Number(value), {
-		duration: 3000,
-		easing: t => t
+		duration: 300,
+		easing: t => t,
+		interpolate: (from, to) => t => Math.pow(Math.E, Math.log(from) + t * (Math.log(to) - Math.log(from)))
 		// interpolate: (from, to) => t => console.log(from, to, t) ||
 		// 	from instanceof BigNumber ? BigNumber.from(to).sub(from).mul(t).add(from) :
 		// 	(Number(to) - Number(from)) * t + Number(from)
@@ -83,7 +85,7 @@
 	{:else}
 		<TokenIcon {token} {tokenAddress} {tokenIcon} />
 		<span>
-			<span class="token-value">{isDebt ? '−' : ''}{(value)}</span>
+			<span class="token-value">{isDebt ? '−' : ''}{formatValue($tweenedValue)}</span>
 			<span class="token-name">{token || '___'}</span>{#if rateInterval}<span class="rate-slash">/</span><span class="rate-interval">{rateInterval}</span>{/if}
 		</span>
 	{/if}
