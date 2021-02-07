@@ -84,37 +84,75 @@
 	import SubscriptionsSummary from '../../components/SubscriptionsSummary.svelte'
 </script>
 
-<section class="flex flex-col pb-24">
-	<div class="w-full h-40 shadow-inner" style={`background-image: url(${profile.cover}); background-position: center; background-size: cover;`} />
-	<div class="relative flex flex-col items-center">
-		<img src={profile.avatar} alt="avatar" class="w-24 h-24 absolute top-0 left-1/2 transform -translate-x-1/2 -mt-20 border-4 border-white border-solid rounded-full" />
-		<div class="flex flex-col items-center space-y-2 mt-10">
+<style>
+	article {
+		display: grid;
+	}
+	.main {
+		justify-self: center;
+		max-width: 70em;
+
+		justify-content: center;
+		flex-wrap: wrap;
+		align-items: start;
+		--space-inner: 2em;
+	}
+	.main .column {
+		--space-inner: 1em;
+	}
+
+	.subscribe-widget {
+		flex: 20em 0 0;
+	}
+	.activity {
+		flex: 35em 1;
+	}
+
+	.profile-image-position {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 0;
+	}
+	.profile-info {
+		justify-items: center;
+		padding-top: 4em;
+	}
+</style>
+
+<article>
+	<header>
+		<div class="cover w-full h-40 shadow-inner" style={`background-image: url(${profile.cover}); background-position: center; background-size: cover;`} />
+		<div class="profile-image-position">
+			<img src={profile.avatar} alt="avatar" class="w-24 h-24 border-4 border-white border-solid rounded-full" />
+		</div>
+		<section class="profile-info column">
 			<h1>{profile.name || address}</h1>
 			<span class="text-primary-200">{profile.summary}</span>
-		</div>
-	</div>
-	{#if currentStreamableETHSubscriptionFrom && $currentStreamableETHSubscriptionFrom}
+		</section>
+	</header>
+	<!-- {#if currentStreamableETHSubscriptionFrom && $currentStreamableETHSubscriptionFrom}
 		This user is subscribed to you.
 	{/if}
 	{#if currentStreamableDAISubscriptionFrom && $currentStreamableDAISubscriptionFrom}
 		This user is subscribed to you.
-	{/if}
-	<div class="flex flex-row px-32 space-x-16 w-full mt-10">
-		<div class="flex flex-col space-y-4 items-start w-80">
+	{/if} -->
+	<section class="main flex">
+		<div class="subscribe-widget column">
 			<h3>Subscribe</h3>
 			<SubscribeWidget {address} {profile} />
 		</div>
-		<div class="flex-1 flex-col space-y-4 items-start">
-			<h3>Profile Summary</h3>
+		<div class="activity column">
+			<h3>Activity</h3>
 			<SubscriptionsSummary {user} />
 		</div>
-	</div>
-</section>
+	</section>
+</article>
 
-<div class="bg-white">
+<!-- <div class="bg-white">
 	<section class="w-full px-8 py-16 mb-32">
 		<AllTransactions {user} />
 	</section>
 
 	<Footer />
-</div>
+</div> -->
