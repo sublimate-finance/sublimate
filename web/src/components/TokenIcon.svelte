@@ -41,13 +41,9 @@
 <style>
 	picture {
 		display: inline-flex;
-		/* height: 1em; */
+		height: 1em;
 		align-self: center;
 		align-items: center;
-	}
-	picture.is-streamable {
-		transform: scale(0.9);
-		position: relative;
 	}
 	/* picture.is-streamable:before {
 		content: '';
@@ -56,13 +52,31 @@
 
 		background: 0 0/1em 1em url("data:image/svg+xml,%3Csvg width='50' height='50' fill='none' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Cpath fill='url(%23p)' d='M6 6h38v38H6z'/%3E%3Ccircle cx='25' cy='25' r='23.5' stroke='url(%23paint0_linear)' stroke-width='3'/%3E%3Cdefs%3E%3ClinearGradient id='paint0_linear' x1='25' y1='0' x2='25' y2='50' gradientUnits='userSpaceOnUse'%3E%3Cstop stop-color='%23E894F6'/%3E%3Cstop offset='1' stop-color='%237D60F4' stop-opacity='.8'/%3E%3C/linearGradient%3E%3Cpattern id='p' patternContentUnits='objectBoundingBox' width='1' height='1'%3E%3C/pattern%3E%3C/defs%3E%3C/svg%3E");
 	} */
+	picture.is-streamable {
+		transform: scale(0.9);
+		position: relative;
+	}
+	/* picture.is-streamable {
+		border: var(--accent-color) 0.1em solid;
+		padding: 0.075em;
+		border-radius: 50%;
+		width: 1.5em;
+		height: 1.5em;
+	} */
 	.streamable-frame {
 		position: absolute;
-		inset: -0.2em;
+		/* inset: -0.2em; */
 		/* margin-top: -0.2em; */
+		top: 50%;
+		left: 50%;
+		width: 0;
+		height: 0;
+		display: grid;
+		justify-content: center;
+		align-items: center;
 	}
 	.streamable-frame svg {
-		width: 100%;
+		width: calc(1.5em + 2px);
 	}
 
 	img, .placeholder-icon {
