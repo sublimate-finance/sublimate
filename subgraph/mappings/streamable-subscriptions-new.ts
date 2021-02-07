@@ -38,18 +38,25 @@ const SubscriptionStatus_FINISHED = 'FINISHED'// Subscription finished normally
 
 
 export function handleBlock(block: ethereum.Block): void {
-	const dataContainer = DataContainer.load(DATA_CONTAINER_ID)
+	const dataContainer = loadOrCreateDataContainer()
+	dataContainer.save()
 	const subscriptions = dataContainer.subscriptions
 	const userStreamableTokenData = dataContainer.userStreamableTokenData
-
-    // this will go over all the subscriptions and create SubscriptionSnapshot, UserSnapshot and UserStreamableTokenDataSnapshot entities
-	for (let i =0; i < subscriptions.length; i++) {
-		createSubscriptionSnapshot(subscriptions[i], block.number, block.timestamp)
-	}
+	log.info("handleBlock handling block...", [])
 
 	for (let i =0; i < userStreamableTokenData.length; i++) {
 		calculateTotalPaidAndTotalReceivedAmountForUserStreamableTokenData(userStreamableTokenData[i])
 	}
+
+	log.info("handleBlock userStreamableTokenData calculated", [])
+
+
+	// this will go over all the subscriptions and create SubscriptionSnapshot, UserSnapshot and UserStreamableTokenDataSnapshot entities
+	for (let i =0; i < subscriptions.length; i++) {
+		createSubscriptionSnapshot(subscriptions[i], block.number, block.timestamp)
+	}
+	log.info("snapshots calculated", [])
+
 
 }
 
@@ -91,16 +98,18 @@ export function handleSubscriptionStarted(event: SubscriptionStartedEvent): void
 	let startBlock = event.params.startBlock
 	let endBlock = event.params.endBlock
 	let amountPaid = event.params.amountPaid
-
+	log.info('handleSubscriptionStarted event params: from: {}, to: {}, rate: {}, maxAmount: {}, startBlock: {}, endBlock: {}, amountPaid: {}', [from, to, rate.toString(), maxAmount.toString(), startBlock.toString(), endBlock.toString(), amountPaid.toString()])
 
 	// Block info
 	let startTime = event.block.timestamp
 	let tokenAddress = event.address
 	let tokenAddressHex = event.address.toHex()
+	log.info('handleSubscriptionStarted block info: startTime: {}, tokenAddress: {}', [startTime.toString(), tokenAddress.toHex()])
 
 	// Subscription
 	// Subscription ID = tokenAddress + from + to + startBlock
 	let subscriptionID = getSubscriptionId(tokenAddressHex, from, to, startBlock)
+	log.info('handleSubscriptionStarted subscriptionID: {}', [subscriptionID])
 
 
 	// load or create entities
@@ -109,11 +118,17 @@ export function handleSubscriptionStarted(event: SubscriptionStartedEvent): void
 	let streamableTokenEntity = StreamableToken.load(tokenAddressHex)
 	// The entity might not exist if this is the first subscription
 	if(streamableTokenEntity == null) {
+		log.info('handleSubscriptionStarted creating streamable token entity...', [])
 		streamableTokenEntity = createStreamableToken(tokenAddress)
 	}
 
+	log.info('handleSubscriptionStarted streamableTokenEntity loaded', [])
+
+
 	// create subscription entity
 	let subscriptionEntity = new StreamableSubscription(subscriptionID)
+
+	log.info('handleSubscriptionStarted StreamableSubscription created', [])
 
 	// load or create users
 	let userFrom = loadOrCreateUser(from)
@@ -121,12 +136,15 @@ export function handleSubscriptionStarted(event: SubscriptionStartedEvent): void
 	// TODO: Change this
 	userFrom.totalSubscribedTo = userFrom.totalSubscribedTo + 1
 	userFrom.save()
+	log.info('handleSubscriptionStarted userFrom data: address: {}, totalOutgoingSubscriptions: {}, totalSubscribedTo: {}', [from, BigInt.fromI32(userFrom.totalOutgoingSubscriptions).toString(), BigInt.fromI32(userFrom.totalSubscribedTo).toString()])
+
 
 	let userTo = loadOrCreateUser(to)
 	userTo.totalIncomingSubscriptions = userTo.totalIncomingSubscriptions + 1
 	// TODO: Change this
 	userTo.totalSubscribers = userTo.totalSubscribers + 1
 	userTo.save()
+	log.info('handleSubscriptionStarted userTo data: address: {}, totalIncomingSubscriptions: {}, totalSubscribers: {}', [to, BigInt.fromI32(userTo.totalIncomingSubscriptions).toString(), BigInt.fromI32(userTo.totalSubscribers).toString()])
 
 	// load or create UserStreamableTokenData
 

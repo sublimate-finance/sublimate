@@ -1,4 +1,4 @@
-import { log, BigInt, BigDecimal, Address } from '@graphprotocol/graph-ts'
+import { log, BigInt, BigDecimal, Address, } from '@graphprotocol/graph-ts'
 import {
 	DataContainer,
 	StreamableToken, StreamableSubscription, SubscriptionSnapshot,
@@ -16,6 +16,10 @@ export function loadOrCreateUser(address: string): User | null {
 	let user = User.load(address)
 	if (user == null) {
 		user = new User(address)
+		user.totalIncomingSubscriptions = 0
+		user.totalSubscribers = 0
+		user.totalOutgoingSubscriptions = 0
+		user.totalSubscribedTo = 0
 	}
 	return user
 }
@@ -65,9 +69,18 @@ export function createUserStreamableTokenData(id: string, userId: string, tokenI
 export function createStreamableToken(id: Address): StreamableToken {
 	const streamableToken = new StreamableToken(id.toHex())
 	const contract = getStreamableERC20Contract(id)
+	log.info('createStreamableToken creating streamable token entity...', [])
+
 	streamableToken.symbol = contract.symbol()
 	streamableToken.name = contract.name()
-	streamableToken.decimals = BigInt.fromI32(contract.decimals())
+	log.info('createStreamableToken data: symbol: {}, name: {}', [streamableToken.symbol, streamableToken.name])
+	let decimalValue = null
+	const decimalResult = contract.try_decimals()
+	if (!decimalResult.reverted) {
+		decimalValue = decimalResult.value
+	}
+	streamableToken.decimals = BigInt.fromI32(decimalValue as i32)
+	log.info('createStreamableToken decimalValue: {}', [streamableToken.decimals.toString()])
 	streamableToken.save()
 	return streamableToken
 }
@@ -81,6 +94,7 @@ export function createSubscriptionSnapshot(subscriptionId: string, blockNumber: 
 	subscriptionSnapshot.maxAmount = subscription.maxAmount
 	subscriptionSnapshot.amountPaid = subscription.amountPaid
 	subscriptionSnapshot.startBlock = subscription.startBlock
+	subscriptionSnapshot.startTime = subscription.startTime
 	subscriptionSnapshot.endBlock = subscription.endBlock
 	subscriptionSnapshot.endTime = subscription.endTime
 	subscriptionSnapshot.blockNumber = blockNumber
@@ -108,7 +122,14 @@ export function createSubscriptionSnapshot(subscriptionId: string, blockNumber: 
 
 export function createUserSnapshot(address: string, blockNumber: BigInt, blockTime: BigInt): UserSnapshot {
 	const userSnapshotId = getUserSnapshotId(address, blockNumber)
+	const user = User.load(address)
 	const userSnapshot = new UserSnapshot(userSnapshotId)
+
+	userSnapshot.totalIncomingSubscriptions = user.totalIncomingSubscriptions
+	userSnapshot.totalSubscribers = user.totalSubscribers
+	userSnapshot.totalOutgoingSubscriptions = user.totalOutgoingSubscriptions
+	userSnapshot.totalSubscribedTo = user.totalSubscribedTo
+
 	userSnapshot.blockNumber = blockNumber
 	userSnapshot.timestamp = blockTime
 	userSnapshot.currentUser = address
@@ -126,11 +147,15 @@ export function createUserStreamableTokenDataSnapshot(userAddress: string, token
 	userStreamableTokenDataSnapshot.balance = getLastUpdatedBalanceOf(Address.fromString(tokenAddress), Address.fromString(userAddress))
 	userStreamableTokenDataSnapshot.availableAmount = userStreamableTokenData.availableAmount
 
+	userStreamableTokenDataSnapshot.lifetimeReceivedAmount = userStreamableTokenData.lifetimeReceivedAmount
+	userStreamableTokenDataSnapshot.totalReceivedAmount = userStreamableTokenData.totalReceivedAmount
 	userStreamableTokenDataSnapshot.totalIncomingRate = userStreamableTokenData.totalIncomingRate
 	userStreamableTokenDataSnapshot.totalMaxIncomingAmount = userStreamableTokenData.totalMaxIncomingAmount
 	userStreamableTokenDataSnapshot.totalIncomingSubscriptions = userStreamableTokenData.totalIncomingSubscriptions
 	userStreamableTokenDataSnapshot.totalSubscribers = userStreamableTokenData.totalSubscribers
 
+	userStreamableTokenDataSnapshot.lifetimePaidAmount = userStreamableTokenData.lifetimePaidAmount
+	userStreamableTokenDataSnapshot.totalPaidAmount = userStreamableTokenData.totalPaidAmount
 	userStreamableTokenDataSnapshot.totalOutgoingRate = userStreamableTokenData.totalOutgoingRate
 	userStreamableTokenDataSnapshot.totalMaxOutgoingAmount = userStreamableTokenData.totalMaxOutgoingAmount
 	userStreamableTokenDataSnapshot.totalOutgoingSubscriptions = userStreamableTokenData.totalOutgoingSubscriptions
@@ -149,15 +174,31 @@ export function calculateTotalPaidAndTotalReceivedAmountForUserStreamableTokenDa
 	const userStreamableTokenDataEntity = UserStreamableTokenData.load(userStreamableTokenDataId)
 	let totalPaidAmount = BigInt.fromI32(0)
 	let totalReceivedAmount = BigInt.fromI32(0)
-	const incomingSubscriptions = userStreamableTokenDataEntity.incomingSubscriptions
-	for (let i = 0; i < incomingSubscriptions.length; i++) {
-		totalReceivedAmount = totalReceivedAmount.plus(StreamableSubscription.load(incomingSubscriptions[i]).amountPaid)
-	}
+	log.info('calculateTotalPaidAndTotalReceivedAmountForUserStreamableTokenData userStreamableTokenDataEntity data: id: {}, balance: {}, availableAmount: {}', [userStreamableTokenDataEntity.id, userStreamableTokenDataEntity.balance.toString(), userStreamableTokenDataEntity.availableAmount.toString()])
+	log.info('calculateTotalPaidAndTotalReceivedAmountForUserStreamableTokenData data: totalPaidAmount: {}, totalReceivedAmount: {}', [totalPaidAmount.toString(), totalReceivedAmount.toString()])
+	//
+	// if(userStreamableTokenDataEntity.totalSubscribers > 0) {
+	// 	const incomingSubscriptions = userStreamableTokenDataEntity.incomingSubscriptions
+	//
+	// 	log.info('calculateTotalPaidAndTotalReceivedAmountForUserStreamableTokenData incomingSubscriptions: {}', incomingSubscriptions)
+	//
+	// 	for (let i = 0; i < incomingSubscriptions.length; i++) {
+	// 		totalReceivedAmount = totalReceivedAmount.plus(StreamableSubscription.load(incomingSubscriptions[i]).amountPaid)
+	// 	}
+	// 	log.info('calculateTotalPaidAndTotalReceivedAmountForUserStreamableTokenData totalReceivedAmount calculated: {}', [totalReceivedAmount.toString()])
+	//
+	// }
+	//
+	//
+	// if(userStreamableTokenDataEntity.totalSubscribedTo > 0) {
+	// 	const outgoingSubscriptions = userStreamableTokenDataEntity.outgoingSubscriptions
+	// 	log.info('calculateTotalPaidAndTotalReceivedAmountForUserStreamableTokenData outgoingSubscriptions: {}', outgoingSubscriptions)
+	// 	for (let i = 0; i < outgoingSubscriptions.length; i++) {
+	// 		totalPaidAmount = totalPaidAmount.plus(StreamableSubscription.load(outgoingSubscriptions[i]).amountPaid)
+	// 	}
+	// 	log.info('calculateTotalPaidAndTotalReceivedAmountForUserStreamableTokenData totalPaidAmount calculated: {}', [totalPaidAmount.toString()])
+	// }
 
-	const outgoingSubscriptions = userStreamableTokenDataEntity.outgoingSubscriptions
-	for (let i = 0; i < outgoingSubscriptions.length; i++) {
-		totalPaidAmount = totalPaidAmount.plus(StreamableSubscription.load(outgoingSubscriptions[i]).amountPaid)
-	}
 
 	userStreamableTokenDataEntity.totalReceivedAmount = totalReceivedAmount
 	userStreamableTokenDataEntity.totalPaidAmount = totalPaidAmount
@@ -168,23 +209,23 @@ export function calculateTotalPaidAndTotalReceivedAmountForUserStreamableTokenDa
 
 
 export function getUserStreamableTokenDataId(userAddress: string, tokenAddress: string): string {
-	return `${userAddress}-${tokenAddress}`;
+	return userAddress.concat('-').concat(tokenAddress)
 }
 
 export function getUserStreamableTokenDataSnapshotId(userAddress: string, tokenAddress: string, blockNumber: BigInt): string {
-	return `${userAddress}-${tokenAddress}-${blockNumber}`;
+	return userAddress.concat('-').concat(tokenAddress).concat('-').concat(blockNumber.toString())
 }
 
 export function getSubscriptionId(tokenAddress: string, from: string, to: string, startBlock: BigInt): string {
-	return `${tokenAddress}-${from}-${to}-${startBlock}`
+	return tokenAddress.concat('-').concat(from).concat('-').concat(to).concat('-').concat(startBlock.toString())
 }
 
 export function getSubscriptionSnapshotId(tokenAddress: string, from: string, to: string, startBlock: BigInt, blockNumber: BigInt): string {
-	return `${from}-${to}-${tokenAddress}-${startBlock}-${blockNumber}`
+	return from.concat('-').concat(to).concat('-').concat(tokenAddress).concat('-').concat(startBlock.toString()).concat('-').concat(blockNumber.toString())
 }
 
 export function getUserSnapshotId(address: string, blockNumber: BigInt): string {
-	return `${address}-${blockNumber}`
+	return address.concat('-').concat(blockNumber.toString())
 }
 
 
@@ -193,6 +234,16 @@ export function getStreamableERC20Contract(address: Address): StreamableERC20Con
 }
 
 export function getLastUpdatedBalanceOf(contractAddress: Address, userAddress: Address): BigInt {
-	const contract = getStreamableERC20Contract(userAddress)
-	return contract.lastUpdatedBalanceOf(userAddress)
+	log.info('getLastUpdatedBalanceOf data: contractAddress: {}, userAddress: {}', [contractAddress.toHexString(), userAddress.toHexString()])
+	const contract = getStreamableERC20Contract(contractAddress)
+	let lastUpdatedBalanceValue = BigInt.fromI32(0)
+	const lastUpdatedBalanceResult = contract.try_lastUpdatedBalanceOf(userAddress)
+	if (!lastUpdatedBalanceResult.reverted) {
+		lastUpdatedBalanceValue = lastUpdatedBalanceResult.value
+		log.info('getLastUpdatedBalanceOf obtained successfully: lastUpdatedBalanceOf: {}', [lastUpdatedBalanceValue.toString()])
+	} else {
+		log.error('getLastUpdatedBalanceOf reverted: lastUpdatedBalanceOf: {}', [lastUpdatedBalanceValue.toString()])
+	}
+
+	return lastUpdatedBalanceValue
 }
