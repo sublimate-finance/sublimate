@@ -18,6 +18,10 @@
 </script>
 
 <style>
+	.subscriptions-summary {
+		--space-inner: 1.15em;
+	}
+
 	.display-options {
 		font-size: 0.85em;
 	}
@@ -35,7 +39,7 @@
 	}
 </style>
 
-<div class="column">
+<div class="subscriptions-summary column">
 	<div class="tabs neumorphic columns">
 		<Select options={['Incoming', 'Supporting', 'Statistics']} bind:value={selected} style="full" />
 	</div>
