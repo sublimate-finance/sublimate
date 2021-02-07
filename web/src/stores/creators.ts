@@ -51,9 +51,9 @@ export const creators = [
 		totalSubscribedTo: 30
 	},
 	{
-		address: '0x15A3FD40ea0aa65007D2Ead6af8848842Acc376a',
+		address: '0x8012eBf4ebe39f501098CF310a6046f97187E677',
 		profile: {
-			name: '0x15A3FD40...',
+			name: '0x8012eBf4e...',
 			summary: 'NFT Creator at Aavegotchi',
 			avatar: undefined,
 			cover: 'https://picsum.photos/1920/1080?1'
@@ -146,9 +146,9 @@ export const creators = [
 		totalSubscribedTo: 30
 	},
 	{
-		address: '0x15A3FD40ea0aa65007D2Ead6af8848842Acc376a',
+		address: '0x8012eBf4ebe39f501098CF310a6046f97187E677',
 		profile: {
-			name: '0x15A3FD40...',
+			name: '0x8012eBf4e...',
 			summary: 'NFT Creator at Aavegotchi',
 			avatar: undefined,
 			cover: 'https://picsum.photos/1920/1080?1'
@@ -241,9 +241,9 @@ export const creators = [
 		totalSubscribedTo: 30
 	},
 	{
-		address: '0x15A3FD40ea0aa65007D2Ead6af8848842Acc376a',
+		address: '0x8012eBf4ebe39f501098CF310a6046f97187E677',
 		profile: {
-			name: '0x15A3FD40...',
+			name: '0x8012eBf4e...',
 			summary: 'NFT Creator at Aavegotchi',
 			avatar: undefined,
 			cover: 'https://picsum.photos/1920/1080?1'
@@ -336,9 +336,9 @@ export const creators = [
 		totalSubscribedTo: 30
 	},
 	{
-		address: '0x15A3FD40ea0aa65007D2Ead6af8848842Acc376a',
+		address: '0x8012eBf4ebe39f501098CF310a6046f97187E677',
 		profile: {
-			name: '0x15A3FD40...',
+			name: '0x8012eBf4e...',
 			summary: 'NFT Creator at Aavegotchi',
 			avatar: undefined,
 			cover: 'https://picsum.photos/1920/1080?1'

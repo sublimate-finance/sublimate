@@ -16,28 +16,55 @@
 	let getUser, getSubscription
 	onMount(async () => ({getUser, getSubscription} = await import('../../stores/subgraph')))
 
+
+
 	export let addressOrENS
 
-	$: address = addressOrENS && utils.isAddress(addressOrENS) ? addressOrENS : wallet?.provider?.resolveName(addressOrENS)
+	let address
+	$: if(addressOrENS){
+		globalThis.window && (window['utils'] = utils)
+		console.log(utils.isAddress(addressOrENS))
+		if(utils.isAddress(addressOrENS)){
+			address = addressOrENS
+		}else{
+			const ensName = addressOrENS
 
-	// TODO: Get profile from The Graph using address
-	$: profile = address && creators.find(c => c.address.toLowerCase() == address.toLowerCase())?.profile || placeholderProfile
-	$: placeholderProfile = {
-		name: address ?? 'Loading profile...',
-		summary: '',
-		avatar: 'https://picsum.photos/200/200',
-		cover: 'https://picsum.photos/1920/1080'
+			// Default: fetch from dummy data
+			const user = creators.find(c => c.profile?.name?.toLowerCase() == ensName.toLowerCase())
+			if(user?.address)
+				address = user.address
+
+			// Resolve ENS name
+			wallet?.provider?.resolveName(ensName).then(_ => address = _)
+		}
 	}
 
-
-	let user
 	let userStore
 	$: if(getUser && address){
 		userStore = getUser(address)
 		console.log('user', userStore, $userStore)
 	}
-	$: if(userStore)
-		user = $userStore
+
+	let user
+	$: if(userStore && $userStore){
+		// user = $userStore
+	}else{
+		// Default: fetch from dummy data
+		user = creators.find(c => c.address.toLowerCase() == address?.toLowerCase()) || {
+			profile: {
+				name: address ?? 'Loading profile...',
+				summary: '',
+				avatar: 'https://picsum.photos/200/200',
+				cover: 'https://picsum.photos/1920/1080'
+			}
+		}
+	}
+
+	let profile = {}
+	$: if(user?.profile)
+		profile = user.profile
+
+	$: console.log('addressOrENS', addressOrENS, 'address', address, 'user', user, 'profile', profile)
 
 
 	let currentStreamableETHSubscriptionTo, currentStreamableETHSubscriptionFrom
@@ -62,7 +89,7 @@
 	<div class="relative flex flex-col items-center">
 		<img src={profile.avatar} alt="avatar" class="w-24 h-24 absolute top-0 left-1/2 transform -translate-x-1/2 -mt-20 border-4 border-white border-solid rounded-full" />
 		<div class="flex flex-col items-center space-y-2 mt-10">
-			<h1>{profile.name}</h1>
+			<h1>{profile.name || address}</h1>
 			<span class="text-primary-200">{profile.summary}</span>
 		</div>
 	</div>
