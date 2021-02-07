@@ -1,75 +1,83 @@
 <script lang="ts">
-	import type { TableData } from '../types/table-data'
+	import { BigNumber, utils } from 'ethers'
 	import { averageBlocksPerTimeInterval, TimeInterval } from '../types/time-intervals'
 
 	// Data
 	// TODO: use generated types from GraphQL schema
-	export let incomingSubscriptions = {
-		aggregated: {
-			currency: 'ETH',
-			rate: 100,
-			subscriberCount: 10,
+	export let tokens = [{
+		token: {
+			symbol: 'strETH',
+			decimals: 18
 		},
+		totalIncomingRate: 0.0001e18,
+		totalMaxIncomingAmount: 0.0005e18,
+		totalIncomingSubscriptions: 4,
+		totalSubscribers: 3
+	}, {
+		token: {
+			symbol: 'strDAI',
+			decimals: 18
+		},
+		totalIncomingRate: 0.0005e18,
+		totalMaxIncomingAmount: 0.0020e18,
+		totalIncomingSubscriptions: 3,
+		totalSubscribers: 2
+	}]
+	export let incomingSubscriptions = []
+	export let totalIncomingSubscriptions = 7
+	export let totalSubscribers = 5
 
-		aggregatedByToken: [{
-			token: 'ETH',
-			rate: 100,
-			subscriberCount: 10,
-		}, {
-			token: 'DAI',
-			rate: 10,
-			subscriberCount: 5,
-		}]
+	function nonStreamableToken(token){
+		return token.replace(/^str/, '')
 	}
 
 	$: prices = {
-		'ETH': 2000 * 1e-18,
-		'DAI': 1 * 1e-18
+		'ETH': 2000,
+		'DAI': 1
 	}
-	function convertTokenRate(token, tokensPerBlock, timeInterval, baseCurrency){
-		const amount = tokensPerBlock * averageBlocksPerTimeInterval[timeInterval] * prices[token]/prices[baseCurrency]
-		return amount.toFixed(3)
+	function convertTokenRate(token: string, decimals: number, tokensPerBlock: BigNumber, timeInterval: TimeInterval, baseCurrency: string){
+		const amount = tokensPerBlock.mul(averageBlocksPerTimeInterval[timeInterval]).mul(prices[token]).div(prices[baseCurrency])
+		return utils.formatUnits(amount.toString(), decimals) // amount.toFixed(3)
 		// return `${amount.toFixed(3)} ${baseCurrency}/${timeInterval}`
-	}
-
-	function tableAggregatedByToken(aggregatedByToken, timeInterval, baseCurrency): TableData {
-		return aggregatedByToken.map(row => {
-			const value = row.token
-			return {
-				'Asset': row.token,
-				'Earning': convertTokenRate(row.token, row.rate, timeInterval, baseCurrency),
-				'Subscribers': row.subscriberCount,
-			}
-		})
 	}
 
 
 	// Display options
+	export let conversionCurrency: 'Original' | 'ETH' | 'DAI' | 'USD' = 'Original'
 	export let timeInterval = TimeInterval.Day
-	export let baseCurrency = 'ETH'
 
 
 	import Table from './Table.svelte'
 	import TokenName from './TokenName.svelte'
-	import TokenValue from './TokenValue.svelte'
+	import TokenRate from './TokenRate.svelte'
 </script>
 
 <div class="columns">
 	<div class="boxed neumorphic">
-		≈ <TokenValue value={convertTokenRate(incomingSubscriptions.aggregated.currency, incomingSubscriptions.aggregated.rate, timeInterval, baseCurrency)} token={baseCurrency} rateInterval={timeInterval} />
-		<!-- <span><strong>{rate} {incomingToken}</strong>/month</span> -->
+		<span><strong>{totalSubscribers}</strong> unique subscriber{totalSubscribers === 1 ? '' : 's'}</span>
 	</div>
 	<div class="boxed neumorphic">
-		<strong>{incomingSubscriptions.aggregated.subscriberCount}</strong> subscriber{incomingSubscriptions.aggregated.subscriberCount === 1 ? '' : 's'}
+		<span><strong>{totalIncomingSubscriptions}</strong> unique subscription{totalIncomingSubscriptions === 1 ? '' : 's'}</span>
 	</div>
 </div>
 <div class="boxed neumorphic column">
-	<Table data={tableAggregatedByToken(incomingSubscriptions.aggregatedByToken, timeInterval, baseCurrency)}>
+	<Table data={
+		tokens.map(tokenData => ({
+			'Asset': tokenData.token.symbol,
+			'Earning': {
+				token: tokenData.token.symbol,
+				decimals: tokenData.token.decimals,
+				tokensPerBlock: BigNumber.from(tokenData.totalIncomingRate)
+			},
+			'Subscribers': tokenData.totalSubscribers,
+			'Subscriptions': tokenData.totalIncomingSubscriptions,
+		}))
+	}>
 		<span slot="cell" let:key let:value>
 			{#if key === 'Asset'}
 				<TokenName token={value} />
 			{:else if key === 'Earning'}
-				≈ <TokenValue value={value} token={baseCurrency} rateInterval={timeInterval} />
+				<TokenRate {...value} {conversionCurrency} {timeInterval} />
 			{:else}
 				{value}
 			{/if}

@@ -9,10 +9,12 @@
 	import { creators } from '../../stores/creators'
 
 	import { onMount } from 'svelte'
+
 	let walletStores, transactions, balance, chain, fallback, builtin, wallet, flow
 	onMount(async () => walletStores = {transactions, balance, chain, fallback, builtin, wallet, flow} = (await import('../../stores/wallet')).getWalletStores())
 
-
+	let getUser, getSubscription
+	onMount(async () => ({getUser, getSubscription} = await import('../../stores/subgraph')))
 
 	export let addressOrENS
 
@@ -20,7 +22,6 @@
 
 	// TODO: Get profile from The Graph using address
 	$: profile = address && creators.find(c => c.address.toLowerCase() == address.toLowerCase())?.profile || placeholderProfile
-
 	$: placeholderProfile = {
 		name: address ?? 'Loading profile...',
 		summary: '',
@@ -29,10 +30,29 @@
 	}
 
 
+	let user
+	$: if(address && getUser){
+		user = getUser(address)
+		console.log('user', user, $user)
+	}
+
+
+	let currentStreamableETHSubscriptionTo, currentStreamableETHSubscriptionFrom
+	let currentStreamableDAISubscriptionTo, currentStreamableDAISubscriptionFrom
+	$: if(address && $wallet?.address && getSubscription){
+		currentStreamableETHSubscriptionTo = getSubscription($wallet.address, address, 'ETH')
+		currentStreamableDAISubscriptionTo = getSubscription($wallet.address, address, 'DAI')
+		currentStreamableETHSubscriptionFrom = getSubscription(address, $wallet.address, 'ETH')
+		currentStreamableDAISubscriptionFrom = getSubscription(address, $wallet.address, 'DAI')
+	}
+	$: console.log('currentStreamableETHSubscriptionTo', currentStreamableETHSubscriptionTo)
+
+
 	import AllTransactions from '../../components/AllTransactions.svelte'
 	import Footer from '../../components/Footer.svelte'
 	import ProfileSummary from '../../components/ProfileSummary.svelte'
 	import SubscribeWidget from '../../components/SubscribeWidget.svelte'
+	import SubscriptionsSummary from '../../components/SubscriptionsSummary.svelte'
 </script>
 
 <section class="flex flex-col pb-24">
@@ -44,6 +64,12 @@
 			<span class="text-primary-200">{profile.summary}</span>
 		</div>
 	</div>
+	{#if currentStreamableETHSubscriptionFrom && $currentStreamableETHSubscriptionFrom}
+		This user is subscribed to you.
+	{/if}
+	{#if currentStreamableDAISubscriptionFrom && $currentStreamableDAISubscriptionFrom}
+		This user is subscribed to you.
+	{/if}
 	<div class="flex flex-row px-32 space-x-16 w-full mt-10">
 		<div class="flex flex-col space-y-4 items-start w-80">
 			<h3>Subscribe</h3>
@@ -51,7 +77,8 @@
 		</div>
 		<div class="flex-1 flex-col space-y-4 items-start">
 			<h3>Profile Summary</h3>
-			<ProfileSummary user={profile} />
+			<!-- <ProfileSummary user={profile} /> -->
+			<SubscriptionsSummary user={$user} />
 		</div>
 	</div>
 </section>
