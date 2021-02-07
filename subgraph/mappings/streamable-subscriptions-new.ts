@@ -111,8 +111,16 @@ export function handleSubscriptionStarted(event: SubscriptionStartedEvent): void
 
 	// load or create users
 	let userFrom = loadOrCreateUser(from)
+	userFrom.totalOutgoingSubscriptions = userFrom.totalOutgoingSubscriptions + 1
+	// TODO: Change this
+	userFrom.totalSubscribedTo = userFrom.totalSubscribedTo + 1
+	userFrom.save()
 
 	let userTo = loadOrCreateUser(to)
+	userTo.totalIncomingSubscriptions = userTo.totalIncomingSubscriptions + 1
+	// TODO: Change this
+	userTo.totalSubscribers = userTo.totalSubscribers + 1
+	userTo.save()
 
 	// load or create UserStreamableTokenData
 
@@ -186,6 +194,7 @@ export function handleSubscriptionUpdated(event: SubscriptionUpdatedEvent): void
 	// Subscription ID = from + to + startBlock
 	let subscriptionEntity = Subscription.load(subscriptionID)
 
+
 	subscriptionEntity.amountPaid = amountPaid
 	subscriptionEntity.save()
 
@@ -203,9 +212,23 @@ export function handleSubscriptionCanceled(event: SubscriptionCanceledEvent): vo
 
 	let tokenAddress = event.address.toHex()
 
+	let userFrom = loadOrCreateUser(from)
+	userFrom.totalOutgoingSubscriptions = userFrom.totalOutgoingSubscriptions - 1
+	// TODO: Change this
+	userFrom.totalSubscribedTo = userFrom.totalSubscribedTo - 1
+	userFrom.save()
+
+	let userTo = loadOrCreateUser(to)
+	userTo.totalIncomingSubscriptions = userTo.totalIncomingSubscriptions - 1
+	// TODO: Change this
+	userTo.totalSubscribers = userTo.totalSubscribers - 1
+	userTo.save()
+
+
 	let fromUserTokenDataId = getUserStreamableTokenDataId(from, tokenAddress)
 	let fromUserTokenDataEntity = UserStreamableTokenData.load(fromUserTokenDataId)
 
+	fromUserTokenDataEntity.lifetimePaidAmount = fromUserTokenDataEntity.lifetimePaidAmount.plus(amountPaid)
 	fromUserTokenDataEntity.totalOutgoingRate = fromUserTokenDataEntity.totalOutgoingRate.minus(rate)
 	fromUserTokenDataEntity.totalMaxOutgoingAmount = fromUserTokenDataEntity.totalMaxOutgoingAmount.minus(maxAmount)
 	fromUserTokenDataEntity.totalSubscribedTo = fromUserTokenDataEntity.totalSubscribedTo - 1
@@ -215,6 +238,7 @@ export function handleSubscriptionCanceled(event: SubscriptionCanceledEvent): vo
 	let toUserTokenDataId = getUserStreamableTokenDataId(to, tokenAddress)
 	let toUserTokenDataEntity = UserStreamableTokenData.load(toUserTokenDataId)
 
+	toUserTokenDataEntity.lifetimeReceivedAmount = fromUserTokenDataEntity.lifetimeReceivedAmount.plus(amountPaid)
 	toUserTokenDataEntity.totalIncomingRate = toUserTokenDataEntity.totalIncomingRate.minus(rate)
 	toUserTokenDataEntity.totalMaxIncomingAmount = toUserTokenDataEntity.totalMaxIncomingAmount.minus(maxAmount)
 	toUserTokenDataEntity.totalSubscribers = toUserTokenDataEntity.totalSubscribers - 1
@@ -234,8 +258,13 @@ export function handleSubscriptionCanceled(event: SubscriptionCanceledEvent): vo
 
 	let dataContainer = loadDataContainer()
 	let subscriptions = dataContainer.subscriptions
-	subscriptions = subscriptions.filter(subscriptionId => subscriptionId != subscriptionEntity.id)
-	dataContainer.subscriptions = subscriptions
+	let filteredSubscriptions = new Array<string>()
+	for(let i = 0; i < subscriptions.length; i++) {
+		if(subscriptions[i] != subscriptionEntity.id) {
+			filteredSubscriptions.push(subscriptions[i])
+		}
+	}
+	dataContainer.subscriptions = filteredSubscriptions
 	dataContainer.save()
 }
 

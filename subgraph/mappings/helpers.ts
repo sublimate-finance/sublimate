@@ -12,16 +12,15 @@ export const ZERO_BI = BigInt.fromI32(0)
 export const DATA_CONTAINER_ID = '1'
 export const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000'
 
-export function loadOrCreateUser(address: string): User {
+export function loadOrCreateUser(address: string): User | null {
 	let user = User.load(address)
 	if (user == null) {
 		user = new User(address)
-		user.save()
 	}
 	return user
 }
 
-export function loadOrCreateDataContainer(): DataContainer {
+export function loadOrCreateDataContainer(): DataContainer | null {
 	let dataContainer = loadDataContainer()
 	if(dataContainer == null) {
 		dataContainer = new DataContainer(DATA_CONTAINER_ID)
@@ -30,7 +29,7 @@ export function loadOrCreateDataContainer(): DataContainer {
 	return dataContainer
 }
 
-export function loadDataContainer(): DataContainer {
+export function loadDataContainer(): DataContainer | null {
 	return DataContainer.load(DATA_CONTAINER_ID)
 }
 
@@ -38,11 +37,23 @@ export function createUserStreamableTokenData(id: string, userId: string, tokenI
 	const userStreamableTokenData = new UserStreamableTokenData(id)
 	userStreamableTokenData.user = userId
 	userStreamableTokenData.token = tokenId
+
+
+	userStreamableTokenData.blockAtLastUpdate = ZERO_BI
+	userStreamableTokenData.balance = ZERO_BI
+	userStreamableTokenData.availableAmount = ZERO_BI
+
+	userStreamableTokenData.lifetimeReceivedAmount = ZERO_BI
+
+	userStreamableTokenData.totalReceivedAmount = ZERO_BI
 	userStreamableTokenData.totalIncomingRate = ZERO_BI
 	userStreamableTokenData.totalMaxIncomingAmount = ZERO_BI
 	userStreamableTokenData.totalSubscribers = 0
 	userStreamableTokenData.totalIncomingSubscriptions = 0
 
+	userStreamableTokenData.lifetimePaidAmount = ZERO_BI
+
+	userStreamableTokenData.totalPaidAmount = ZERO_BI
 	userStreamableTokenData.totalOutgoingRate = ZERO_BI
 	userStreamableTokenData.totalMaxOutgoingAmount = ZERO_BI
 	userStreamableTokenData.totalOutgoingSubscriptions = 0
@@ -55,14 +66,14 @@ export function createStreamableToken(id: Address): StreamableToken {
 	const contract = getStreamableERC20Contract(id)
 	streamableToken.symbol = contract.symbol()
 	streamableToken.name = contract.name()
-	streamableToken.decimals = contract.decimals()
+	streamableToken.decimals = BigInt.fromI32(contract.decimals())
 	streamableToken.save()
 	return streamableToken
 }
 
 export function createSubscriptionSnapshot(subscriptionId: string, blockNumber: BigInt, blockTime: BigInt): SubscriptionSnapshot {
 	const subscription = Subscription.load(subscriptionId)
-	const subscriptionSnapshotId = getSubscriptionSnapshotId(subscription.token, subscription.from, subscription.to, subscription.startBlock, block.number)
+	const subscriptionSnapshotId = getSubscriptionSnapshotId(subscription.token, subscription.from, subscription.to, subscription.startBlock, blockNumber)
 	const subscriptionSnapshot = new SubscriptionSnapshot(subscriptionSnapshotId)
 	subscriptionSnapshot.token = subscription.token
 	subscriptionSnapshot.rate = subscription.rate
@@ -115,12 +126,15 @@ export function createUserStreamableTokenDataSnapshot(userAddress: string, token
 	userStreamableTokenDataSnapshot.availableAmount = userStreamableTokenData.availableAmount
 
 	userStreamableTokenDataSnapshot.totalIncomingRate = userStreamableTokenData.totalIncomingRate
-	userStreamableTokenDataSnapshot.totalMaxIncomingAmount = userStreamableTokenData.totalIncomingSubscriptions
+	userStreamableTokenDataSnapshot.totalMaxIncomingAmount = userStreamableTokenData.totalMaxIncomingAmount
+	userStreamableTokenDataSnapshot.totalIncomingSubscriptions = userStreamableTokenData.totalIncomingSubscriptions
 	userStreamableTokenDataSnapshot.totalSubscribers = userStreamableTokenData.totalSubscribers
+
 	userStreamableTokenDataSnapshot.totalOutgoingRate = userStreamableTokenData.totalOutgoingRate
 	userStreamableTokenDataSnapshot.totalMaxOutgoingAmount = userStreamableTokenData.totalMaxOutgoingAmount
 	userStreamableTokenDataSnapshot.totalOutgoingSubscriptions = userStreamableTokenData.totalOutgoingSubscriptions
 	userStreamableTokenDataSnapshot.totalSubscribedTo = userStreamableTokenData.totalSubscribedTo
+
 	userStreamableTokenDataSnapshot.blockNumber = blockNumber
 	userStreamableTokenDataSnapshot.timestamp = blockTime
 
