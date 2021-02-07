@@ -13,8 +13,6 @@ type Subscription @entity {
 	token: StreamableToken!
 	from: User!
 	to: User!
-
-#	# should this really be here?
 	fromUserTokenData: UserStreamableTokenData!
 	toUserTokenData: UserStreamableTokenData!
 
@@ -78,16 +76,22 @@ type UserStreamableTokenData @entity {
 
 	# Incoming subscriptions
 	incomingSubscriptions: [Subscription!]! @derivedFrom(field: "toUserTokenData")
+		# Aggregated statistics (all subscriptions ever)
+		lifetimeReceivedAmount: BigInt!
 		# Aggregated statistics (counting active subscriptions only)
 		totalIncomingRate: BigInt! # tokens per block
+		totalReceivedAmount: BigInt! # tokens received so far
 		totalMaxIncomingAmount: BigInt! # tokens
 		totalIncomingSubscriptions: Int! # length of incomingSubscriptions
 		totalSubscribers: Int! # unique subscribers
 
 	# Outgoing subscriptions
 	outgoingSubscriptions: [Subscription!]! @derivedFrom(field: "fromUserTokenData")
+		# Aggregated statistics (all subscriptions ever)
+		lifetimePaidAmount: BigInt!
 		# Aggregated statistics (counting active subscriptions only)
 		totalOutgoingRate: BigInt! # tokens per block
+		totalPaidAmount: BigInt! # tokens paid so far
 		totalMaxOutgoingAmount: BigInt! # tokens
 		totalOutgoingSubscriptions: Int! # length of outgoingSubscriptions
 		totalSubscribedTo: Int! # unique users subscribed to
@@ -175,16 +179,22 @@ type UserStreamableTokenDataSnapshot @entity {
 
 	# Incoming subscriptions
 	incomingSubscriptions: [SubscriptionSnapshot!]! @derivedFrom(field: "toUserTokenData")
+		# Aggregated statistics (all subscriptions ever)
+		lifetimeReceivedAmount: BigInt!
 		# Aggregated statistics (counting active subscriptions only)
 		totalIncomingRate: BigInt! # tokens per block
+		totalReceivedAmount: BigInt! # tokens received so far
 		totalMaxIncomingAmount: BigInt! # tokens
 		totalIncomingSubscriptions: Int! # length of incomingSubscriptions
 		totalSubscribers: Int! # unique subscribers
 
 	# Outgoing subscriptions
 	outgoingSubscriptions: [SubscriptionSnapshot!]! @derivedFrom(field: "fromUserTokenData")
+		# Aggregated statistics (all subscriptions ever)
+		lifetimePaidAmount: BigInt!
 		# Aggregated statistics (counting active subscriptions only)
 		totalOutgoingRate: BigInt! # tokens per block
+		totalPaidAmount: BigInt! # tokens paid so far
 		totalMaxOutgoingAmount: BigInt! # tokens
 		totalOutgoingSubscriptions: Int! # length of outgoingSubscriptions
 		totalSubscribedTo: Int! # unique users subscribed to
