@@ -51,7 +51,7 @@
 			</div>
 		{:else if selected === 'Incoming'}
 			<div class="card column" transition:scale={{start: 0.8}}>
-				<IncomingSubscriptionsSummary incomingSubscriptions={user.incomingSubscriptions} {conversionCurrency} {timeInterval} />
+				<IncomingSubscriptionsSummary incomingSubscriptions={user.incomingSubscriptions} bind:conversionCurrency={conversionCurrency} bind:timeInterval={timeInterval} />
 			</div>
 		{:else if selected === 'Supporting'}
 			<div class="card column" transition:scale={{start: 0.8}}>
