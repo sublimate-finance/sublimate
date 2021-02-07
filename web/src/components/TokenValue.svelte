@@ -13,7 +13,7 @@
 	export let rateInterval: TimeInterval | undefined
 
 	export let value: number | string | BigNumberish = '...'
-	export let showDecimalPlaces = 3 + Math.round(Math.log10(prices[token]))
+	export let showDecimalPlaces = 2 + Math.round(Math.log10(prices[token]))
 
 	export let isDebt = false
 

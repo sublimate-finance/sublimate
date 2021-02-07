@@ -27,7 +27,7 @@
 	}
 
 	#creators :global(.creator-cards) {
-		font-size: 0.6em;
+		font-size: 0.55em;
 	}
 </style>
 

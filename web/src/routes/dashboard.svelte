@@ -73,8 +73,8 @@
 		</div>
 	</div>
 	<div class="column flex-1 p-8">
-		<CreatorChart />
-		<SubscriptionsSummary incomingSubscriptions={creator.incomingSubscriptions} outgoingSubscriptions={creator.outgoingSubscriptions} />
+		<CreatorChart user={$user} />
+		<SubscriptionsSummary user={$user} />
 	</div>
 </section>
 

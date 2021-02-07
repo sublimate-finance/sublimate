@@ -42,6 +42,6 @@
 	<img src={profile.avatar?.toString() ?? `https://picsum.photos/200/200?${profile.name}`} alt={profile.name} width="100" />
 	<h3>{profile.name}</h3>
 	<h4 class="summary">{profile.summary}</h4>
-	<IncomingSubscriptionsSummary {incomingSubscriptions} {timeInterval} {baseCurrency} />
+	<IncomingSubscriptionsSummary view="basic" {incomingSubscriptions} bind:timeInterval={timeInterval} bind:baseCurrency={baseCurrency} />
 	<Button href="creator/{address}">Visit Creator</Button>
 </article>

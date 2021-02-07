@@ -31,6 +31,9 @@
 	export let conversionCurrency: 'Original' | 'ETH' | 'DAI' | 'USD' = 'Original'
 	export let timeInterval = TimeInterval.Day
 
+	export let view: 'basic' | 'detailed' = 'detailed'
+	$: isDetailed = view === 'detailed'
+
 
 	import Table from './Table.svelte'
 	import TokenName from './TokenName.svelte'
@@ -45,10 +48,10 @@
 
 <div class="aggregated-statistics columns">
 	<div class="boxed neumorphic">
-		<span><strong>{totalSubscribers}</strong> unique subscriber{totalSubscribers === 1 ? '' : 's'}</span>
+		<span><strong>{totalSubscribers}</strong> {isDetailed ? 'unique ' : ''}subscriber{totalSubscribers === 1 ? '' : 's'}</span>
 	</div>
 	<div class="boxed neumorphic">
-		<span><strong>{totalIncomingSubscriptions}</strong> incoming subscription{totalIncomingSubscriptions === 1 ? '' : 's'}</span>
+		<span><strong>{totalIncomingSubscriptions}</strong> {isDetailed ? 'incoming ' : ''}subscription{totalIncomingSubscriptions === 1 ? '' : 's'}</span>
 	</div>
 </div>
 <div class="boxed neumorphic column">
@@ -61,7 +64,9 @@
 				tokensPerBlock: BigNumber.from(tokenData.totalIncomingRate)
 			},
 			'Subscribers': tokenData.totalSubscribers,
-			'Subscriptions': tokenData.totalIncomingSubscriptions,
+			...(isDetailed ? {
+				'Subscriptions': tokenData.totalIncomingSubscriptions
+			} : {})
 		}))
 	}>
 		<span slot="cell" let:key let:value>
