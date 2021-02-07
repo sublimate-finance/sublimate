@@ -39,22 +39,22 @@
 	<div class="tabs neumorphic columns">
 		<Select options={['Incoming', 'Supporting', 'Statistics']} bind:value={selected} style="full" />
 	</div>
-	<div class="stack card">
+	<div class="stack">
 		{#if !user}
-			<div class="row" transition:scale={{start: 0.8}}>
+			<div class="card row" transition:scale={{start: 0.8}}>
 				<LoadingSpinner />
 				Loading data from The Graph...
 			</div>
 		{:else if selected === 'Incoming'}
-			<div class="column" transition:scale={{start: 0.8}}>
+			<div class="card column" transition:scale={{start: 0.8}}>
 				<IncomingSubscriptionsSummary incomingSubscriptions={user.incomingSubscriptions} {conversionCurrency} {timeInterval} />
 			</div>
 		{:else if selected === 'Supporting'}
-			<div class="column" transition:scale={{start: 0.8}}>
+			<div class="card column" transition:scale={{start: 0.8}}>
 				<OutgoingSubscriptionsSummary outgoingSubscriptions={user.outgoingSubscriptions} />
 			</div>
 		{:else if selected === 'Statistics'}
-			<div class="stats columns" transition:scale={{start: 0.8}}>
+			<div class="card stats columns" transition:scale={{start: 0.8}}>
 				<div class="vertical-inline">
 					<span class="boxed neumorphic">≈ <TokenValue value={0.1} token="ETH" /></span>
 					<span>collected since <strong>January 2017</strong>.</span>
