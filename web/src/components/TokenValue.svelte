@@ -26,8 +26,8 @@
 			return globalThis.navigator
 				? new Intl.NumberFormat(globalThis.navigator?.languages, {
 					... isFiat ? {style: 'currency', currency: token} : {},
-					minimumFractionDigits: showDecimalPlaces,
-					maximumFractionDigits: showDecimalPlaces
+					minimumFractionDigits: Math.max(showDecimalPlaces, 0),
+					maximumFractionDigits: Math.max(showDecimalPlaces, 0)
 				}).format(value)
 				: value
 		}catch(e){
@@ -81,7 +81,7 @@
 
 <span class="token-value-container" class:is-debt={isDebt} title="{value} {token} ({tokenName})">
 	{#if isFiat}
-		<span class="token-value">{formatValue($tweenedValue)}</span>
+		<span class="token-value">{formatValue($tweenedValue)}{#if rateInterval}<span class="rate-slash">/</span><span class="rate-interval">{rateInterval}</span>{/if}</span>
 	{:else}
 		<TokenIcon {token} {tokenAddress} {tokenIcon} />
 		<span>
