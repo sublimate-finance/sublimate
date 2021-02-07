@@ -21,7 +21,7 @@
 </style>
 
 <div class="creator-cards">
-	{#each creators as {address, profile, incomingSubscriptions}}
-		<CreatorCard {address} {profile} {incomingSubscriptions} />
+	{#each creators as {address, profile, ...data}}
+		<CreatorCard {address} {profile} user={data} />
 	{/each}
 </div>

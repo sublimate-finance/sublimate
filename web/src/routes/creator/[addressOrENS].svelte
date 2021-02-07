@@ -31,10 +31,13 @@
 
 
 	let user
-	$: if(address && getUser){
-		user = getUser(address)
-		console.log('user', user, $user)
+	let userStore
+	$: if(getUser && address){
+		userStore = getUser(address)
+		console.log('user', userStore, $userStore)
 	}
+	$: if(userStore)
+		user = $userStore
 
 
 	let currentStreamableETHSubscriptionTo, currentStreamableETHSubscriptionFrom
@@ -76,14 +79,14 @@
 		</div>
 		<div class="flex-1 flex-col space-y-4 items-start">
 			<h3>Profile Summary</h3>
-			<SubscriptionsSummary user={$user} />
+			<SubscriptionsSummary {user} />
 		</div>
 	</div>
 </section>
 
 <div class="bg-white">
 	<section class="w-full px-8 py-16 mb-32">
-		<AllTransactions user={profile} />
+		<AllTransactions {user} />
 	</section>
 
 	<Footer />

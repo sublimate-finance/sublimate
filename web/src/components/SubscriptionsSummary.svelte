@@ -51,11 +51,11 @@
 			</div>
 		{:else if selected === 'Incoming'}
 			<div class="card column" transition:scale={{start: 0.8}}>
-				<IncomingSubscriptionsSummary incomingSubscriptions={user.incomingSubscriptions} bind:conversionCurrency={conversionCurrency} bind:timeInterval={timeInterval} />
+				<IncomingSubscriptionsSummary {...user} bind:conversionCurrency={conversionCurrency} bind:timeInterval={timeInterval} />
 			</div>
 		{:else if selected === 'Supporting'}
 			<div class="card column" transition:scale={{start: 0.8}}>
-				<OutgoingSubscriptionsSummary outgoingSubscriptions={user.outgoingSubscriptions} />
+				<OutgoingSubscriptionsSummary {...user} bind:conversionCurrency={conversionCurrency} bind:timeInterval={timeInterval} />
 			</div>
 		{:else if selected === 'Statistics'}
 			<div class="card stats columns" transition:scale={{start: 0.8}}>
