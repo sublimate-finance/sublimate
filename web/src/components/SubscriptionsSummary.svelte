@@ -37,6 +37,14 @@
 		--border-radius: 0.75em;
 		border-radius: var(--border-radius);
 	}
+
+	.columns {
+		align-items: center;
+	}
+
+	.vertical-inline {
+		line-height: 1.5;
+	}
 </style>
 
 <div class="subscriptions-summary column">
@@ -60,16 +68,18 @@
 		{:else if selected === 'Statistics'}
 			<div class="card stats columns" transition:scale={{start: 0.8}}>
 				<div class="vertical-inline">
-					<span class="boxed neumorphic">≈ <TokenValue value={0.1} token="ETH" /></span>
-					<span>collected since <strong>January 2017</strong>.</span>
+					{#each user.tokens as tokenData}
+						<mark><TokenValue value={tokenData.balance} token={tokenData.token.symbol} /></mark>
+					{/each}
+					<span>lifetime funds received</span>
 				</div>
 				<div class="vertical-inline">
-					<span class="boxed neumorphic">≈ <TokenValue value={24.04} token="ETH" /></span>
-					<span>collected in the last <strong>24 hours</strong>.</span>
+					<mark>≈ <TokenValue value={0.1} token="ETH" /></mark>
+					<span>lifetime funds given</span>
 				</div>
 				<div class="vertical-inline">
-					<span class="boxed neumorphic">145 donators</span>
-					<span>since <strong>January 2017</strong>.</span>
+					<mark>{user.totalSubscribers}</mark>
+					<span>lifetime subscribers</span>
 				</div>
 			</div>
 		{/if}
