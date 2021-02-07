@@ -33,10 +33,12 @@
 	import TokenValue from './TokenValue.svelte'
 </script>
 
-{isApproximate ? '≈ ' : ''}{#key conversionCurrency}
-	<TokenValue
-		{value}
-		token={convertToBaseCurrency ? conversionCurrency : _token}
-		rateInterval={timeInterval}
-		/>
-{/key}
+<span class="nowrap">
+	{isApproximate ? '≈ ' : ''}{#key conversionCurrency}
+		<TokenValue
+			{value}
+			token={convertToBaseCurrency ? conversionCurrency : _token}
+			rateInterval={timeInterval}
+			/>
+	{/key}
+</span>
