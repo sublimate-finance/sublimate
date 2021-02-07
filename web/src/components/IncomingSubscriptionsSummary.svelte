@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { BigNumber, utils } from 'ethers'
-	import { averageBlocksPerTimeInterval, TimeInterval } from '../types/time-intervals'
+	import { BigNumber } from 'ethers'
+	import { TimeInterval } from '../types/time-intervals'
 
 	// Data
-	// TODO: use generated types from GraphQL schema
 	export let tokens = [{
 		token: {
 			symbol: 'strETH',
@@ -26,6 +25,7 @@
 	export let incomingSubscriptions = []
 	export let totalIncomingSubscriptions = 7
 	export let totalSubscribers = 5
+
 
 	// Display options
 	export let conversionCurrency: 'Original' | 'ETH' | 'DAI' | 'USD' = 'Original'
@@ -75,4 +75,3 @@
 		</span>
 	</Table>
 </div>
-
