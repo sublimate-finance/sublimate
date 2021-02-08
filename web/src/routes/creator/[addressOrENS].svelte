@@ -30,7 +30,7 @@
 			const ensName = addressOrENS
 
 			// Default: fetch from dummy data
-			const user = creators.find(c => c.profile?.name?.toLowerCase() == ensName.toLowerCase())
+			const user = creators.find(c => c.profile.ens.toLowerCase() == ensName.toLowerCase())
 			if(user?.address)
 				address = user.address
 
