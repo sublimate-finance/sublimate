@@ -6,8 +6,8 @@ export const creators = [
 		profile: {
 			name: 'Vitalik Buterin',
 			ens: 'vitalik.eth',
-			summary: 'Ethereum. Daylight savings time delenda est.',
-			about: '',
+			summary: 'Ethereum.',
+			about: 'Daylight savings time delenda est.',
 			avatar: 'https://pbs.twimg.com/profile_images/977496875887558661/L86xyLF4_400x400.jpg',
 			cover: 'https://picsum.photos/1920/1080?1',
 			website: 'https://vitalik.ca',
@@ -20,8 +20,8 @@ export const creators = [
 				decimals: 18
 			},
 
-			totalIncomingRate: 32e14,
-			totalIncomingAmount: 32e14 * 3,
+			totalIncomingRate: 14e14,
+			totalIncomingAmount: 14e14 * 3,
 			totalIncomingSubscriptions: 1987,
 			totalSubscribers: 1987 * 0.9 | 0,
 
@@ -61,7 +61,7 @@ export const creators = [
 			name: 'The Defiant',
 			ens: 'thedefiant.eth',
 			summary: 'The DeFi news platform',
-			about: 'The DeFi news platform — Finance is being rebuilt to put people in control. Here’s where you can track and join this revolution.',
+			about: 'Finance is being rebuilt to put people in control. Here’s where you can track and join this revolution.',
 			avatar: 'https://pbs.twimg.com/profile_images/1311463933287505920/G50MgnEo_400x400.jpg',
 			cover: 'https://picsum.photos/1920/1080?3',
 			website: 'https://thedefiant.io',
@@ -278,8 +278,8 @@ export const creators = [
 		profile: {
 			name: 'Stani Kulechov',
 			ens: 'stani.eth',
-			summary: 'Founder and CEO @AaveAave',
-			about: 'Founder and CEO @AaveAave #DeFi #Ethereum',
+			summary: 'Founder and CEO, Aave',
+			about: 'Aave is an open source and non-custodial liquidity protocol for earning interest on deposits and borrowing assets.',
 			avatar: 'https://pbs.twimg.com/profile_images/1322199309476126721/uX7iWP7J_400x400.jpg',
 			cover: 'https://pbs.twimg.com/profile_banners/867100084248469505/1571663796/1500x500',
 			website: 'https://aave.com',
@@ -388,8 +388,8 @@ export const creators = [
 		profile: {
 			name: 'Altcoin Daily',
 			ens: 'altcoindaily.eth',
-			summary: 'Huge #bitcoin fundamentalists. Bitcoiners using alts to stack more BTC.',
-			about: 'Follow our YouTube channel for DAILY news & opinion videos! Brothers Aaron & Austin. Huge #bitcoin fundamentalists. Bitcoiners using alts to stack more BTC.',
+			summary: 'Bitcoiners using alts to stack more BTC.',
+			about: 'Brothers Aaron & Austin. Huge #bitcoin fundamentalists. Bitcoiners using alts to stack more BTC. Follow our YouTube channel for DAILY news & opinion videos!',
 			avatar: 'https://pbs.twimg.com/profile_images/959000053267415041/FMOGeFYe_400x400.jpg',
 			cover: 'https://picsum.photos/1920/1080?7',
 			website: 'https://youtube.com/c/AltcoinDaily',
