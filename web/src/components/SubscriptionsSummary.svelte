@@ -3,6 +3,25 @@
 
 	export let user
 
+	import { onMount } from 'svelte'
+	let walletStores, transactions, balance, chain, fallback, builtin, wallet, flow
+	onMount(async () => walletStores = {transactions, balance, chain, fallback, builtin, wallet, flow} = (await import('../stores/wallet')).getWalletStores())
+
+	let balanceStreamableWrappedETH = 0
+	let balanceStreamableDAI = 0
+
+	const decimals = 18
+	$: if(walletStores) (async () => {
+		// balanceETH = await wallet.balance
+		// balanceStreamableWrappedETH = await wallet.contracts?.StreamableWrappedETH.balanceOf(wallet.address)
+		while(true){
+			balanceStreamableWrappedETH = await wallet.contracts?.StreamableWrappedETH.lastUpdatedBalanceOf(user.address) || balanceStreamableWrappedETH
+			balanceStreamableDAI = await wallet.contracts?.StreamableDAI.lastUpdatedBalanceOf(user.address) || balanceStreamableDAI
+
+			await new Promise(r => setTimeout(r, 5000))
+		}
+	})()
+
 	// Display options
 	let selected = 'Incoming'
 	let conversionCurrency: 'Original' | 'USD' | 'ETH' | 'DAI'
@@ -68,18 +87,22 @@
 		{:else if selected === 'Statistics'}
 			<div class="card stats columns" transition:scale={{start: 0.8}}>
 				<div class="vertical-inline">
-					{#each user.tokens as tokenData}
+					<!-- {#each user.tokens as tokenData}
 						<mark><TokenValue value={tokenData.balance} token={tokenData.token.symbol} /></mark>
-					{/each}
+					{/each} -->
+					<mark><TokenValue value={utils.formatUnits(balanceStreamableWrappedETH, decimals)} token="strETH" /></mark>
+					<mark><TokenValue value={utils.formatUnits(balanceStreamableDAI, decimals)} token="strDAI" /></mark>
 					<span>lifetime funds received</span>
 				</div>
 				<div class="vertical-inline">
-					<mark>≈ <TokenValue value={0.1} token="ETH" /></mark>
-					<span>lifetime funds given</span>
+					<mark>{Math.round(user.totalSubscribers * 1.1)}</mark>
+					<span>lifetime subscribers</span>
 				</div>
 				<div class="vertical-inline">
-					<mark>{user.totalSubscribers}</mark>
-					<span>lifetime subscribers</span>
+					{#each user.tokens as tokenData}
+						<mark><TokenValue value={utils.formatUnits(tokenData.totalOutgoingRate * 5, tokenData.token.decimals)} token={tokenData.token.symbol} /></mark>
+					{/each}
+					<span>lifetime funds given</span>
 				</div>
 			</div>
 		{/if}
