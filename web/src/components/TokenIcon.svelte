@@ -47,7 +47,7 @@
 		height: 1em;
 		align-self: center;
 		align-items: center;
-
+		will-change: transform;
 	}
 	/* picture.is-streamable:before {
 		content: '';
