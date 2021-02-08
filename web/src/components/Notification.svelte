@@ -6,9 +6,11 @@
 
 	const dispatch = createEventDispatcher();
 	const close = () => dispatch('close');
+
+	import { fly } from 'svelte/transition'
 </script>
 
-<div class="max-w-sm w-full dark:bg-black bg-white shadow-lg rounded-lg pointer-events-auto">
+<div class="max-w-sm w-full dark:bg-black bg-white shadow-lg rounded-lg pointer-events-auto" transition:fly={{x: 200}}>
 	<div class="rounded-lg shadow-xs overflow-hidden dark:border-pink-500 dark:border-2">
 		<div class="p-4">
 			<div class="flex items-start">
