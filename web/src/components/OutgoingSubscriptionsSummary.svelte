@@ -54,9 +54,13 @@
 <div class="boxed neumorphic column">
 	<Table data={
 		tokens.map(tokenData => ({
-			'Asset': tokenData.token.symbol,
+			'Asset': {
+				token: tokenData.token.symbol,
+				tokenAddress: tokenData.token.id
+			},
 			'Giving': {
 				token: tokenData.token.symbol,
+				tokenAddress: tokenData.token.id,
 				decimals: tokenData.token.decimals,
 				tokensPerBlock: BigNumber.from(tokenData.totalOutgoingRate)
 			},
@@ -66,7 +70,7 @@
 	}>
 		<span slot="cell" let:key let:value>
 			{#if key === 'Asset'}
-				<TokenName token={value} />
+				<TokenName {...value} />
 			{:else if key === 'Giving'}
 				<TokenRate {...value} {conversionCurrency} {timeInterval} />
 			{:else}

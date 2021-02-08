@@ -8,6 +8,7 @@
 	}
 
 	export let token: string
+	export let tokenAddress
 	export let decimals: number
 	export let tokensPerBlock: BigNumber
 
@@ -38,6 +39,7 @@
 		<TokenValue
 			{value}
 			token={convertToBaseCurrency ? conversionCurrency : _token}
+			{tokenAddress}
 			rateInterval={timeInterval}
 			/>
 	{/key}
