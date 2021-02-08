@@ -3,7 +3,7 @@
 
 	export let user
 
-	import { onMount } from 'svelte'
+	import { onMount, onDestroy } from 'svelte'
 	let walletStores, transactions, balance, chain, fallback, builtin, wallet, flow
 	onMount(async () => walletStores = {transactions, balance, chain, fallback, builtin, wallet, flow} = (await import('../stores/wallet')).getWalletStores())
 
@@ -11,14 +11,13 @@
 	let balanceStreamableDAI = 0
 
 	const decimals = 18
-	$: if(walletStores && wallet.contracts) (async () => {
-		// balanceETH = await wallet.balance
-		// balanceStreamableWrappedETH = await wallet.contracts.StreamableWrappedETH.balanceOf(wallet.address)
+	$: if(walletStores) (async () => {
 		while(true){
-			balanceStreamableWrappedETH = await wallet.contracts.StreamableWrappedETH.lastUpdatedBalanceOf(user.address) || balanceStreamableWrappedETH
-			balanceStreamableDAI = await wallet.contracts.StreamableDAI.lastUpdatedBalanceOf(user.address) || balanceStreamableDAI
-
-			await new Promise(r => setTimeout(r, 5000))
+			if(wallet.contracts && user.address){
+				balanceStreamableWrappedETH = await wallet.contracts.StreamableWrappedETH.lastUpdatedBalanceOf(user.address)
+				balanceStreamableDAI = await wallet.contracts.StreamableDAI.lastUpdatedBalanceOf(user.address)
+			}
+			await new Promise(r => setTimeout(r, 2000))
 		}
 	})()
 

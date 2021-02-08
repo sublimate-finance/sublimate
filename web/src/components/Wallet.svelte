@@ -10,16 +10,25 @@
 	let balanceStreamableDAI
 
 	const decimals = 18
-	$: if(walletStores && wallet.contracts && wallet.address) (async () => {
-		// balanceETH = await wallet.balance
-		// balanceStreamableWrappedETH = await wallet.contracts.StreamableWrappedETH.balanceOf(wallet.address)
+	$: if(walletStores) (async () => {
 		while(true){
-			balanceStreamableWrappedETH = await wallet.contracts.StreamableWrappedETH.lastUpdatedBalanceOf(wallet.address) || balanceStreamableWrappedETH
-			balanceStreamableDAI = await wallet.contracts.StreamableDAI.lastUpdatedBalanceOf(wallet.address) || balanceStreamableDAI
-
-			await new Promise(r => setTimeout(r, 5000))
+			if(wallet.contracts && wallet.address){
+				balanceStreamableWrappedETH = await wallet.contracts.StreamableWrappedETH.lastUpdatedBalanceOf(wallet.address)
+				balanceStreamableDAI = await wallet.contracts.StreamableDAI.lastUpdatedBalanceOf(wallet.address)
+			}
+			await new Promise(r => setTimeout(r, 2000))
 		}
 	})()
+	// $: flow?.execute(async contracts => {
+	// 	while(true){
+	// 		if(wallet.address){
+	// 			balanceStreamableWrappedETH = (await contracts.StreamableWrappedETH.lastUpdatedBalanceOf(wallet.address))
+	// 			balanceStreamableDAI = (await contracts.StreamableDAI.lastUpdatedBalanceOf(wallet.address))
+	// 		}
+
+	// 		await new Promise(r => setTimeout(r, 5000))
+	// 	}
+	// })
 
 	let modalIsOpen = false
 
