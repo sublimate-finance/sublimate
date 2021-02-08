@@ -13,7 +13,7 @@
 
 	// Display options
 	export let conversionCurrency: 'Original' | 'ETH' | 'DAI' | 'USD'
-	export let timeInterval = TimeInterval.Day
+	export let timeInterval: TimeInterval
 
 	$: _token = nonStreamableToken(token)
 
