@@ -11,12 +11,12 @@
 	let balanceStreamableDAI = 0
 
 	const decimals = 18
-	$: if(walletStores) (async () => {
+	$: if(walletStores && wallet.contracts) (async () => {
 		// balanceETH = await wallet.balance
-		// balanceStreamableWrappedETH = await wallet.contracts?.StreamableWrappedETH.balanceOf(wallet.address)
+		// balanceStreamableWrappedETH = await wallet.contracts.StreamableWrappedETH.balanceOf(wallet.address)
 		while(true){
-			balanceStreamableWrappedETH = await wallet.contracts?.StreamableWrappedETH.lastUpdatedBalanceOf(user.address) || balanceStreamableWrappedETH
-			balanceStreamableDAI = await wallet.contracts?.StreamableDAI.lastUpdatedBalanceOf(user.address) || balanceStreamableDAI
+			balanceStreamableWrappedETH = await wallet.contracts.StreamableWrappedETH.lastUpdatedBalanceOf(user.address) || balanceStreamableWrappedETH
+			balanceStreamableDAI = await wallet.contracts.StreamableDAI.lastUpdatedBalanceOf(user.address) || balanceStreamableDAI
 
 			await new Promise(r => setTimeout(r, 5000))
 		}
