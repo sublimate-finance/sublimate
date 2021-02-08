@@ -80,7 +80,7 @@ export const creators = [
 
 			totalOutgoingRate: 0.00005e18,
 			totalMaxOutgoingAmount: 0.0002e18,
-			totalOutgoingSubscriptions: 3,
+			totalOutgoingSubscriptions: 4,
 			totalSubscribedTo: 2
 		}, {
 			token: {
@@ -104,8 +104,8 @@ export const creators = [
 
 		totalIncomingSubscriptions: 12 + 0,
 		totalSubscribers: (12 + 0) * 0.9 | 0,
-		totalOutgoingSubscriptions: 12 + 0,
-		totalSubscribedTo: (12 + 0) * 0.9 | 0
+		totalOutgoingSubscriptions: 7,
+		totalSubscribedTo: 4
 	},
 	// {
 	// 	id: '0xae138430C6B78B536bC957e77640290858e149A91E',
