@@ -7,6 +7,7 @@
 
 	let balanceETH
 	let balanceStreamableWrappedETH
+	let balanceStreamableDAI
 
 	const decimals = 18
 	$: if(walletStores) (async () => {
@@ -14,6 +15,7 @@
 		// balanceStreamableWrappedETH = await wallet.contracts?.StreamableWrappedETH.balanceOf(wallet.address)
 		while(true){
 			balanceStreamableWrappedETH = await wallet.contracts?.StreamableWrappedETH.lastUpdatedBalanceOf(wallet.address)
+			balanceStreamableDAI = await wallet.contracts?.StreamableDAI.lastUpdatedBalanceOf(wallet.address)
 
 			await new Promise(r => setTimeout(r, 5000))
 		}
@@ -64,10 +66,13 @@
 			</button> -->
 			<Button class="wallet-badge button row neumorphic" on:click={() => modalIsOpen = !modalIsOpen}>
 				{#if balanceETH !== undefined}
-					<TokenValue value={utils.formatUnits(balanceETH, decimals)} token="ETH" showDecimalPlaces={12} />
+					<TokenValue value={utils.formatUnits(balanceETH, decimals)} token="ETH" showDecimalPlaces={10} />
 				{/if}
 				{#if balanceStreamableWrappedETH !== undefined}
-					<TokenValue value={utils.formatUnits(balanceStreamableWrappedETH, decimals)} token="strETH" showDecimalPlaces={12} />
+					<TokenValue value={utils.formatUnits(balanceStreamableWrappedETH, decimals)} token="strETH" showDecimalPlaces={10} />
+				{/if}
+				{#if balanceStreamableDAI !== undefined}
+					<TokenValue value={utils.formatUnits(balanceStreamableDAI, decimals)} token="strDAI" showDecimalPlaces={10} />
 				{/if}
 				<div class="address-badge row">
 					<Address address={$wallet.address} format="middle-truncated" linked={false} />
