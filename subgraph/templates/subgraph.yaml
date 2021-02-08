@@ -16,12 +16,13 @@ dataSources:
           language: wasm/assemblyscript
           entities:
               - User
-              - Subscription
+              - StreamableSubscription
               - StreamableToken
               - UserStreamableTokenData
               - SubscriptionSnapshot
               - UserSnapshot
               - UserStreamableTokenDataSnapshot
+              - DataContainer
           abis:
               - name: StreamableWrappedETHContract
                 file: ./abis/StreamableWrappedETH.json
@@ -30,10 +31,6 @@ dataSources:
           blockHandlers:
               - handler: handleBlock
           eventHandlers:
-              - event: Approval(indexed address,indexed address,uint256)
-                handler: handleApproval
-              - event: Deposit(indexed address,uint256)
-                handler: handleDeposit
               - event: SubscriptionCanceled(indexed address,indexed address,uint256,uint256,uint256,uint256,indexed uint256,uint256)
                 handler: handleSubscriptionCanceled
               - event: SubscriptionStarted(indexed address,indexed address,uint256,uint256,uint256,uint256,indexed uint256,uint256)
@@ -44,6 +41,4 @@ dataSources:
                 handler: handleTransfer
               - event: UserStatusChanged(indexed address,indexed uint256,uint256,uint256,uint256,indexed uint256,uint256,uint256)
                 handler: handleUserStatusChanged
-              - event: Withdrawal(indexed address,uint256)
-                handler: handleWithdrawal
-          file: ./mappings/streamable-subscriptions.ts
+          file: ./mappings/streamable-subscriptions-new.ts
