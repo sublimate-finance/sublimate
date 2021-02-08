@@ -29,8 +29,8 @@
 
 	// Calculate tokensPerBlock (rate) and totalTokens (maxTokens) based on user input
 	const decimals = 18
-	$: _totalAmount = utils.parseUnits(totalAmount.toString(), decimals)
-	$: _rateAmount = utils.parseUnits(rateAmount.toString(), decimals)
+	$: _totalAmount = utils.parseUnits((totalAmount || 0).toString(), decimals)
+	$: _rateAmount = utils.parseUnits((rateAmount || 0).toString(), decimals)
 	$: _durationAmount = BigNumber.from((durationAmount || 0).toString())
 
 	$: blocks = _durationAmount.mul(averageBlocksPerTimeInterval[durationTimeInterval])
