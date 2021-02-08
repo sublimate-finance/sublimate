@@ -44,6 +44,7 @@ import About from "../routes/about.svelte"
 	}
 	li > a[aria-current=page] {
 		border-bottom-color: var(--accent-color);
+		font-weight: bold;
 	}
 </style>
 
