@@ -9,17 +9,84 @@
 
 	// TODO: Get from subgraph and AWS backend
 	import { creators } from '../stores/creators'
-	const placeholderUser = creators[creators.length - 1]
+	const createNewUser = address => ({
+		id: address,
+		address: address,
+		profile: {
+			name: '',
+			ens: '',
+			summary: '',
+			about: '',
+			avatar: 'https://picsum.photos/200/200',
+			cover: 'https://picsum.photos/1920/1080',
+			website: '',
+			twitter: ''
+		},
 
-	let user = placeholderUser
+		tokens: [{
+			token: {
+				symbol: 'strETH',
+				decimals: 18
+			},
+
+			totalIncomingRate: 0,
+			totalMaxIncomingAmount: 0,
+			totalIncomingSubscriptions: 0,
+			totalSubscribers: 0,
+
+			totalOutgoingRate: 0, //
+			totalMaxOutgoingAmount: 0, //
+			totalOutgoingSubscriptions: 1, //
+			totalSubscribedTo: 1 //
+		}, {
+			token: {
+				symbol: 'strDAI',
+				decimals: 18
+			},
+
+			totalIncomingRate: 0,
+			totalMaxIncomingAmount: 0,
+			totalIncomingSubscriptions: 0,
+			totalSubscribers: 0,
+
+			totalOutgoingRate: 0, //
+			totalMaxOutgoingAmount: 0, //
+			totalOutgoingSubscriptions: 1, //
+			totalSubscribedTo: 1 //
+		}],
+
+		totalIncomingSubscriptions: 0,
+		totalSubscribers: 0,
+		totalOutgoingSubscriptions: 2,
+		totalSubscribedTo: 2
+	})
+
+	let address
+	$: if(wallet && $wallet.address)
+		address = $wallet.address
+
 	let userStore
-	$: if(getUser && wallet && $wallet.address){
-		userStore = getUser($wallet.address)
-		// user.id = user.address = $wallet.address
+	$: if(getUser && address){
+		userStore = getUser(address)
 		console.log('user', userStore, $userStore)
 	}
-	$: if(userStore)
-		user = $userStore
+
+	let user
+	$: if(userStore && $userStore){
+		// user = $userStore
+	}else{
+		// Default: fetch from dummy data
+		user = creators.find(c => c.address.toLowerCase() == address?.toLowerCase())
+		if(!user && address){
+			// Create new user
+			user = createNewUser(address)
+			creators.push(user)
+		}
+	}
+
+	let profile = {}
+	$: if(user?.profile)
+		profile = user.profile
 
 
 	let creatorLink
@@ -59,29 +126,33 @@
 <div class="stack">
 	<div>
 		<section class="dashboard">
-			<div class="column">
-				<ProfileEditor profile={user.profile} />
-				<div class="card">
-					<div class="column">
-						<h3>Share your Sublimate profile</h3>
-						<div class="bar boxed neumorphic">
-							<a href="/creator/{user.address}" class="creator-link" bind:this={creatorLink}>sublimate.finance/creator/{user.address}</a>
-							<CopyButton content={creatorLink?.href} />
-							<!-- <img src="/images/copy.svg" alt="copy" /> -->
+			{#if profile}
+				<div class="column">
+					<ProfileEditor {profile} />
+					<div class="card">
+						<div class="column">
+							<h3>Share your Sublimate profile</h3>
+							<div class="bar boxed neumorphic">
+								<a href="/creator/{profile.ens || profile.address}" class="creator-link" bind:this={creatorLink}>sublimate.finance/creator/{profile.ens || profile.address}</a>
+								<CopyButton content={creatorLink?.href} />
+								<!-- <img src="/images/copy.svg" alt="copy" /> -->
+							</div>
 						</div>
-					</div>
-					<div class="column">
-						<h3>Embed Sublimate on your website</h3>
-						<div class="columns">
-							<CopyButton>Copy Embed Code</CopyButton>
+						<div class="column">
+							<h3>Embed Sublimate on your website</h3>
+							<div class="columns">
+								<CopyButton>Copy Embed Code</CopyButton>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-			<div class="column flex-1 p-8">
-				<CreatorChart {user} />
-				<SubscriptionsSummary {user} />
-			</div>
+			{/if}
+			{#if user}
+				<div class="column flex-1 p-8">
+					<CreatorChart {user} />
+					<SubscriptionsSummary {user} />
+				</div>
+			{/if}
 		</section>
 
 		<!-- <div class="bg-white">
