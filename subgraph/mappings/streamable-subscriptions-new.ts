@@ -3,16 +3,19 @@
 import {BigInt, ByteArray, crypto, ethereum, log} from '@graphprotocol/graph-ts'
 import {
 	ZERO_BI,
+	ADDRESS_ZERO,
+	DATA_CONTAINER_ID,
 	loadOrCreateUser,
 	createUserStreamableTokenData,
 	getUserStreamableTokenDataId,
 	getSubscriptionId,
 	createStreamableToken,
-	getStreamableERC20Contract,
-	getLastUpdatedBalanceOf
+	getLastUpdatedBalanceOf,
+	createSubscriptionSnapshot, loadOrCreateDataContainer, loadDataContainer,
+	calculateTotalPaidAndTotalReceivedAmountForUserStreamableTokenData
 } from './helpers'
 // Entities
-import { User, Subscription, StreamableToken, UserStreamableTokenData } from '../generated/schema'
+import { User, StreamableSubscription, StreamableToken, UserStreamableTokenData, DataContainer, SubscriptionSnapshot, UserSnapshot, UserStreamableTokenDataSnapshot } from '../generated/schema'
 
 // Events
 import { SubscriptionStarted as SubscriptionStartedEvent,
@@ -35,7 +38,24 @@ const SubscriptionStatus_FINISHED = 'FINISHED'// Subscription finished normally
 
 
 export function handleBlock(block: ethereum.Block): void {
-	let blockHash = block.hash.toHex()
+	const dataContainer = loadOrCreateDataContainer()
+	dataContainer.save()
+	const subscriptions = dataContainer.subscriptions
+	const userStreamableTokenData = dataContainer.userStreamableTokenData
+	log.info("handleBlock handling block...", [])
+
+	for (let i =0; i < userStreamableTokenData.length; i++) {
+		calculateTotalPaidAndTotalReceivedAmountForUserStreamableTokenData(userStreamableTokenData[i])
+	}
+
+	log.info("handleBlock userStreamableTokenData calculated", [])
+
+
+	// this will go over all the subscriptions and create SubscriptionSnapshot, UserSnapshot and UserStreamableTokenDataSnapshot entities
+	for (let i =0; i < subscriptions.length; i++) {
+		createSubscriptionSnapshot(subscriptions[i], block.number, block.timestamp)
+	}
+	log.info("snapshots calculated", [])
 
 
 }
@@ -78,16 +98,18 @@ export function handleSubscriptionStarted(event: SubscriptionStartedEvent): void
 	let startBlock = event.params.startBlock
 	let endBlock = event.params.endBlock
 	let amountPaid = event.params.amountPaid
-
+	log.info('handleSubscriptionStarted event params: from: {}, to: {}, rate: {}, maxAmount: {}, startBlock: {}, endBlock: {}, amountPaid: {}', [from, to, rate.toString(), maxAmount.toString(), startBlock.toString(), endBlock.toString(), amountPaid.toString()])
 
 	// Block info
 	let startTime = event.block.timestamp
 	let tokenAddress = event.address
 	let tokenAddressHex = event.address.toHex()
+	log.info('handleSubscriptionStarted block info: startTime: {}, tokenAddress: {}', [startTime.toString(), tokenAddress.toHex()])
 
 	// Subscription
 	// Subscription ID = tokenAddress + from + to + startBlock
 	let subscriptionID = getSubscriptionId(tokenAddressHex, from, to, startBlock)
+	log.info('handleSubscriptionStarted subscriptionID: {}', [subscriptionID])
 
 
 	// load or create entities
@@ -96,16 +118,33 @@ export function handleSubscriptionStarted(event: SubscriptionStartedEvent): void
 	let streamableTokenEntity = StreamableToken.load(tokenAddressHex)
 	// The entity might not exist if this is the first subscription
 	if(streamableTokenEntity == null) {
+		log.info('handleSubscriptionStarted creating streamable token entity...', [])
 		streamableTokenEntity = createStreamableToken(tokenAddress)
 	}
 
+	log.info('handleSubscriptionStarted streamableTokenEntity loaded', [])
+
+
 	// create subscription entity
-	let subscriptionEntity = new Subscription(subscriptionID)
+	let subscriptionEntity = new StreamableSubscription(subscriptionID)
+
+	log.info('handleSubscriptionStarted StreamableSubscription created', [])
 
 	// load or create users
 	let userFrom = loadOrCreateUser(from)
+	userFrom.totalOutgoingSubscriptions = userFrom.totalOutgoingSubscriptions + 1
+	// TODO: Change this
+	userFrom.totalSubscribedTo = userFrom.totalSubscribedTo + 1
+	userFrom.save()
+	log.info('handleSubscriptionStarted userFrom data: address: {}, totalOutgoingSubscriptions: {}, totalSubscribedTo: {}', [from, BigInt.fromI32(userFrom.totalOutgoingSubscriptions).toString(), BigInt.fromI32(userFrom.totalSubscribedTo).toString()])
+
 
 	let userTo = loadOrCreateUser(to)
+	userTo.totalIncomingSubscriptions = userTo.totalIncomingSubscriptions + 1
+	// TODO: Change this
+	userTo.totalSubscribers = userTo.totalSubscribers + 1
+	userTo.save()
+	log.info('handleSubscriptionStarted userTo data: address: {}, totalIncomingSubscriptions: {}, totalSubscribers: {}', [to, BigInt.fromI32(userTo.totalIncomingSubscriptions).toString(), BigInt.fromI32(userTo.totalSubscribers).toString()])
 
 	// load or create UserStreamableTokenData
 
@@ -118,8 +157,8 @@ export function handleSubscriptionStarted(event: SubscriptionStartedEvent): void
 		fromUserTokenDataEntity.totalMaxOutgoingAmount = fromUserTokenDataEntity.totalMaxOutgoingAmount.plus(maxAmount)
 		fromUserTokenDataEntity.totalSubscribedTo = fromUserTokenDataEntity.totalSubscribedTo + 1
 		fromUserTokenDataEntity.totalOutgoingSubscriptions = fromUserTokenDataEntity.totalOutgoingSubscriptions + 1
-		fromUserTokenDataEntity.save()
 	}
+	fromUserTokenDataEntity.save()
 
 	let toUserTokenDataId = getUserStreamableTokenDataId(to, tokenAddressHex)
 	let toUserTokenDataEntity = UserStreamableTokenData.load(toUserTokenDataId)
@@ -130,8 +169,9 @@ export function handleSubscriptionStarted(event: SubscriptionStartedEvent): void
 		toUserTokenDataEntity.totalMaxIncomingAmount = toUserTokenDataEntity.totalMaxIncomingAmount.plus(maxAmount)
 		toUserTokenDataEntity.totalSubscribers = toUserTokenDataEntity.totalSubscribers + 1
 		toUserTokenDataEntity.totalIncomingSubscriptions = toUserTokenDataEntity.totalIncomingSubscriptions + 1
-		toUserTokenDataEntity.save()
 	}
+	toUserTokenDataEntity.save()
+
 
 	subscriptionEntity.token = streamableTokenEntity.id
 
@@ -154,6 +194,23 @@ export function handleSubscriptionStarted(event: SubscriptionStartedEvent): void
 
 	streamableTokenEntity.save()
 	subscriptionEntity.save()
+
+	let dataContainer = loadOrCreateDataContainer()
+	let subscriptions = dataContainer.subscriptions
+	let userStreamableTokenData = dataContainer.userStreamableTokenData
+
+	if(!userStreamableTokenData.includes(toUserTokenDataId)) {
+		userStreamableTokenData.push(toUserTokenDataId)
+	}
+	if(!userStreamableTokenData.includes(fromUserTokenDataId)) {
+		userStreamableTokenData.push(fromUserTokenDataId)
+	}
+
+	subscriptions.push(subscriptionEntity.id)
+	dataContainer.subscriptions = subscriptions
+	dataContainer.userStreamableTokenData = userStreamableTokenData
+	dataContainer.save()
+
 }
 
 
@@ -169,7 +226,8 @@ export function handleSubscriptionUpdated(event: SubscriptionUpdatedEvent): void
 	let subscriptionID = getSubscriptionId(tokenAddress, from, to, startBlock)
 
 	// Subscription ID = from + to + startBlock
-	let subscriptionEntity = Subscription.load(subscriptionID)
+	let subscriptionEntity = StreamableSubscription.load(subscriptionID)
+
 
 	subscriptionEntity.amountPaid = amountPaid
 	subscriptionEntity.save()
@@ -188,9 +246,23 @@ export function handleSubscriptionCanceled(event: SubscriptionCanceledEvent): vo
 
 	let tokenAddress = event.address.toHex()
 
+	let userFrom = loadOrCreateUser(from)
+	userFrom.totalOutgoingSubscriptions = userFrom.totalOutgoingSubscriptions - 1
+	// TODO: Change this
+	userFrom.totalSubscribedTo = userFrom.totalSubscribedTo - 1
+	userFrom.save()
+
+	let userTo = loadOrCreateUser(to)
+	userTo.totalIncomingSubscriptions = userTo.totalIncomingSubscriptions - 1
+	// TODO: Change this
+	userTo.totalSubscribers = userTo.totalSubscribers - 1
+	userTo.save()
+
+
 	let fromUserTokenDataId = getUserStreamableTokenDataId(from, tokenAddress)
 	let fromUserTokenDataEntity = UserStreamableTokenData.load(fromUserTokenDataId)
 
+	fromUserTokenDataEntity.lifetimePaidAmount = fromUserTokenDataEntity.lifetimePaidAmount.plus(amountPaid)
 	fromUserTokenDataEntity.totalOutgoingRate = fromUserTokenDataEntity.totalOutgoingRate.minus(rate)
 	fromUserTokenDataEntity.totalMaxOutgoingAmount = fromUserTokenDataEntity.totalMaxOutgoingAmount.minus(maxAmount)
 	fromUserTokenDataEntity.totalSubscribedTo = fromUserTokenDataEntity.totalSubscribedTo - 1
@@ -200,6 +272,7 @@ export function handleSubscriptionCanceled(event: SubscriptionCanceledEvent): vo
 	let toUserTokenDataId = getUserStreamableTokenDataId(to, tokenAddress)
 	let toUserTokenDataEntity = UserStreamableTokenData.load(toUserTokenDataId)
 
+	toUserTokenDataEntity.lifetimeReceivedAmount = fromUserTokenDataEntity.lifetimeReceivedAmount.plus(amountPaid)
 	toUserTokenDataEntity.totalIncomingRate = toUserTokenDataEntity.totalIncomingRate.minus(rate)
 	toUserTokenDataEntity.totalMaxIncomingAmount = toUserTokenDataEntity.totalMaxIncomingAmount.minus(maxAmount)
 	toUserTokenDataEntity.totalSubscribers = toUserTokenDataEntity.totalSubscribers - 1
@@ -208,10 +281,7 @@ export function handleSubscriptionCanceled(event: SubscriptionCanceledEvent): vo
 
 	// Subscription ID = tokenAddress + from + to + startBlock
 	let subscriptionID = getSubscriptionId(tokenAddress, from, to, startBlock)
-	let subscriptionEntity = Subscription.load(subscriptionID)
-
-
-
+	let subscriptionEntity = StreamableSubscription.load(subscriptionID)
 
 	subscriptionEntity.amountPaid = amountPaid
 	subscriptionEntity.endTime = event.block.timestamp
@@ -220,5 +290,57 @@ export function handleSubscriptionCanceled(event: SubscriptionCanceledEvent): vo
 
 	subscriptionEntity.save()
 
+	let dataContainer = loadDataContainer()
+	let subscriptions = dataContainer.subscriptions
+	let userStreamableTokenData = dataContainer.userStreamableTokenData
+	let filteredSubscriptions = new Array<string>()
+	let filteredUserStreamableTokenData = new Array<string>()
+	for(let i = 0; i < subscriptions.length; i++) {
+		if(subscriptions[i] != subscriptionEntity.id) {
+			filteredSubscriptions.push(subscriptions[i])
+		}
+	}
+
+	for(let i = 0; i < userStreamableTokenData.length; i++) {
+		if(userStreamableTokenData[i] != toUserTokenDataEntity.id && userStreamableTokenData[i] != fromUserTokenDataEntity.id) {
+			filteredUserStreamableTokenData.push(subscriptions[i])
+		}
+	}
+	dataContainer.subscriptions = filteredSubscriptions
+	dataContainer.userStreamableTokenData = filteredUserStreamableTokenData
+	dataContainer.save()
 }
 
+
+
+export function handleTransfer(event: TransferEvent): void {
+	let from = event.params.from
+	let toHex = event.params.to.toHex()
+	let value = event.params.value
+
+	let tokenAddress = event.address
+	let tokenAddressHex = event.address.toHex()
+	// handle mint event
+	if (from.toHex() == ADDRESS_ZERO) {
+		// load or create token entity
+		let streamableTokenEntity = StreamableToken.load(tokenAddressHex)
+		// The entity might not exist if this is the first subscription
+		if(streamableTokenEntity == null) {
+			streamableTokenEntity = createStreamableToken(tokenAddress)
+		}
+
+		loadOrCreateUser(toHex)
+
+		let userTokenDataEntityId = getUserStreamableTokenDataId(toHex, tokenAddressHex)
+		let userTokenDataEntity = UserStreamableTokenData.load(userTokenDataEntityId)
+		if (userTokenDataEntity == null) {
+			userTokenDataEntity = createUserStreamableTokenData(userTokenDataEntityId, toHex, tokenAddressHex)
+		}
+
+		userTokenDataEntity.blockAtLastUpdate = event.block.number
+		userTokenDataEntity.balance = userTokenDataEntity.balance.plus(value)
+		userTokenDataEntity.availableAmount = userTokenDataEntity.availableAmount.plus(value)
+		userTokenDataEntity.save()
+	}
+
+}
