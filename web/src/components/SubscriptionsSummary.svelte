@@ -100,7 +100,7 @@
 					<span>lifetime subscribers</span>
 				</div>
 				<div class="vertical-inline">
-					{#each user.tokens as tokenData}
+					{#each user.tokens || [] as tokenData}
 						<mark><TokenValue value={utils.formatUnits(tokenData.totalOutgoingRate * 5, tokenData.token.decimals)} token={tokenData.token.symbol} /></mark>
 					{/each}
 					<span>lifetime funds given</span>
