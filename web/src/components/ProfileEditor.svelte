@@ -48,10 +48,10 @@
 				<input type="file" class="button" />
 			</div>
 			<h2>
-				<input type="text" class="boxed neumorphic" bind:value={editedProfile.name} />
+				<input type="text" class="boxed neumorphic" bind:value={editedProfile.name} placeholder="Name" />
 			</h2>
 			<p>
-				<input type="text" class="boxed neumorphic" bind:value={editedProfile.summary} />
+				<input type="text" class="boxed neumorphic" bind:value={editedProfile.summary} placeholder="Summary" />
 			</p>
 		</div>
 	{:else}

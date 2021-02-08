@@ -9,7 +9,7 @@
 
 	// TODO: Get from subgraph and AWS backend
 	import { creators } from '../stores/creators'
-	const placeholderUser = creators[0]
+	const placeholderUser = creators[creators.length - 1]
 
 	let user = placeholderUser
 	let userStore
@@ -84,12 +84,12 @@
 			</div>
 		</section>
 
-		<div class="bg-white">
+		<!-- <div class="bg-white">
 			<section class="w-full px-8 py-16 mb-32">
 				<AllTransactions transactions={user.transactions} />
 			</section>
 
 			<Footer />
-		</div>
+		</div> -->
 	</div>
 </div>
