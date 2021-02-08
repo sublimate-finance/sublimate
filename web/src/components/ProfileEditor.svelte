@@ -1,7 +1,7 @@
 <script lang="ts">
 	export let profile
 
-	let isEditing = false
+	let isEditing = true // false
 
 	let editedProfile = profile
 	// $: if(isEditing)
