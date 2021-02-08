@@ -594,8 +594,8 @@ export const creators = [
 			totalSubscribedTo: 1 //
 		}, {
 			token: {
-				id: '0x12e51e77daaa58aa0e9247db7510ea4b46f9bead',
-				symbol: 'straYFI',
+				id: '0x0bc529c00c6401aef6d220be8c6ea1667f6ad93e',
+				symbol: 'strYFI',
 				decimals: 18
 			},
 
