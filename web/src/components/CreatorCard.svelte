@@ -2,6 +2,7 @@
 	import { TimeInterval } from '../types/time-intervals'
 
 	// Data
+	export let ens
 	export let address
 	export let profile: {
 		name: string
@@ -43,5 +44,5 @@
 	<h3>{profile.name}</h3>
 	<h4 class="summary">{profile.summary}</h4>
 	<IncomingSubscriptionsSummary view="basic" {...user} bind:timeInterval={timeInterval} bind:baseCurrency={baseCurrency} />
-	<Button href="creator/{address}">Visit Creator</Button>
+	<Button href="creator/{profile.ens || address}">Visit Creator</Button>
 </article>
