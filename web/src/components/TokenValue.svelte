@@ -6,20 +6,23 @@
 	import type { TimeInterval } from '../types/time-intervals'
 	import { prices } from '../stores/prices'
 
+	function nonStreamableToken(token){
+		return token.replace(/^str/, '')
+	}
+
 	export let token: TickerSymbol
 	export let tokenAddress: Ethereum.ContractAddress
 	export let tokenIcon: string
 	export let tokenName: string
 	export let rateInterval: TimeInterval | undefined
 
-	export let value: number | string | BigNumberish = '...'
-	export let showDecimalPlaces = 2 + Math.round(Math.log10(prices[token]))
+	export let value: number | string | BigNumberish = 0
+	export let showDecimalPlaces = 2 + Math.round(Math.log10(prices[nonStreamableToken(token)] || 1))
 
 	export let isDebt = false
 
 	export let showPlainFiat = true
 	$: isFiat = showPlainFiat && ['USD', 'EUR', 'GBP', 'CAD', 'INR'].includes(token)
-
 
 	const formatValue = value => {
 		try {
@@ -37,7 +40,7 @@
 	}
 
 	import { tweened } from 'svelte/motion'
-	const tweenedValue = tweened(Number(value), {
+	const tweenedValue = tweened(Number(value || 0), {
 		duration: 300,
 		easing: t => t,
 		interpolate: (from, to) => t => Math.pow(Math.E, Math.log(from) + t * (Math.log(to) - Math.log(from)))
@@ -45,7 +48,7 @@
 		// 	from instanceof BigNumber ? BigNumber.from(to).sub(from).mul(t).add(from) :
 		// 	(Number(to) - Number(from)) * t + Number(from)
 	})
-	$: tweenedValue.set(Number(value))
+	$: tweenedValue.set(Number(value || 0))
 
 	import TokenIcon from './TokenIcon.svelte'
 </script>
