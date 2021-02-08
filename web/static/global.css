@@ -135,6 +135,8 @@ select,
 textarea {
 	border: none;
 	font: inherit;
+	background-color: rgba(255, 255, 255, 0.85);
+	box-shadow: rgba(231, 145, 245, 0.267) 0px 1px 2px;
 }
 
 input {
