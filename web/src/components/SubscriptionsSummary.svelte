@@ -91,8 +91,8 @@
 					<!-- {#each user.tokens as tokenData}
 						<mark><TokenValue value={tokenData.balance} token={tokenData.token.symbol} /></mark>
 					{/each} -->
-					<mark><TokenValue value={utils.formatUnits(balanceStreamableWrappedETH, decimals)} token="strETH" /></mark>
-					<mark><TokenValue value={utils.formatUnits(balanceStreamableDAI, decimals)} token="strDAI" /></mark>
+					<mark><TokenValue value={utils.formatUnits(balanceStreamableWrappedETH, decimals)} token="strETH" showDecimalPlaces={10} /></mark>
+					<mark><TokenValue value={utils.formatUnits(balanceStreamableDAI, decimals)} token="strDAI" showDecimalPlaces={10} /></mark>
 					<span>lifetime funds received</span>
 				</div>
 				<div class="vertical-inline">
@@ -101,7 +101,7 @@
 				</div>
 				<div class="vertical-inline">
 					{#each user.tokens || [] as tokenData}
-						<mark><TokenValue value={utils.formatUnits(tokenData.totalOutgoingRate * 5, tokenData.token.decimals)} token={tokenData.token.symbol} /></mark>
+						<mark><TokenValue value={utils.formatUnits(tokenData.totalOutgoingRate * 5, tokenData.token.decimals)} token={tokenData.token.symbol} showDecimalPlaces={10} /></mark>
 					{/each}
 					<span>lifetime funds given</span>
 				</div>
