@@ -1,8 +1,8 @@
 // TODO: Replace with The Graph
 export const creators = [
 	{
-		id: '0x9487ba23c2c12d9d0dab2a78f0639460fcfc5e3e',
-		address: '0x9487ba23c2c12d9d0dab2a78f0639460fcfc5e3e',
+		id: '0x9487ba23c2c12d9d0dab2a78f0639460fcfc5e13e',
+		address: '0x9487ba23c2c12d9d0dab2a78f0639460fcfc5e13e',
 		profile: {
 			name: 'Vitalik Buterin',
 			ens: 'vitalik.eth',
@@ -35,8 +35,8 @@ export const creators = [
 				decimals: 18
 			},
 
-			totalIncomingRate: 89,
-			totalIncomingAmount: 89 * 3,
+			totalIncomingRate: 89e14,
+			totalIncomingAmount: 89e14 * 3,
 			totalIncomingSubscriptions: 7934,
 			totalSubscribers: 7934 * 0.9 | 0,
 
@@ -73,8 +73,8 @@ export const creators = [
 				decimals: 18
 			},
 
-			totalIncomingRate: 3.2e14,
-			totalIncomingAmount: 3.2e14 * 3,
+			totalIncomingRate: 3.1e14,
+			totalIncomingAmount: 3.1e14 * 3,
 			totalIncomingSubscriptions: 12,
 			totalSubscribers: 12 * 0.9 | 0,
 
@@ -88,8 +88,8 @@ export const creators = [
 				decimals: 18
 			},
 
-			totalIncomingRate: 1000,
-			totalIncomingAmount: 1000 * 3,
+			totalIncomingRate: 10e14,
+			totalIncomingAmount: 10e14 * 3,
 			totalIncomingSubscriptions: 2,
 			totalSubscribers: 2,
 
@@ -108,8 +108,8 @@ export const creators = [
 		totalSubscribedTo: (12 + 0) * 0.9 | 0
 	},
 	// {
-	// 	id: '0xae38430C6B78B536bC957e77640290858e149A91E',
-	// 	address: '0xae38430C6B78B536bC957e77640290858e149A91E',
+	// 	id: '0xae138430C6B78B536bC957e77640290858e149A91E',
+	// 	address: '0xae138430C6B78B536bC957e77640290858e149A91E',
 	// 	profile: {
 	// 		name: 'Andre Cronje',
 	// 		ens: 'andrecronje.eth',
@@ -233,8 +233,8 @@ export const creators = [
 				decimals: 18
 			},
 
-			totalIncomingRate: 4e14,
-			totalIncomingAmount: 4e14 * 3,
+			totalIncomingRate: 4.6e14,
+			totalIncomingAmount: 4.6e14 * 3,
 			totalIncomingSubscriptions: 4,
 			totalSubscribers: 4 * 0.9 | 0,
 
@@ -248,8 +248,8 @@ export const creators = [
 				decimals: 18
 			},
 
-			totalIncomingRate: 290e3,
-			totalIncomingAmount: 290e3 * 3,
+			totalIncomingRate: 290e13,
+			totalIncomingAmount: 290e13 * 3,
 			totalIncomingSubscriptions: 2,
 			totalSubscribers: 2 * 0.9 | 0,
 
@@ -301,8 +301,8 @@ export const creators = [
 				decimals: 18
 			},
 
-			totalIncomingRate: 23,
-			totalIncomingAmount: 23 * 3,
+			totalIncomingRate: 23e14,
+			totalIncomingAmount: 23e14 * 3,
 			totalIncomingSubscriptions: 3,
 			totalSubscribers: 3 * 0.9 | 0,
 
@@ -354,8 +354,8 @@ export const creators = [
 				decimals: 18
 			},
 
-			totalIncomingRate: 892,
-			totalIncomingAmount: 892 * 3,
+			totalIncomingRate: 892e13,
+			totalIncomingAmount: 892e13 * 3,
 			totalIncomingSubscriptions: 0,
 			totalSubscribers: 0 * 0.9 | 0,
 
@@ -392,8 +392,8 @@ export const creators = [
 				decimals: 18
 			},
 
-			totalIncomingRate: 1200,
-			totalIncomingAmount: 1200 * 3,
+			totalIncomingRate: 12e13,
+			totalIncomingAmount: 12e13 * 3,
 			totalIncomingSubscriptions: 23,
 			totalSubscribers: 23 * 0.9 | 0,
 
@@ -407,8 +407,8 @@ export const creators = [
 				decimals: 18
 			},
 
-			totalIncomingRate: 4,
-			totalIncomingAmount: 4 * 3,
+			totalIncomingRate: 4e13,
+			totalIncomingAmount: 4e13 * 3,
 			totalIncomingSubscriptions: 6,
 			totalSubscribers: 6 * 0.9 | 0,
 
@@ -460,8 +460,8 @@ export const creators = [
 				decimals: 18
 			},
 
-			totalIncomingRate: 0,
-			totalIncomingAmount: 0 * 3,
+			totalIncomingRate: 5e13,
+			totalIncomingAmount: 5e13 * 3,
 			totalIncomingSubscriptions: 0,
 			totalSubscribers: 0 * 0.9 | 0,
 
@@ -514,8 +514,8 @@ export const creators = [
 				decimals: 18
 			},
 
-			totalIncomingRate: 2,
-			totalIncomingAmount: 2 * 3,
+			totalIncomingRate: 2e13,
+			totalIncomingAmount: 2e13 * 3,
 			totalIncomingSubscriptions: 32,
 			totalSubscribers: 32 * 0.9 | 0,
 
