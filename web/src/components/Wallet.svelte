@@ -41,7 +41,7 @@
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
 
-		--space-inner: 1em;
+		--space-inner: 0.75em;
 		gap: var(--space-inner);
 	}
 
