@@ -33,7 +33,8 @@
 <style>
 	:global(.wallet-badge) {
 		--space-outer: 0.5em;
-		--space-inner: 0.5em;
+		--space-inner: 1em;
+		line-height: 1;
 	}
 
 	.wallet-options {
