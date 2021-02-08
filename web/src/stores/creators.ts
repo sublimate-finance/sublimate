@@ -1,8 +1,8 @@
 // TODO: Replace with The Graph
 export const creators = [
 	{
-		id: '0x9487ba23c2c12d9d0dab2a78f0639460fcfc5e13e',
-		address: '0x9487ba23c2c12d9d0dab2a78f0639460fcfc5e13e',
+		id: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
+		address: '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
 		profile: {
 			name: 'Vitalik Buterin',
 			ens: 'vitalik.eth',
@@ -59,7 +59,7 @@ export const creators = [
 		address: '0x30E7d7FfF85C8d0E775140b1aD93C230D5595207',
 		profile: {
 			name: 'The Defiant',
-			ens: 'thedefiant.eth',
+			ens: '', // 'thedefiant.eth',
 			summary: 'The DeFi news platform',
 			about: 'Finance is being rebuilt to put people in control. Here’s where you can track and join this revolution.',
 			avatar: 'https://pbs.twimg.com/profile_images/1311463933287505920/G50MgnEo_400x400.jpg',
@@ -273,8 +273,8 @@ export const creators = [
 		totalSubscribedTo: 4
 	},
 	{
-		id: '0x42aD0c5683f3c3dd5357CfCB4aEd63B878d73b2r',
-		address: '0x42aD0c5683f3c3dd5357CfCB4aEd63B878d73b2r',
+		id: '0x77dcb3ac387f7da0737948ac897d8eadd4ce4264',
+		address: '0x77dcb3ac387f7da0737948ac897d8eadd4ce4264',
 		profile: {
 			name: 'Stani Kulechov',
 			ens: 'stani.eth',
@@ -332,7 +332,7 @@ export const creators = [
 		address: '0xb2a03e995c98981013fefc5e140fb5a9da326c230',
 		profile: {
 			name: 'Elon Musk',
-			ens: 'elon.eth',
+			ens: '', // 'elon.eth',
 			summary: '#bitcoin ₿',
 			about: '',
 			avatar: 'https://pbs.twimg.com/media/Etm4yFZUcAAoN5u?format=jpg&name=medium',
@@ -387,7 +387,7 @@ export const creators = [
 		address: '0x248601e0b0084ee51d53154ee148146b05216053',
 		profile: {
 			name: 'Altcoin Daily',
-			ens: 'altcoindaily.eth',
+			ens: '', // 'altcoindaily.eth',
 			summary: 'Bitcoiners using alts to stack more BTC.',
 			about: 'Brothers Aaron & Austin. Huge #bitcoin fundamentalists. Bitcoiners using alts to stack more BTC. Follow our YouTube channel for DAILY news & opinion videos!',
 			avatar: 'https://pbs.twimg.com/profile_images/959000053267415041/FMOGeFYe_400x400.jpg',
@@ -437,8 +437,8 @@ export const creators = [
 		totalSubscribedTo: (23 + 6) * 0.9 | 0
 	},
 	{
-		id: '0xb2a03e995C98981013fefc5e140fB5a9dA326C230',
-		address: '0xb2a03e995C98981013fefc5e140fB5a9dA326C230',
+		id: '0x4f0fa30d9a0a7bdd053210e6f220255fd64a3a22',
+		address: '0x4f0fa30d9a0a7bdd053210e6f220255fd64a3a22',
 		profile: {
 			name: 'Coin Bureau',
 			ens: 'guy.eth',
