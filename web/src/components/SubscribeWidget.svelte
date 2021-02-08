@@ -144,7 +144,7 @@
 	<!-- svelte-ignore a11y-label-has-associated-control -->
 	<label class="column duration">
 		<strong>over {durationTimeInterval === TimeInterval.Block ? 'exactly' : 'approximately'}</strong>
-		<div class="columns">
+		<div class="bar">
 			<input type="number" bind:value={durationAmount} min={1} />
 			<select bind:value={durationTimeInterval}>
 				{#each Object.values(TimeInterval) as timeInterval}
