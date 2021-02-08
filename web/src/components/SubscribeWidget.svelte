@@ -48,6 +48,7 @@
 
 
 	enum FlowAction {
+		ApproveERC20,
 		TopUpDeposit,
 		StartSubscription
 	}
@@ -73,10 +74,23 @@
 
 			const currentBalance = await StreamableToken.balanceOf(from)
 
-			// Top up balance of strToken by wrapping ERC20 token
-			console.log(maxAmount.toString(), currentBalance.toString())
+			// Top up balance of strToken by wrapping ERC-20 token
 			topUpAmount = maxAmount.sub(currentBalance)
 			if(topUpAmount.gt(0)){
+				// ERC-20 allowance
+				if(currency !== Currency.ETH){
+					// Check current allowance
+					const allowance = await StreamableToken.allowance(from, StreamableToken.address)
+					console.log('allowance', allowance)
+
+					// Approve ERC-20 token
+					if(allowance.lt(topUpAmount)){
+						estimatedGas = await StreamableToken.estimateGas.approve(from, topUpAmount)
+						flowAction = FlowAction.ApproveERC20
+						await StreamableToken.approve(from, topUpAmount)
+					}
+				}
+
 				estimatedGas = await StreamableToken.estimateGas.deposit({value: topUpAmount})
 				flowAction = FlowAction.TopUpDeposit
 				await StreamableToken.deposit({value: topUpAmount})
@@ -158,7 +172,19 @@
 </form>
 
 <WalletAccess bind:estimatedGas={estimatedGas}>
-	{#if flowAction === FlowAction.TopUpDeposit}
+	{#if flowAction === FlowAction.ApproveERC20}
+		<h2>Approve <TokenName token={currency} /></h2>
+		<p class="vertical-inline">
+			<span>
+				You need to convert
+				<mark><TokenValue value={utils.formatUnits(topUpAmount, decimals)} token={currency} /></mark>
+				into <TokenName token={wrappedCurrency} />
+			</span>
+			<span>
+				in order to have the <mark><TokenValue value={utils.formatUnits(totalTokens, decimals)} token={wrappedCurrency} /></mark> needed for this subscription.
+			</span>
+		</p>
+	{:else if flowAction === FlowAction.TopUpDeposit}
 		<h2>Top up your <TokenName token={wrappedCurrency} /> balance</h2>
 		<p class="vertical-inline">
 			<span>
