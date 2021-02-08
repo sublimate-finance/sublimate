@@ -117,6 +117,27 @@
 	.profile-info {
 		justify-items: center;
 		padding-top: 4em;
+		text-align: center;
+	}
+	.profile-info p {
+		display: flex;
+		justify-content: center;
+		align-items: baseline;
+		flex-wrap: wrap;
+		gap: 1em;
+	}
+	.profile-info .second-line {
+		font-size: 1.2em;
+	}
+	.profile-info .summary {
+		color: var(--accent-color);
+		font-weight: 500;
+	}
+	.profile-info a {
+		font-size: 0.9em;
+	}
+	.profile-info .about {
+		max-width: 40rem;
 	}
 </style>
 
@@ -128,7 +149,20 @@
 		</div>
 		<section class="profile-info column">
 			<h1>{profile.name || address}</h1>
-			<span class="text-primary-200">{profile.summary}</span>
+			<p class="second-line">
+				{#if profile.summary}
+					<span class="summary">{profile.summary}</span>
+				{/if}
+				{#if profile.website}
+					<a href={profile.website} target="_blank">{profile.website.replace(/^https?:\/\//, '')}</a>
+				{/if}
+				{#if profile.twitter}
+					<a href={profile.twitter} target="_blank">{profile.twitter.replace(/^https?:\/\/twitter\.com\//, '@')}</a>
+				{/if}
+			</p>
+			{#if profile.about}
+				<p class="about">{profile.about}</p>
+			{/if}
 		</section>
 	</header>
 	<!-- {#if currentStreamableETHSubscriptionFrom && $currentStreamableETHSubscriptionFrom}
