@@ -41,7 +41,7 @@
 
 <div class="card">
 	{#if isEditing}
-		<div class="column">
+		<!-- <div class="column">
 			<h3>Profile Picture</h3>
 			<div class="row">
 				<img src={editedProfile.avatar} alt="Avatar" class="block rounded-full" width="80" height="80" />
@@ -53,6 +53,17 @@
 			<p>
 				<input type="text" class="boxed neumorphic" bind:value={editedProfile.summary} placeholder="Summary" />
 			</p>
+		</div> -->
+		<div class="row">
+			<img src={profile.avatar} alt="Avatar" class="block rounded-full" width="80" height="80" />
+			<div class="column">
+				<h2>
+					<input type="text" class="boxed neumorphic" bind:value={editedProfile.name} placeholder="Name" />
+				</h2>
+				<p>
+					<input type="text" class="boxed neumorphic" bind:value={editedProfile.summary} placeholder="Summary" />
+				</p>
+			</div>
 		</div>
 	{:else}
 		<div class="row">
@@ -67,40 +78,44 @@
 			</div>
 		</div>
 	{/if}
-	<div class="column">
+	{#if isEditing || profile.website || profile.twitter}
 		<div class="column">
-			<h3>About</h3>
-			{#if isEditing}
-				<textarea class="boxed neumorphic" bind:value={editedProfile.about} rows="3" />
-			{:else}
-				<p>{profile.about}</p>
-			{/if}
+			<h3>Links</h3>
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<label class="column">
+				<span>Website</span>
+				{#if isEditing}
+					<input type="text" class="neumorphic" bind:value={editedProfile.website} placeholder="https://sublimate.finance" />
+				{:else if profile.website}
+					<p>{profile.website}</p>
+				{/if}
+			</label>
+			<label class="column">
+				<span>Twitter</span>
+				{#if isEditing}
+					<input type="text" class="neumorphic" bind:value={editedProfile.twitter} placeholder="https://twitter.com/SublimateFinance" />
+				{:else if profile.twitter}
+					<p>{profile.twitter}</p>
+				{/if}
+			</label>
 		</div>
-	</div>
-	<div class="column">
-		<h3>Links</h3>
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label class="column">
-			<span>Website</span>
-			{#if isEditing}
-				<input type="text" class="neumorphic" bind:value={editedProfile.website} placeholder="https://sublimate.finance" />
-			{:else if profile.website}
-				<p>{profile.website}</p>
-			{/if}
-		</label>
-		<label class="column">
-			<span>Twitter</span>
-			{#if isEditing}
-				<input type="text" class="neumorphic" bind:value={editedProfile.twitter} placeholder="https://twitter.com/SublimateFinance" />
-			{:else if profile.twitter}
-				<p>{profile.twitter}</p>
-			{/if}
-		</label>
-	</div>
+	{/if}
+	{#if isEditing || profile.about}
+		<div class="column">
+			<div class="column">
+				<h3>About</h3>
+				{#if isEditing}
+					<textarea class="boxed neumorphic" bind:value={editedProfile.about} rows="2" />
+				{:else}
+					<p>{profile.about}</p>
+				{/if}
+			</div>
+		</div>
+	{/if}
 	<div class="column">
 		<h3>Cover image</h3>
 		{#if isEditing}
-			<input type="file" class="button" />
+			<!-- <input type="file" class="button" /> -->
 		{/if}
 		<img class="cover-image rounded-md shadow-inner" src={profile.cover} alt="Cover Image" height="100" />
 	</div>
