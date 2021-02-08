@@ -177,11 +177,11 @@
 		<p class="vertical-inline">
 			<span>
 				You need to convert
-				<mark><TokenValue value={utils.formatUnits(topUpAmount, decimals)} token={currency} /></mark>
+				<mark><TokenValue value={utils.formatUnits(topUpAmount, decimals)} token={currency} showDecimalPlaces={6} /></mark>
 				into <TokenName token={wrappedCurrency} />
 			</span>
 			<span>
-				in order to have the <mark><TokenValue value={utils.formatUnits(totalTokens, decimals)} token={wrappedCurrency} /></mark> needed for this subscription.
+				in order to have the <mark><TokenValue value={utils.formatUnits(totalTokens, decimals)} token={wrappedCurrency} showDecimalPlaces={6} /></mark> needed for this subscription.
 			</span>
 		</p>
 	{:else if flowAction === FlowAction.TopUpDeposit}
@@ -189,11 +189,11 @@
 		<p class="vertical-inline">
 			<span>
 				You'll convert
-				<mark><TokenValue value={utils.formatUnits(topUpAmount, decimals)} token={currency} /></mark>
+				<mark><TokenValue value={utils.formatUnits(topUpAmount, decimals)} token={currency} showDecimalPlaces={6} /></mark>
 				into <TokenName token={wrappedCurrency} />
 			</span>
 			<span>
-				in order to have the <mark><TokenValue value={utils.formatUnits(totalTokens, decimals)} token={wrappedCurrency} /></mark> needed for this subscription.
+				in order to have the <mark><TokenValue value={utils.formatUnits(totalTokens, decimals)} token={wrappedCurrency} showDecimalPlaces={6} /></mark> needed for this subscription.
 			</span>
 		</p>
 	{:else if flowAction === FlowAction.StartSubscription}
