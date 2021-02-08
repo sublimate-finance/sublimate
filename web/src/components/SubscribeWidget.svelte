@@ -31,7 +31,7 @@
 	const decimals = 18
 	$: _totalAmount = utils.parseUnits(totalAmount.toString(), decimals)
 	$: _rateAmount = utils.parseUnits(rateAmount.toString(), decimals)
-	$: _durationAmount = BigNumber.from(durationAmount.toString())
+	$: _durationAmount = BigNumber.from((durationAmount || 0).toString())
 
 	$: blocks = _durationAmount.mul(averageBlocksPerTimeInterval[durationTimeInterval])
 	$: tokensPerBlock =
