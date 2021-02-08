@@ -11,6 +11,9 @@
 
 	$: _token = isStreamable ? token.replace(/^str/, '') : token
 
+	$: if(_token === 'DAI')
+		tokenAddress = '0x6b175474e89094c44da98b954eedeac495271d0f'
+
 	$: Icon = _token && CryptoIcons[_token[0].toUpperCase() + _token.slice(1).toLowerCase()]
 
 	let loadingError = false
@@ -22,7 +25,7 @@
 			<svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path fill="url(#p)" d="M6 6h38v38H6z"/><circle cx="25" cy="25" r="23.5" stroke="url(#paint0_linear)" stroke-width="3"/><defs><linearGradient id="paint0_linear" x1="25" y1="0" x2="25" y2="50" gradientUnits="userSpaceOnUse"><stop stop-color="#E894F6"/><stop offset="1" stop-color="#7D60F4" stop-opacity=".8"/></linearGradient><pattern id="p" patternContentUnits="objectBoundingBox" width="1" height="1"></pattern></defs></svg>
 		</div>
 	{/if}
-	{#if globalThis.window && Icon}
+	{#if globalThis.window && Icon && _token !== 'DAI'}
 		<svelte:component this={Icon} size="1.25em" />
 	{:else if !loadingError && (tokenAddress || tokenIcon)}
 		{#if tokenAddress}
@@ -44,6 +47,7 @@
 		height: 1em;
 		align-self: center;
 		align-items: center;
+
 	}
 	/* picture.is-streamable:before {
 		content: '';
