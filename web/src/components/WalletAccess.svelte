@@ -131,7 +131,12 @@
 						</div>
 
 					<!-- Temporary for demo -->
-					{:else if $flow.executionError && $flow.executionError.message === 'The execution failed due to an exception.' && $flow.executionError.data === 'Reverted'}
+					{:else if $flow.executionError &&
+						(
+							$flow.executionError.message === 'The execution failed due to an exception.'
+							|| $flow.executionError.message === 'Internal JSON-RPC error.'
+						) && $flow.executionError.data === 'Reverted'
+					}
 						Transaction sent.
 
 					{:else if $flow.executionError}
