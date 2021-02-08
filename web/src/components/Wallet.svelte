@@ -1,17 +1,18 @@
 <script lang="ts">
 	import { utils } from 'ethers'
 
-	import { onMount } from 'svelte'
+	import { onMount, onDestroy } from 'svelte'
 	let walletStores, transactions, balance, chain, fallback, builtin, wallet, flow
 	onMount(async () => walletStores = {transactions, balance, chain, fallback, builtin, wallet, flow} = (await import('../stores/wallet')).getWalletStores())
-
+	let isDestroyed = false
+	onDestroy(() => isDestroyed = true)
 	let balanceETH
 	let balanceStreamableWrappedETH
 	let balanceStreamableDAI
 
 	const decimals = 18
 	$: if(walletStores) (async () => {
-		while(true){
+		while(!isDestroyed){
 			if(wallet.contracts && wallet.address){
 				balanceStreamableWrappedETH = await wallet.contracts.StreamableWrappedETH.lastUpdatedBalanceOf(wallet.address)
 				balanceStreamableDAI = await wallet.contracts.StreamableDAI.lastUpdatedBalanceOf(wallet.address)

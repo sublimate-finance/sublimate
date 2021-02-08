@@ -6,13 +6,15 @@
 	import { onMount, onDestroy } from 'svelte'
 	let walletStores, transactions, balance, chain, fallback, builtin, wallet, flow
 	onMount(async () => walletStores = {transactions, balance, chain, fallback, builtin, wallet, flow} = (await import('../stores/wallet')).getWalletStores())
+	let isDestroyed = false
+	onDestroy(() => isDestroyed = true)
 
 	let balanceStreamableWrappedETH = 0
 	let balanceStreamableDAI = 0
 
 	const decimals = 18
 	$: if(walletStores) (async () => {
-		while(true){
+		while(!isDestroyed){
 			if(wallet.contracts && user.address){
 				balanceStreamableWrappedETH = await wallet.contracts.StreamableWrappedETH.lastUpdatedBalanceOf(user.address)
 				balanceStreamableDAI = await wallet.contracts.StreamableDAI.lastUpdatedBalanceOf(user.address)
