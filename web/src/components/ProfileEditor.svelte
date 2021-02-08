@@ -18,7 +18,7 @@
 		// await fetch('', {data: editedProfile})
 
 		isSigning = true
-		await flow.execute(async contracts => (await walletStores.wallet.provider.getSigner()).signMessage('Update your Sublimate creator profile!'))
+		await flow.execute(async contracts => (await walletStores.wallet.provider.getSigner()).signMessage('Sign this message to update your Sublimate creator profile!'))
 		isSigning = false
 
 		profile = editedProfile
