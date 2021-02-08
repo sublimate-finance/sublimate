@@ -104,12 +104,16 @@
 	.column > * {
 		--space-inner: 0.25em;
 	}
+
+	strong {
+		font-weight: 500;
+	}
 </style>
 
 <form class="column card neumorphic" on:submit|preventDefault={() => depositAndUpdateSubscription(wallet.address, address, tokensPerBlock, totalTokens)}>
 	<!-- svelte-ignore a11y-label-has-associated-control -->
 	<label class="column">
-		<span>Stream</span>
+		<strong>Stream</strong>
 		<div class="rate-or-total-amount bar">
 			{#if inputMode === InputMode.TotalAndDuration}
 				<input type="number" bind:value={totalAmount} min={1e-5} step={1e-5} />
@@ -139,7 +143,7 @@
 	</label>
 	<!-- svelte-ignore a11y-label-has-associated-control -->
 	<label class="column duration">
-		<p>over {durationTimeInterval === TimeInterval.Block ? 'exactly' : 'approximately'}</p>
+		<strong>over {durationTimeInterval === TimeInterval.Block ? 'exactly' : 'approximately'}</strong>
 		<div class="columns">
 			<input type="number" bind:value={durationAmount} min={1} />
 			<select bind:value={durationTimeInterval}>
