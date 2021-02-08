@@ -73,7 +73,7 @@ export function getWalletStores(){
 						// Notify cancelled
 						notifications.queue({
 							id: tx.hash,
-							delay: 3,
+							delay: 0, // 3
 							title: 'Transaction Canceled',
 							text: `The transaction was canceled. Transaction ID: ${tx.hash}`,
 							type: 'info',
@@ -83,7 +83,7 @@ export function getWalletStores(){
 						// Notify successful
 						notifications.queue({
 							id: tx.hash,
-							delay: 3,
+							delay: 0, // 3
 							title: `Transaction Successful (${tx.status})`,
 							text: `The transaction has completed successfully. Transaction ID: ${tx.hash}`,
 							type: 'info',
