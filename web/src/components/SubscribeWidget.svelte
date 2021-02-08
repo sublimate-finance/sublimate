@@ -183,7 +183,7 @@
 			</span>
 			<span>
 				at a rate of
-				<mark>≈<TokenValue value={rateAmount} token={wrappedCurrency} rateInterval={rateTimeInterval} /></mark>
+				<mark>≈ <TokenValue value={rateAmount} token={wrappedCurrency} rateInterval={rateTimeInterval} /></mark>
 				{#if inputMode === InputMode.RateAndDuration}
 					<small class="nowrap">(<mark><TokenValue value={utils.formatUnits(tokensPerBlock, decimals)} token={wrappedCurrency} rateInterval={TimeInterval.Block} /></mark>)</small>
 				{/if}
