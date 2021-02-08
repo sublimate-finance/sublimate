@@ -53,6 +53,22 @@
 			totalMaxOutgoingAmount: 0, //
 			totalOutgoingSubscriptions: 1, //
 			totalSubscribedTo: 1 //
+		}, {
+			token: {
+				id: '0x12e51e77daaa58aa0e9247db7510ea4b46f9bead',
+				symbol: 'straYFI',
+				decimals: 18
+			},
+
+			totalIncomingRate: 0,
+			totalMaxIncomingAmount: 0,
+			totalIncomingSubscriptions: 0,
+			totalSubscribers: 0,
+
+			totalOutgoingRate: 0, //
+			totalMaxOutgoingAmount: 0, //
+			totalOutgoingSubscriptions: 1, //
+			totalSubscribedTo: 1 //
 		}],
 
 		totalIncomingSubscriptions: 0,

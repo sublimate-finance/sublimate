@@ -336,7 +336,8 @@ export const creators = [
 
 		tokens: [{
 			token: {
-				symbol: 'strETH',
+				id: '0xfc4b8ed459e00e5400be803a9bb3954234fd50e3',
+				symbol: 'strwBTC',
 				decimals: 18
 			},
 
@@ -567,6 +568,22 @@ export const creators = [
 		}, {
 			token: {
 				symbol: 'strDAI',
+				decimals: 18
+			},
+
+			totalIncomingRate: 0,
+			totalMaxIncomingAmount: 0,
+			totalIncomingSubscriptions: 0,
+			totalSubscribers: 0,
+
+			totalOutgoingRate: 0, //
+			totalMaxOutgoingAmount: 0, //
+			totalOutgoingSubscriptions: 1, //
+			totalSubscribedTo: 1 //
+		}, {
+			token: {
+				id: '0x12e51e77daaa58aa0e9247db7510ea4b46f9bead',
+				symbol: 'straYFI',
 				decimals: 18
 			},
 
