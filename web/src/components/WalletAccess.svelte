@@ -129,6 +129,11 @@
 								<small>Estimated Gas: <mark>{estimatedGas} gas units</mark></small>
 							{/if}
 						</div>
+
+					<!-- Temporary for demo -->
+					{:else if $flow.executionError && $flow.executionError.message === 'The execution failed due to an exception.' && $flow.executionError.data === 'Reverted'}
+						Transaction sent.
+
 					{:else if $flow.executionError}
 						<div class="bar" transition:scale>
 							<p>
@@ -136,11 +141,6 @@
 									You canceled the transaction.
 								{:else if $flow.executionError.data && $flow.executionError.data.message}
 									{$flow.executionError.data.message}
-
-								<!-- Temporary for demo -->
-								{:else if $flow.executionError.message === 'The execution failed due to an exception.' && $flow.executionError.data === 'Reverted'}
-									Transaction sent.
-
 								{:else if $flow.executionError.message}
 									{$flow.executionError.message}
 									{#if $flow.executionError.data}
