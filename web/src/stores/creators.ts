@@ -282,8 +282,9 @@ export const creators = [
 
 		tokens: [{
 			token: {
-				symbol: 'strETH',
-				decimals: 18
+				id: '0x328c4c80bc7aca0834db37e6600a6c49e12da4de',
+				symbol: 'straSNX',
+				decimals: 18,
 			},
 
 			totalIncomingRate: 7.85e14,
