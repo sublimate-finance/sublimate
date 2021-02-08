@@ -64,7 +64,7 @@
 	$: if(user?.profile)
 		profile = user.profile
 
-	$: console.log('addressOrENS', addressOrENS, 'address', address, 'user', user, 'profile', profile)
+	// $: console.log('addressOrENS', addressOrENS, 'address', address, 'user', user, 'profile', profile)
 
 
 	let currentStreamableETHSubscriptionTo, currentStreamableETHSubscriptionFrom
@@ -75,7 +75,7 @@
 		currentStreamableETHSubscriptionFrom = getSubscription(address, $wallet.address, 'ETH')
 		currentStreamableDAISubscriptionFrom = getSubscription(address, $wallet.address, 'DAI')
 	}
-	$: console.log('currentStreamableETHSubscriptionTo', currentStreamableETHSubscriptionTo)
+	$: console.log('currentStreamableETHSubscriptionTo', $currentStreamableETHSubscriptionTo)
 
 
 	import AllTransactions from '../../components/AllTransactions.svelte'
