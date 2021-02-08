@@ -1,7 +1,7 @@
 <script lang="ts">
 	export let profile
 
-	let isEditing = true // false
+	let isEditing = false
 	let isSigning = false
 
 	let editedProfile = profile
