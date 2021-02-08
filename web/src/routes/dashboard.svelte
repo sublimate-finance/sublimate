@@ -89,11 +89,12 @@
 	}
 
 	let user
-	$: if(userStore && $userStore){
+	$: /*if(userStore && $userStore){
 		// user = $userStore
-	}else{
+	}else*/ if(address){
 		// Default: fetch from dummy data
-		user = creators.find(c => c.address.toLowerCase() == address?.toLowerCase())
+		user = creators.find(c => c.address.toLowerCase() == address.toLowerCase())
+
 		if(!user && address){
 			// Create new user
 			user = createNewUser(address)
@@ -101,9 +102,11 @@
 		}
 	}
 
-	let profile = {}
+	let profile
 	$: if(user?.profile)
 		profile = user.profile
+
+	$: console.log('profile', profile)
 
 
 	let creatorLink
@@ -143,14 +146,19 @@
 <div class="stack">
 	<div>
 		<section class="dashboard">
+			{#if !profile && !user}
+				<div class="card">
+					Connect your wallet to access your creator dashboard!
+				</div>
+			{/if}
 			{#if profile}
 				<div class="column">
-					<ProfileEditor {profile} />
+					<ProfileEditor bind:profile={profile} />
 					<div class="card">
 						<div class="column">
 							<h3>Share your Sublimate profile</h3>
 							<div class="bar boxed neumorphic">
-								<a href="/creator/{profile.ens || profile.address}" class="creator-link" bind:this={creatorLink}>sublimate.finance/creator/{profile.ens || profile.address}</a>
+								<a href="/creator/{profile.ens || user.address}" class="creator-link" bind:this={creatorLink}>sublimate.finance/creator/{profile.ens || user.address}</a>
 								<CopyButton content={creatorLink?.href} />
 								<!-- <img src="/images/copy.svg" alt="copy" /> -->
 							</div>
