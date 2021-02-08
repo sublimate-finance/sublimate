@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { BigNumber, utils } from 'ethers'
+	import type { ERC20 } from '../../../contracts/typechain/ERC20'
 	import type { StreamableWrappedETH, StreamableDAI } from '../../../contracts/typechain/StreamableWrappedETH'
 	import { Currency } from '../types/currency'
 	import { averageBlocksPerTimeInterval, TimeInterval } from '../types/time-intervals'
@@ -79,15 +80,19 @@
 			if(topUpAmount.gt(0)){
 				// ERC-20 allowance
 				if(currency !== Currency.ETH){
+					const ERC20Token: ERC20 =
+						currency === Currency.DAI ? contracts.DAI :
+						undefined
+
 					// Check current allowance
-					const allowance = await StreamableToken.allowance(from, StreamableToken.address)
+					const allowance = await ERC20Token.allowance(from, StreamableToken.address)
 					console.log('allowance', allowance)
 
 					// Approve ERC-20 token
 					if(allowance.lt(topUpAmount)){
-						estimatedGas = await StreamableToken.estimateGas.approve(from, topUpAmount)
+						estimatedGas = await ERC20Token.estimateGas.approve(from, topUpAmount)
 						flowAction = FlowAction.ApproveERC20
-						await StreamableToken.approve(from, topUpAmount)
+						await ERC20Token.approve(from, topUpAmount)
 					}
 				}
 
