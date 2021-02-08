@@ -48,7 +48,7 @@
 		<span>Supporting <strong>{totalSubscribedTo}</strong> creator{totalSubscribedTo === 1 ? '' : 's'}</span>
 	</div>
 	<div class="boxed neumorphic">
-		<span><strong>{totalOutgoingSubscriptions}</strong> outgoing subscription{totalOutgoingSubscriptions === 1 ? '' : 's'}</span>
+		<span><strong>{totalOutgoingSubscriptions}</strong> active subscription{totalOutgoingSubscriptions === 1 ? '' : 's'}</span>
 	</div>
 </div>
 <div class="boxed neumorphic column">
