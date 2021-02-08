@@ -2,19 +2,31 @@
 	export let profile
 
 	let isEditing = true // false
+	let isSigning = false
 
 	let editedProfile = profile
 	// $: if(isEditing)
 	// 	editedProfile = {...profile}
 
+
+	import { onMount } from 'svelte'
+	let walletStores, transactions, balance, chain, fallback, builtin, wallet, flow
+	onMount(async () => walletStores = {transactions, balance, chain, fallback, builtin, wallet, flow} = (await import('../stores/wallet')).getWalletStores())
+
 	async function saveProfile(){
 		// TODO: Upload profile data to back end
 		// await fetch('', {data: editedProfile})
 
+		isSigning = true
+		await flow.execute(async contracts => (await walletStores.wallet.provider.getSigner()).signMessage('Update your Sublimate creator profile!'))
+		isSigning = false
+
 		profile = editedProfile
+		isEditing = false
 	}
 
 	import Button from './Button.svelte'
+	import LoadingSpinner from './LoadingSpinner.svelte'
 </script>
 
 <style>
@@ -120,10 +132,15 @@
 		<img class="cover-image rounded-md shadow-inner" src={profile.cover} alt="Cover Image" height="100" />
 	</div>
 	<div class="stack">
-		{#if isEditing}
+		{#if isSigning}
+			<div>
+				<LoadingSpinner />
+				Signing message...
+			</div>
+		{:else if isEditing}
 			<div class="columns">
 				<Button on:click={() => isEditing = false}>Cancel</Button>
-				<Button on:click={() => {saveProfile(); isEditing = false}} class="accented">Save</Button>
+				<Button on:click={() => saveProfile()} class="accented">Save</Button>
 			</div>
 		{:else}
 			<Button on:click={() => isEditing = true}>Edit Profile</Button>
