@@ -185,12 +185,12 @@
 				at a rate of
 				<mark>≈ <TokenValue value={rateAmount} token={wrappedCurrency} rateInterval={rateTimeInterval} /></mark>
 				{#if inputMode === InputMode.RateAndDuration}
-					<small class="nowrap">(<mark><TokenValue value={utils.formatUnits(tokensPerBlock, decimals)} token={wrappedCurrency} rateInterval={TimeInterval.Block} /></mark>)</small>
+					<small class="nowrap">(<mark><TokenValue value={utils.formatUnits(tokensPerBlock, decimals)} token={wrappedCurrency} rateInterval={TimeInterval.Block} showDecimalPlaces={10} /></mark>)</small>
 				{/if}
 			</span>
 			<span>
 				until
-				<mark>≈ {durationAmount} {durationTimeInterval}</mark>
+				<mark>≈ {durationAmount} {durationTimeInterval}{durationAmount == 1 ? '' : 's'}</mark>
 				<small class="nowrap">(<mark>{blocks} blocks</mark>)</small>
 				from now.
 			</span>
