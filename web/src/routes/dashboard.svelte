@@ -117,6 +117,7 @@
 	import Footer from '../components/Footer.svelte'
 	import ProfileEditor from '../components/ProfileEditor.svelte'
 	import SubscriptionsSummary from '../components/SubscriptionsSummary.svelte'
+	import { scale } from 'svelte/transition'
 </script>
 
 <style>
@@ -146,13 +147,8 @@
 <div class="stack">
 	<div>
 		<section class="dashboard">
-			{#if !profile && !user}
-				<div class="card">
-					Connect your wallet to access your creator dashboard!
-				</div>
-			{/if}
 			{#if profile}
-				<div class="column">
+				<div class="column" transition:scale>
 					<ProfileEditor bind:profile={profile} />
 					<div class="card">
 						<div class="column">
@@ -171,9 +167,16 @@
 						</div>
 					</div>
 				</div>
+			{:else}
+				<div class="column" transition:scale>
+					<h1>Dashboard</h1>
+					<div class="card">
+						Connect your wallet to access your creator dashboard!
+					</div>
+				</div>
 			{/if}
 			{#if user}
-				<div class="column flex-1 p-8">
+				<div class="column flex-1 p-8" transition:scale>
 					<CreatorChart {user} />
 					<SubscriptionsSummary {user} />
 				</div>
