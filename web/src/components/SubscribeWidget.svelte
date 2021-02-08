@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { BigNumber, utils } from 'ethers'
-	import type { StreamableWrappedETH } from '../../../contracts/typechain/StreamableWrappedETH'
+	import type { StreamableWrappedETH, StreamableDAI } from '../../../contracts/typechain/StreamableWrappedETH'
 	import { Currency } from '../types/currency'
 	import { averageBlocksPerTimeInterval, TimeInterval } from '../types/time-intervals'
 
@@ -68,7 +68,7 @@
 		await flow.execute(async contracts => {
 			const StreamableToken =
 				currency === Currency.ETH ? contracts.StreamableWrappedETH as StreamableWrappedETH :
-				// currency === Currency.DAI ? contracts.StreamableDAI as StreamableDAI :
+				currency === Currency.DAI ? contracts.StreamableDAI as StreamableDAI :
 				undefined
 
 			const currentBalance = await StreamableToken.balanceOf(from)
