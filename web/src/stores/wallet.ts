@@ -65,7 +65,7 @@ export function getWalletStores(){
 							id: tx.hash,
 							delay: 0,
 							title: 'Transaction Error',
-							text: `The transaction failed. Transaction ID: ${tx.hash}`,
+							text: `The <a href="https://kovan.etherscan.io/tx/${tx.hash}" target="_blank">transaction</a> failed.`,
 							type: 'error',
 							onAcknowledge: () => walletStores.transactions.acknowledge(tx.hash, 'failure'),
 						})
@@ -75,17 +75,17 @@ export function getWalletStores(){
 							id: tx.hash,
 							delay: 0, // 3
 							title: 'Transaction Canceled',
-							text: `The transaction was canceled. Transaction ID: ${tx.hash}`,
+							text: `The <a href="https://kovan.etherscan.io/tx/${tx.hash}" target="_blank">transaction</a> was canceled.`,
 							type: 'info',
 							onAcknowledge: () => walletStores.transactions.acknowledge(tx.hash, 'cancelled'),
 						})
-					} else {
+					} else if (tx.status === 'success') {
 						// Notify successful
 						notifications.queue({
 							id: tx.hash,
 							delay: 0, // 3
-							title: `Transaction Successful (${tx.status})`,
-							text: `The transaction has completed successfully. Transaction ID: ${tx.hash}`,
+							title: 'Transaction Successful',
+							text: `The <a href="https://kovan.etherscan.io/tx/${tx.hash}" target="_blank">transaction</a> has completed successfully.`,
 							type: 'info',
 							onAcknowledge: () => walletStores.transactions.acknowledge(tx.hash, tx.status),
 						})
