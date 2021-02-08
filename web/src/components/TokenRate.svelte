@@ -18,7 +18,11 @@
 
 	$: _token = nonStreamableToken(token)
 
-	$: convertToBaseCurrency = conversionCurrency !== 'Original' && nonStreamableToken(token) != conversionCurrency
+	$: convertToBaseCurrency =
+		conversionCurrency !== 'Original'
+		&& nonStreamableToken(token) != conversionCurrency
+		&& prices[_token]
+		&& prices[conversionCurrency]
 
 	$: value = utils.formatUnits(
 		(convertToBaseCurrency
