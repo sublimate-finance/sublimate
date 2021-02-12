@@ -546,8 +546,8 @@ export const creators = [
 		totalSubscribedTo: (54 + 32) * 0.9 | 0
 	},
 	{
-		id: '0xe72f79190bc8f92067c6a62008656c6a9077f6aa',
-		address: '0xe72f79190bc8f92067c6a62008656c6a9077f6aa',
+		id: '0x8aaD44321A86b170879d7A244c1e8d360c99DdA8',
+		address: '0x8aaD44321A86b170879d7A244c1e8d360c99DdA8',
 		profile: {
 			name: 'Unstoppable Brad',
 			ens: 'brad.crypto',
