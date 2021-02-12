@@ -135,8 +135,14 @@
 								MetaMask
 							</Button>
 							<Button
+								label="Connect Portis Wallet"
+								disabled={$wallet.connecting}
+								on:click={() => wallet.connect('portis')}>
+								Portis
+							</Button>
+							<Button
 								label="Connect WalletConnect Wallet"
-								disabled={!$builtin.available || $wallet.connecting}
+								disabled={$wallet.connecting}
 								on:click={() => wallet.connect('walletconnect')}>
 								WalletConnect
 							</Button>

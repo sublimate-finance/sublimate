@@ -7,8 +7,8 @@
     "build": "sapper build --legacy",
     "export": "sapper export --legacy",
     "start": "node __sapper__/build",
-	"validate": "svelte-check --ignore src/node_modules/@sapper",
-	"tailwind": "npx tailwindcss-cli@latest build -o static/tailwind.css"
+    "validate": "svelte-check --ignore src/node_modules/@sapper",
+    "tailwind": "npx tailwindcss-cli@latest build -o static/tailwind.css"
   },
   "dependencies": {
     "@urql/core": "^1.16.2",
@@ -22,6 +22,7 @@
     "sirv": "^1.0.0",
     "svelte-cryptoicon": "^0.16.1",
     "web3w": "^0.2.39",
+    "web3w-portis-loader": "^0.2.0",
     "web3w-torus-loader": "^0.2.4",
     "web3w-walletconnect-loader": "^0.2.0",
     "wonka": "^4.0.15"

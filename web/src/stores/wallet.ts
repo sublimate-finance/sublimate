@@ -1,4 +1,5 @@
 import WalletStores from 'web3w'
+import {PortisModuleLoader} from 'web3w-portis-loader'
 import {TorusModuleLoader} from 'web3w-torus-loader'
 import {WalletConnectModuleLoader} from 'web3w-walletconnect-loader'
 import contractsInfo from '../contracts.json'
@@ -36,6 +37,7 @@ export function getWalletStores(){
 					: undefined, // ensure local storage is not conflicting across web3w-based apps on ipfs gateways
 			options: [
 				'builtin',
+				new PortisModuleLoader('1b6e507b-5355-432c-a729-8945e0c54b38', {chainId}),
 				new WalletConnectModuleLoader({
 					nodeUrl,
 					chainId,
