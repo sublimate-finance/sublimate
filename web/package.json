@@ -11,6 +11,7 @@
     "tailwind": "npx tailwindcss-cli@latest build -o static/tailwind.css"
   },
   "dependencies": {
+    "@unstoppabledomains/resolution": "^1.17.0",
     "@urql/core": "^1.16.2",
     "@urql/devtools": "^2.0.2",
     "compression": "^1.7.1",
