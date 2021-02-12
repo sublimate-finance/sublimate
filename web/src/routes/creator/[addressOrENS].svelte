@@ -5,8 +5,12 @@
 </script>
 
 <script lang="ts">
-	import { utils } from 'ethers'
+	import { ethers, utils } from 'ethers'
 	import { creators } from '../../stores/creators'
+
+
+	// import Resolution from '@unstoppabledomains/resolution'
+	// const unstoppableResolution = new Resolution()
 
 	import { onMount } from 'svelte'
 
@@ -36,6 +40,24 @@
 
 			// Resolve ENS name
 			wallet?.provider?.resolveName(ensName).then(_ => address = _)
+
+			// unstoppableResolution
+			// 	.addr(addressOrENS, 'ETH')
+			// 	.then(_ => address = _)
+			// 	.catch(console.error)
+
+			// const proxyReaderContract = new ethers.Contract(
+			// 	'0x7ea9Ee21077F84339eDa9C80048ec6db678642B1',
+			// 	['function getMany(string[] calldata keys, uint256 tokenId) external view returns (string[] memory)'],
+			// 	provider
+			// )
+
+			// const tokenId = namehash(ensName);
+			// proxyReaderContract.getMany(["crypto.ETH.address"], tokenId).then(values => {
+			// 	console.log(values);
+			// 	if(values[0])
+			// 		address = values[0]
+			// })
 		}
 	}
 
